@@ -1,6 +1,6 @@
 <script>
   let nadas
-  let cosa
+  let nadas
 </script>
 
 <h1>Welcome to SvelteKit</h1>
