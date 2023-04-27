@@ -1,17 +1,10 @@
 module.exports = {
   root: true,
-  parser: "@typescript-eslint/parser",
-  extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-  ],
-  plugins: ["svelte3", "@typescript-eslint"],
+  extends: ["eslint:recommended", "prettier"],
+  plugins: ["svelte3"],
   ignorePatterns: ["*.cjs"],
   overrides: [{ files: ["*.svelte"], processor: "svelte3/svelte3" }],
-  settings: {
-    "svelte3/typescript": () => require("typescript"),
-  },
+
   parserOptions: {
     sourceType: "module",
     ecmaVersion: 2020,
@@ -23,9 +16,9 @@ module.exports = {
   },
   rules: {
     "array-callback-return": "error",
-    "prefer-destructuring": "error",
     "no-return-await": "error",
     "require-await": "error",
+    "no-unused-vars": ["error", { ignoreRestSiblings: true }],
     "no-undef": "off",
     "no-var": "error",
     "prefer-template": "error",
@@ -37,18 +30,6 @@ module.exports = {
     "no-unneeded-ternary": "error",
     "quote-props": ["error", "as-needed"],
     "no-console": ["warn", { allow: ["warn", "error"] }],
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { argsIgnorePattern: "^_", ignoreRestSiblings: true },
-    ],
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-types": [
-      "error",
-      {
-        types: {
-          Function: false,
-        },
-      },
-    ],
+    "no-duplicate-imports": "error",
   },
-};
+}

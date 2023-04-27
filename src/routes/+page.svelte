@@ -1,5 +1,6 @@
 <script>
   let nada
+  let cosa
 </script>
 
 <h1>Welcome to SvelteKit</h1>
