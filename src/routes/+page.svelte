@@ -1,5 +1,5 @@
 <script>
-  let nada
+  let nadas
   let cosa
 </script>
 

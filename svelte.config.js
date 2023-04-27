@@ -1,8 +1,13 @@
 import adapter from "@sveltejs/adapter-static"
-import { vitePreprocess } from "@sveltejs/kit/vite"
+import preprocess from "svelte-preprocess"
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
+  preprocess: [
+    preprocess({
+      postcss: true,
+    }),
+  ],
   kit: {
     //  By default, `npm run build` will create a standard Node app.
     //  You can create optimized builds for different platforms by
