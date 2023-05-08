@@ -1,5 +1,6 @@
 <script lang="ts">
   let name = "caracole"
+  let nada
 </script>
 
 <h1>Welcome to SvelteKit</h1>
