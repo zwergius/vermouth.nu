@@ -20,8 +20,6 @@
 <style>
   h3 {
     line-height: 25px;
-
-    font-family: GTAlpina;
     color: var(--white);
   }
 
