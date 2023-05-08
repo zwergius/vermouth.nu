@@ -40,7 +40,7 @@ module.exports = {
     "no-console": ["warn", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-unused-vars": [
       "error",
-      // { argsIgnorePattern: '^_', ignoreRestSiblings: true },
+      { argsIgnorePattern: "^_", ignoreRestSiblings: true },
     ],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/ban-types": [

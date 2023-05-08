@@ -11,6 +11,7 @@
 
 <style>
   .si {
-    color: blueviolet;
+    font-family: GTAlpina;
+    color: var(--primary);
   }
 </style>
