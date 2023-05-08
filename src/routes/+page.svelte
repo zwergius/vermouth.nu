@@ -1,5 +1,4 @@
 <script lang="ts">
-  let nada
   let name = "caracole"
 </script>
 
