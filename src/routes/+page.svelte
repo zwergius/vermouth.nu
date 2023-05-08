@@ -1,19 +1,45 @@
 <script lang="ts">
-  let name = "caracole"
+  import Header from "../components/header.svelte"
+  import Carrousel from "../components/carrousel.svelte"
 </script>
 
-<div class="contaier">
-  <h1>Welcome to SvelteKit</h1>
-  <p>
-    Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-  </p>
+<div class="container">
+  <Header />
+  <div class="main">
+    <div class="box-logo">
+      <div class="logo">
+        <img
+          width="1300"
+          height="400"
+          src="/src/assets/logo-home.png"
+          alt="logo"
+        />
+      </div>
+    </div>
 
-  <h2 class="si">hola {name}</h2>
+    <Carrousel />
+  </div>
 </div>
 
+<slot />
+
 <style>
-  .si {
-    font-family: GTAlpina;
-    color: var(--primary);
+  .main {
+    margin-top: 120px;
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center;
+  }
+  .logo {
+    height: 400px;
+    z-index: 10;
+    top: -50px;
+    position: absolute;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    background-color: var(--primary);
   }
 </style>
