@@ -1,6 +1,23 @@
 <script lang="ts">
-  import Header from "../components/header.svelte"
-  import Carrousel from "../components/carrousel.svelte"
+  import Header from "$lib/components/header.svelte"
+  import Carrousel from "$lib/components/carrousel.svelte"
+  const images = [
+    {
+      path: "/src/lib/assets/forzudo.webp",
+      id: "image1",
+      alt: "",
+    },
+    {
+      path: "/src/lib/assets/banner.webp",
+      id: "image2",
+      alt: "",
+    },
+    {
+      path: "/src/lib/assets/tabira.webp",
+      id: "image3",
+      alt: "",
+    },
+  ]
 </script>
 
 <div class="container">
@@ -9,15 +26,15 @@
     <div class="box-logo">
       <div class="logo">
         <img
-          width="1300"
-          height="400"
-          src="/src/assets/logo-home.png"
+          width="1200"
+          height="350"
+          src="/src/lib/assets/logo-home.png"
           alt="logo"
         />
       </div>
     </div>
 
-    <Carrousel />
+    <Carrousel {images} />
   </div>
 </div>
 
@@ -33,7 +50,7 @@
   .logo {
     height: 400px;
     z-index: 10;
-    top: -50px;
+    top: 0;
     position: absolute;
     align-items: center;
     display: flex;
@@ -41,5 +58,10 @@
   }
   .container {
     background-color: var(--primary);
+  }
+  @media only screen and (max-width: 1024px) {
+    img {
+      aspect-ratio: 8/4;
+    }
   }
 </style>
