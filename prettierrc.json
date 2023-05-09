@@ -2,7 +2,7 @@
   "tabWidth": 2,
   "semi": false,
   "singleQuote": true,
-  "trailingComma": "es5",
+  "trailingComma": "always",
   "printWidth": 100,
   "svelteSortOrder": "scripts-markup-styles",
   "plugins": ["prettier-plugin-svelte"],

@@ -30,6 +30,7 @@ module.exports = {
     "no-var": "error",
     "prefer-template": "error",
     "no-else-return": "error",
+    "no-unused-vars": "error",
     "template-curly-spacing": "error",
     "one-var": ["error", "never"],
     eqeqeq: "error",
@@ -51,4 +52,4 @@ module.exports = {
       },
     ],
   },
-};
+}
