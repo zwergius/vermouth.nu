@@ -4,7 +4,7 @@
 @font-face {
   font-family: "GTAlpina";
   src: url("/fonts/GTAlpina-Regular.woff2") format("woff2"),
-    url("fonts/GTAlpina-Regular.woff") format("woff"); /* Modern Browsers */
+    url("/fonts/GTAlpina-Regular.woff") format("woff"); /* Modern Browsers */
   font-weight: normal;
   font-style: normal;
 }
@@ -13,8 +13,11 @@
   /* fallback colors */
   --white: #ffffff;
   --black: #000000;
+  --grey: #c3c3c3;
   --primary: #f0aaa9;
+  --primary-text-color: var(--black);
   --secondary: #122a59;
+  --secondary-text-color: var(--white);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -27,16 +30,19 @@
   --space-7: 114px;
   --space-8: 152px;
 
-  --font-0: calc(0.25em + 1vw + 1vh);
+  --16px: var(--font-1);
+  --20px: var(--font-2);
+  --25px: var(--font-3);
+  --30px: var(--font-4);
+  --35px: var(--font-5);
+  --40px: var(--font-6);
 
-  --font-1: calc(-0.1em + 1vw + 1vh);
-  --font-2: calc(0em + 1vw + 1vh);
-  --font-3: calc(0.4em + 1vw + 1vh);
-  --font-4: calc(0.9em + 1vw + 1vh);
-  --font-5: calc(1.25em + 1vw + 1vh);
-  --font-6: calc(1.7em + 1vw + 1vh);
-  --font-7: calc(2.3em + 1vw + 1vh);
-  --font-10: calc(4em + 1vw + 1vh);
+  --font-1: 1rem;
+  --font-2: 1.25rem;
+  --font-3: 1.563rem;
+  --font-4: 1.875rem;
+  --font-5: 2.188rem;
+  --font-6: 2.5rem;
 
   --aspect-ratio: calc(296.6 / 1197.07);
   --header-height: calc(100vw * var(--aspect-ratio));
