@@ -13,20 +13,18 @@
 
 <style>
   a {
-    margin-top: 25px;
     background-color: transparent;
     border: none;
     border-radius: 32px;
     height: 30px;
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 15px;
     padding: 5px;
     text-decoration: none;
   }
   h3 {
-    font-size: 20px;
+    font-size: var(--30px);
     color: var(--secondary);
   }
 
@@ -38,7 +36,6 @@
   }
   .text {
     display: flex;
-    flex-direction: row;
     justify-content: flex-end;
     align-items: flex-end;
     margin-right: 50px;
@@ -46,15 +43,32 @@
   }
 
   .container {
-    display: flex;
-    flex-direction: column;
+    padding: 60px;
+    margin-bottom: 30px;
   }
 
   .header {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    right: 0;
+    z-index: 100;
+    position: absolute;
     background-color: hsl(1, 70%, 80%);
-    margin-bottom: 60px;
+  }
+  @media only screen and (max-width: 767px) {
+    h3 {
+      font-size: var(--25px);
+    }
+    .container {
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    .text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 0px;
+    }
+    .header {
+      position: static;
+    }
   }
 </style>

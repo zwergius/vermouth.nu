@@ -8,7 +8,7 @@
     </div>
   </div>
   <div>
-    <div>
+    <div class="right">
       <h3>Newsletter</h3>
       <h3>tlf:784-449-333</h3>
       <h3>noseymeil@gmail.com</h3>
@@ -19,12 +19,15 @@
 
 <style>
   h3 {
-    line-height: 25px;
+    font-size: var(--25px);
+    line-height: var(--space-4);
     color: var(--white);
   }
-
+  .right {
+    text-align: right;
+  }
   .container {
-    padding: 40px 70px;
+    padding: 50px 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,19 +35,17 @@
     background-color: var(--secondary);
   }
   @media only screen and (max-width: 1024px) {
-    h3 {
-      font-size: 20px;
-    }
     .container {
-      padding: 40px 40px;
+      padding: 90px 40px;
     }
   }
   @media only screen and (max-width: 767px) {
     h3 {
-      font-size: 16px;
+      line-height: var(--25px);
+      font-size: var(--16px);
     }
     .container {
-      padding: 40px 10px;
+      padding: 30px 10px;
     }
   }
 </style>

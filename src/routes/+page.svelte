@@ -23,15 +23,8 @@
 <div class="container">
   <Header />
   <div class="main">
-    <div class="box-logo">
-      <div class="logo">
-        <img
-          width="1200"
-          height="350"
-          src="/src/lib/assets/logo-home.png"
-          alt="logo"
-        />
-      </div>
+    <div class="logo">
+      <img src="/src/lib/assets/logo-home.svg" alt="logo" />
     </div>
 
     <Carrousel {images} />
@@ -41,27 +34,48 @@
 <slot />
 
 <style>
+  img {
+    object-fit: cover;
+    height: 100%;
+    width: auto;
+  }
   .main {
     margin-top: 120px;
     padding-bottom: 50px;
     display: flex;
     justify-content: center;
+    align-items: center;
+    position: relative;
   }
   .logo {
-    height: 400px;
-    z-index: 10;
-    top: 0;
+    width: 100%;
+    z-index: 101;
+    bottom: 650px;
     position: absolute;
-    align-items: center;
-    display: flex;
-    justify-content: center;
   }
   .container {
     background-color: var(--primary);
   }
   @media only screen and (max-width: 1024px) {
-    img {
-      aspect-ratio: 8/4;
+    .main {
+      margin-top: 140px;
+    }
+    .logo {
+      bottom: 625px;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    .main {
+      display: flex;
+      margin: 0;
+      flex-direction: column;
+      padding-bottom: 50px;
+    }
+    .logo {
+      position: static;
+      align-items: center;
+      display: flex;
+      justify-content: center;
     }
   }
 </style>
