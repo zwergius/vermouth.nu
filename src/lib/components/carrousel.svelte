@@ -29,8 +29,8 @@
       <div class="image">
         <img
           transition:fade
-          width="1700px"
-          height="600px"
+          sizes="80vw"
+          srcset="{path}, 1200w"
           {id}
           src={path}
           alt={id}

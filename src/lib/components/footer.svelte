@@ -21,7 +21,7 @@
   h3 {
     font-size: var(--25px);
     line-height: 1.5;
-    color: var(--white);
+    color: var(--secondary-text-color);
   }
   .right {
     text-align: right;
