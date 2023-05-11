@@ -40,8 +40,7 @@
     width: auto;
   }
   .main {
-    margin-top: 120px;
-    padding-bottom: 50px;
+    padding: 220px 100px 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,8 +48,9 @@
   }
   .logo {
     width: 100%;
-    z-index: 101;
-    bottom: 650px;
+    z-index: 10;
+    top: -100px;
+    left: 0;
     position: absolute;
   }
   .container {
@@ -58,10 +58,11 @@
   }
   @media only screen and (max-width: 1024px) {
     .main {
-      margin-top: 140px;
+      padding: 100px 50px 100px;
     }
     .logo {
-      bottom: 625px;
+      top: -35px;
+      left: 0;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -69,9 +70,10 @@
       display: flex;
       margin: 0;
       flex-direction: column;
-      padding-bottom: 50px;
+      padding: 20px 10px 80px;
     }
     .logo {
+      margin-bottom: 60px;
       position: static;
       align-items: center;
       display: flex;

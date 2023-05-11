@@ -20,7 +20,7 @@
 <style>
   h3 {
     font-size: var(--25px);
-    line-height: var(--space-4);
+    line-height: 1.5;
     color: var(--white);
   }
   .right {
@@ -41,7 +41,6 @@
   }
   @media only screen and (max-width: 767px) {
     h3 {
-      line-height: var(--25px);
       font-size: var(--16px);
     }
     .container {

@@ -28,12 +28,6 @@
     color: var(--secondary);
   }
 
-  a:hover h3 {
-    color: var(--primary);
-  }
-  a:hover {
-    background-color: var(--secondary);
-  }
   .text {
     display: flex;
     justify-content: flex-end;
@@ -51,7 +45,7 @@
     right: 0;
     z-index: 100;
     position: absolute;
-    background-color: hsl(1, 70%, 80%);
+    background-color: var(--primary);
   }
   @media only screen and (max-width: 767px) {
     h3 {
@@ -69,6 +63,14 @@
     }
     .header {
       position: static;
+    }
+  }
+  @media (hover: hover) {
+    a:hover h3 {
+      color: var(--primary);
+    }
+    a:hover {
+      background-color: var(--secondary);
     }
   }
 </style>

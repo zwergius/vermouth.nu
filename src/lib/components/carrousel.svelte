@@ -29,8 +29,8 @@
       <div class="image">
         <img
           transition:fade
-          sizes="80vw"
-          srcset="{path}, 1200w"
+          width="1700px"
+          height="600px"
           {id}
           src={path}
           alt={id}
@@ -43,16 +43,16 @@
     <button class="left" on:click={previous}><span>&#8592;</span> </button>
     <button class="right" on:click={next}> <span>&#8594;</span> </button>
     <ul>
-      {#each [...Array(images.length).keys()] as id}
+      {#each [...Array(images.length).keys()] as i}
         <button
-          aria-controls={index === id ? "carousel" : undefined}
+          aria-controls={index === i ? "carousel" : undefined}
           class="carousel-indicator"
           on:click={() => {
-            index = id
+            index = i
           }}
         >
-          <svg width="50" height="30">
-            <circle cx="15" cy="15" r="15" />
+          <svg width="35" height="20">
+            <circle cx="10" cy="10" r="10" />
           </svg>
         </button>
       {/each}
@@ -63,14 +63,13 @@
 <style>
   .carrousel {
     position: relative;
-    margin: 100px 0;
-    width: 1700px;
-    height: 700px;
+    width: 100%;
+    aspect-ratio: 16/7;
   }
   .image {
     position: absolute;
-    width: 1700px;
-    height: 700px;
+    aspect-ratio: 16/7;
+    width: 100%;
   }
   img {
     object-fit: cover;
@@ -96,7 +95,7 @@
     padding: 20px 0px 20px 30px;
   }
   ul {
-    margin-top: 10px;
+    padding-top: 10px;
     position: absolute;
     left: 100px;
     bottom: -50px;
@@ -108,26 +107,22 @@
     padding: 5px 10px;
   }
 
-  .carousel-indicator:hover circle,
   .carousel-indicator[aria-controls] circle {
     fill: var(--secondary);
   }
 
   circle {
-    fill: rgb(195, 195, 195);
+    fill: var(--grey);
     transition: fill 0.1s linear;
   }
   @media only screen and (max-width: 1024px) {
     .image {
-      width: 750px;
-      height: 500px;
+      aspect-ratio: 4/3;
     }
     .carrousel {
       display: flex;
       justify-content: center;
-      margin: 40px 0 150px 0;
-      width: 750px;
-      height: 500px;
+      aspect-ratio: 4/3;
     }
 
     button.left,
@@ -135,21 +130,21 @@
       display: none;
     }
     ul {
-      top: 580px;
+      top: 100%;
       left: 50%;
     }
   }
   @media only screen and (max-width: 767px) {
     .image {
-      width: 360px;
-      height: 300px;
+      aspect-ratio: 1/1;
     }
     .carrousel {
-      width: 360px;
-      height: 300px;
+      aspect-ratio: 1/1;
     }
-    ul {
-      top: 350px;
+  }
+  @media (hover: hover) {
+    .carousel-indicator:hover circle {
+      fill: var(--secondary);
     }
   }
 </style>
