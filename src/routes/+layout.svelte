@@ -17,16 +17,14 @@
 
 <style>
   img {
+    z-index: 10;
     object-fit: cover;
     height: 100%;
     width: 100%;
   }
   .logo-desktop {
-    z-index: 10;
     width: 100%;
-    top: -60px;
-    left: 0;
-    position: absolute;
+    z-index: 10;
   }
 
   .logo-mobile {
@@ -40,9 +38,6 @@
       display: block;
       z-index: 10;
       width: 100%;
-      top: -35px;
-      left: 0;
-      position: absolute;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -50,7 +45,6 @@
       display: none;
     }
     .logo-mobile {
-      background-color: var(--primary);
       position: static;
       align-items: center;
       display: flex;

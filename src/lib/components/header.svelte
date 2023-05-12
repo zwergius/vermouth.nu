@@ -1,16 +1,10 @@
 <div class="container">
   <div class="header">
-    <div class="text">
-      <a href="/">
-        <h3>Hjem</h3>
-      </a>
-      <a href="hola">
-        <h3>Bodegaer</h3>
-      </a>
-      <a href="hola">
-        <h3>Producenter</h3>
-      </a>
-    </div>
+    <nav>
+      <a href="/"> Hjem </a>
+      <a href="hola"> Bodegaer </a>
+      <a href="hola"> Producenter </a>
+    </nav>
   </div>
 </div>
 
@@ -25,27 +19,27 @@
     gap: 15px;
     padding: 5px;
     text-decoration: none;
-  }
-  h3 {
     font-size: var(--30px);
     color: var(--secondary);
+    font-weight: bold;
   }
 
-  .text {
+  nav {
     display: flex;
     gap: 15px;
   }
 
   .container {
     background-color: var(--primary);
-    padding: 60px;
+    padding: 60px 100px 0 0;
   }
 
   .header {
-    padding-right: 100px;
     right: 0;
     z-index: 100;
-    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
   }
   @media only screen and (max-width: 1024px) {
     .header {
@@ -53,30 +47,29 @@
       right: none;
       padding-right: 0;
       padding-left: 100px;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
   }
   @media only screen and (max-width: 767px) {
-    h3 {
+    a {
       font-size: var(--25px);
     }
     .container {
-      padding: 25px;
-    }
-    .text {
+      padding: 25px 0px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
+
     .header {
       padding-left: 0px;
       position: static;
     }
   }
   @media (hover: hover) {
-    a:hover h3 {
-      color: var(--primary);
-    }
     a:hover {
+      color: var(--primary);
       background-color: var(--secondary);
     }
   }

@@ -23,51 +23,56 @@
   }
 </script>
 
-<div class="carrousel">
-  {#if images.length}
-    {#each [images[index]] as { id, path } (index)}
-      <div class="image">
-        <img
-          transition:fade
-          sizes="80vw"
-          srcset="{path}, 1200w"
-          {id}
-          src={path}
-          alt={id}
-        />
-      </div>
-    {/each}
-  {/if}
-  <slot {index} />
-  {#if images.length > 0}
-    <button class="left" on:click={previous}><span>&#8592;</span> </button>
-    <button class="right" on:click={next}> <span>&#8594;</span> </button>
-    <ul>
-      {#each [...Array(images.length).keys()] as i}
-        <button
-          aria-controls={index === i ? "carousel" : undefined}
-          class="carousel-indicator"
-          on:click={() => {
-            index = i
-          }}
-        >
-          <svg width="35" height="20">
-            <circle cx="10" cy="10" r="10" />
-          </svg>
-        </button>
+<div class="container">
+  <div class="carrousel">
+    {#if images.length}
+      {#each [images[index]] as { id, path } (index)}
+        <div class="image">
+          <img
+            transition:fade
+            sizes="80vw"
+            srcset="{path}, 1200w"
+            {id}
+            src={path}
+            alt={id}
+          />
+        </div>
       {/each}
-    </ul>
-  {/if}
+    {/if}
+    <slot {index} />
+    {#if images.length > 0}
+      <button class="left" on:click={previous}><span>&#8592;</span> </button>
+      <button class="right" on:click={next}> <span>&#8594;</span> </button>
+      <ul>
+        {#each [...Array(images.length).keys()] as i}
+          <button
+            aria-controls={index === i ? "carousel" : undefined}
+            class="carousel-indicator"
+            on:click={() => {
+              index = i
+            }}
+          >
+            <svg width="35" height="20">
+              <circle cx="10" cy="10" r="10" />
+            </svg>
+          </button>
+        {/each}
+      </ul>
+    {/if}
+  </div>
 </div>
 
 <style>
-  .carrousel {
+  .container {
     position: relative;
     width: 100%;
     aspect-ratio: 16/7;
   }
+
   .image {
+    z-index: -1;
     position: absolute;
+    bottom: 50px;
     aspect-ratio: 16/7;
     width: 100%;
   }
@@ -98,7 +103,7 @@
     padding-top: 10px;
     position: absolute;
     left: 100px;
-    bottom: -50px;
+    bottom: 0px;
     transform: translateX(-50%);
     display: flex;
   }
@@ -119,6 +124,7 @@
     .image {
       aspect-ratio: 4/3;
     }
+
     .carrousel {
       display: flex;
       justify-content: center;
@@ -136,6 +142,7 @@
   }
   @media only screen and (max-width: 767px) {
     .image {
+      bottom: 0;
       aspect-ratio: 1/1;
     }
     .carrousel {
