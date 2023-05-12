@@ -1,8 +1,11 @@
 <div class="container">
   <div class="header">
     <div class="text">
+      <a href="/">
+        <h3>Hjem</h3>
+      </a>
       <a href="hola">
-        <h3>Mærker</h3>
+        <h3>Bodegaer</h3>
       </a>
       <a href="hola">
         <h3>Producenter</h3>
@@ -30,22 +33,30 @@
 
   .text {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    margin-right: 50px;
+    margin-right: 100px;
     gap: 15px;
   }
 
   .container {
+    background-color: var(--primary);
     padding: 60px;
-    margin-bottom: 30px;
   }
 
   .header {
     right: 0;
     z-index: 100;
     position: absolute;
-    background-color: var(--primary);
+  }
+  @media only screen and (max-width: 1024px) {
+    .header {
+      left: 0;
+      right: none;
+    }
+
+    .text {
+      margin-right: 0;
+      margin-left: 100px;
+    }
   }
   @media only screen and (max-width: 767px) {
     h3 {
@@ -53,13 +64,12 @@
     }
     .container {
       padding: 25px;
-      margin-bottom: 20px;
     }
     .text {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-right: 0px;
+      margin-left: 0px;
     }
     .header {
       position: static;
