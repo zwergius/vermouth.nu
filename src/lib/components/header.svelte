@@ -33,7 +33,6 @@
 
   .text {
     display: flex;
-    margin-right: 100px;
     gap: 15px;
   }
 
@@ -43,6 +42,7 @@
   }
 
   .header {
+    padding-right: 100px;
     right: 0;
     z-index: 100;
     position: absolute;
@@ -51,11 +51,8 @@
     .header {
       left: 0;
       right: none;
-    }
-
-    .text {
-      margin-right: 0;
-      margin-left: 100px;
+      padding-right: 0;
+      padding-left: 100px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -69,9 +66,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-left: 0px;
     }
     .header {
+      padding-left: 0px;
       position: static;
     }
   }

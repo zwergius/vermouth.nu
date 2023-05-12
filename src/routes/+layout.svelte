@@ -5,10 +5,10 @@
 </script>
 
 <Header />
-<div class="logo">
+<div class="logo-mobile">
   <img src="/src/lib/assets/diagonal-logo.svg" alt="logo" />
 </div>
-<div class="logo-home">
+<div class="logo-desktop">
   <img src="/src/lib/assets/logo-home.svg" alt="logo" />
 </div>
 <slot />
@@ -21,7 +21,7 @@
     height: 100%;
     width: 100%;
   }
-  .logo-home {
+  .logo-desktop {
     z-index: 10;
     width: 100%;
     top: -60px;
@@ -29,14 +29,14 @@
     position: absolute;
   }
 
-  .logo {
+  .logo-mobile {
     display: none;
   }
   @media only screen and (max-width: 1024px) {
-    .logo-home {
+    .logo-desktop {
       display: none;
     }
-    .logo {
+    .logo-mobile {
       display: block;
       z-index: 10;
       width: 100%;
@@ -46,10 +46,10 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    .logo-home {
+    .logo-desktop {
       display: none;
     }
-    .logo {
+    .logo-mobile {
       background-color: var(--primary);
       position: static;
       align-items: center;
