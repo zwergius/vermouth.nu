@@ -1,20 +1,23 @@
 <script lang="ts">
   import { fade } from "svelte/transition"
-  type vermouthType = {
+
+  type vermouthTypes = {
     brand: string
     name: string
     image: string
   }
-  export let vermouth: vermouthType[]
+  export let vermouth: vermouthTypes[]
 </script>
 
 <div class="container">
   {#each vermouth as { image, name, brand }, index}
-    <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
-      <img src={image} alt="" />
-      <h2>{brand}</h2>
-      <h4>{name}</h4>
-    </div>
+    <a href="/technical-file">
+      <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
+        <img src={image} alt="" />
+        <h2>{brand}</h2>
+        <h4>{name}</h4>
+      </div>
+    </a>
   {/each}
 </div>
 
@@ -25,11 +28,12 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    gap: 30px;
   }
   .product {
     border: 2px solid var(--secondary);
     border-radius: 20px;
-    margin: 30px;
+
     transition: transform 0.2s ease-in-out;
   }
 

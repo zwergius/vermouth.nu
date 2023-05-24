@@ -1,9 +1,9 @@
 <div class="container">
   <div class="header">
     <nav>
-      <a href="/"> Hjem </a>
-      <a href="/"> Bodegaer </a>
-      <a href="/product"> Produkt </a>
+      <a href="/">Hjem</a>
+      <a href="/">Bodegaer</a>
+      <a href="/products">Produkt</a>
     </nav>
   </div>
 </div>

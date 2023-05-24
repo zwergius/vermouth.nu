@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Card from "$lib/components/product.svelte"
+  import Product from "$lib/components/product.svelte"
 
   const vermouth = [
     {
@@ -73,7 +73,7 @@
 </script>
 
 <section>
-  <Card {vermouth} />
+  <Product {vermouth} />
 </section>
 
 <style>
