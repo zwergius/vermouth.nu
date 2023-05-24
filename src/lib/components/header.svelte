@@ -2,8 +2,8 @@
   <div class="header">
     <nav>
       <a href="/"> Hjem </a>
-      <a href="hola"> Bodegaer </a>
-      <a href="hola"> Producenter </a>
+      <a href="/"> Bodegaer </a>
+      <a href="/product"> Produkt </a>
     </nav>
   </div>
 </div>
@@ -31,7 +31,7 @@
 
   .container {
     background-color: var(--primary);
-    padding: 60px 100px 0 0;
+    padding: 10px 100px 0 0;
   }
 
   .header {
