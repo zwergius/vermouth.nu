@@ -1,23 +1,23 @@
 <script lang="ts">
-  import { fade } from "svelte/transition"
+  import { fade } from "svelte/transition";
 
-  type Vermouthtypes = {
-    brand: string
-    name: string
-    image: string
-  }
-  export let vermouths: Vermouthtypes[]
+  type Vermouth = {
+    brand: string;
+    name: string;
+    image: string;
+  };
+  export let vermouths: Vermouth[];
 </script>
 
 <div class="container">
   {#each vermouths as { image, name, brand }, index}
-    <a href="#">
-      <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
-        <img src={image} alt="" />
-        <h2>{brand}</h2>
-        <h4>{name}</h4>
-      </div>
-    </a>
+    <!-- <a href="#"> -->
+    <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
+      <img src={image} alt="" />
+      <h2>{brand}</h2>
+      <h4>{name}</h4>
+    </div>
+    <!-- </a> -->
   {/each}
 </div>
 
