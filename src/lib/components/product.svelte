@@ -7,9 +7,7 @@
     image: string
   }
   export let vermouths: Vermouthtypes[]
-  vermouths.forEach((element) => {
-    console.log(element.image)
-  })
+  console.log(vermouths)
 </script>
 
 <div class="container">
