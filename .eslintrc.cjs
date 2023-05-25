@@ -22,7 +22,8 @@ module.exports = {
     node: true,
   },
   rules: {
-    "no-console": "error",
+    "no-console": "production" ? "error" : "off",
+    "no-debugger": "production" ? "error" : "off",
     "array-callback-return": "error",
     "prefer-destructuring": "error",
     "no-return-await": "error",
