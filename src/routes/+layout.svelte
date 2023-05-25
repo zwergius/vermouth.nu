@@ -1,9 +1,9 @@
 <script>
-  import "../app.postcss";
-  import Footer from "$lib/components/footer.svelte";
-  import Header from "$lib/components/header.svelte";
-  import logoDesktop from "$lib/assets/logo-home.svg";
-  import logoMobile from "$lib/assets/diagonal-logo.svg";
+  import "../app.postcss"
+  import Footer from "$lib/components/footer.svelte"
+  import Header from "$lib/components/header.svelte"
+  import logoDesktop from "$lib/assets/logo-home.svg"
+  import logoMobile from "$lib/assets/diagonal-logo.svg"
 </script>
 
 <Header />

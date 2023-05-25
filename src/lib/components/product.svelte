@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
+  import { fade } from "svelte/transition"
 
   type Vermouth = {
-    brand: string;
-    name: string;
-    image: string;
-  };
-  export let vermouths: Vermouth[];
+    brand: string
+    name: string
+    image: string
+  }
+  export let vermouths: Vermouth[]
 </script>
 
 <div class="container">

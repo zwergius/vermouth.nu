@@ -1,25 +1,25 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
-  import { fade } from "svelte/transition";
+  import { browser } from "$app/environment"
+  import { fade } from "svelte/transition"
   type CarrouselImage = {
-    id: string;
-    path: string;
-  };
-  let index = 0;
-  let interval: number;
-  export let images: CarrouselImage[];
+    id: string
+    path: string
+  }
+  let index = 0
+  let interval: number
+  export let images: CarrouselImage[]
 
   const next = () => {
-    index = (index + images.length + 1) % images.length;
-  };
+    index = (index + images.length + 1) % images.length
+  }
   function previous() {
-    index = (index + images.length - 1) % images.length;
+    index = (index + images.length - 1) % images.length
   }
 
-  let ms = 3500;
+  let ms = 3500
   $: if (browser) {
-    clearInterval(interval);
-    interval = window.setInterval(next, ms);
+    clearInterval(interval)
+    interval = window.setInterval(next, ms)
   }
 </script>
 
@@ -49,7 +49,7 @@
             aria-controls={index === i ? "carousel" : undefined}
             class="carousel-indicator"
             on:click={() => {
-              index = i;
+              index = i
             }}
           >
             <svg width="35" height="20">
