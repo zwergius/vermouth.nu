@@ -39,7 +39,7 @@
     "vite": "^4.2.0"
   },
   "engines": {
-    "node": "v18.14.0 "
+    "node": "^18.16.0"
   },
   "type": "module",
   "husky": {
@@ -50,5 +50,4 @@
   "lint-staged": {
     "*.{js,ts,svelte}": "eslint"
   }
-   
 }
