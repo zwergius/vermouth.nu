@@ -2,7 +2,7 @@
   import "../app.postcss"
   import Footer from "$lib/components/footer.svelte"
   import Header from "$lib/components/header.svelte"
-  import logDesktop from "$lib/assets/logo-home.svg"
+  import logoDesktop from "$lib/assets/logo-home.svg"
   import logoMobile from "$lib/assets/diagonal-logo.svg"
 </script>
 
@@ -11,7 +11,7 @@
   <img src={logoMobile} alt="logo" />
 </div>
 <div class="logo-desktop">
-  <img src={logDesktop} alt="logo" />
+  <img src={logoDesktop} alt="logo" />
 </div>
 <slot />
 
