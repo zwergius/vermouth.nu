@@ -7,7 +7,7 @@
     image: string
   }
   export let vermouths: Vermouthtypes[]
-  console.log(vermouths)
+  console.log(vermouths[0])
 </script>
 
 <div class="container">

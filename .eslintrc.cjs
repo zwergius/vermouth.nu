@@ -22,6 +22,7 @@ module.exports = {
     node: true,
   },
   rules: {
+    "no-console": "error",
     "array-callback-return": "error",
     "prefer-destructuring": "error",
     "no-return-await": "error",
