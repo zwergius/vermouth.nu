@@ -22,8 +22,7 @@ module.exports = {
     node: true,
   },
   rules: {
-    "no-console": "production" ? "error" : "off",
-    "no-debugger": "production" ? "error" : "off",
+    "no-console": "error",
     "array-callback-return": "error",
     "prefer-destructuring": "error",
     "no-return-await": "error",
@@ -39,7 +38,7 @@ module.exports = {
     "object-shorthand": "error",
     "no-unneeded-ternary": "error",
     "quote-props": ["error", "as-needed"],
-    "no-console": ["warn", { allow: ["warn", "error"] }],
+    // "no-console": ["warn", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-unused-vars": [
       "error",
       { argsIgnorePattern: "^_", ignoreRestSiblings: true },
