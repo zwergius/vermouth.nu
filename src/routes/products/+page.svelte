@@ -1,79 +1,91 @@
 <script lang="ts">
   import Product from "$lib/components/product.svelte"
+  import sardinoBlanco from "$lib/assets/bottles/sardino-blanco.avif"
+  import sardinoRojo from "$lib/assets/bottles/sardino-rojo.avif"
+  import forzudoRojo from "$lib/assets/bottles/forzudo-rojo.avif"
+  import forzudoBlanco from "$lib/assets/bottles/forzudo-blanco.avif"
+  import carmeletaOrange from "$lib/assets/bottles/orange-carmeleta.avif"
+  import carmeletaBlanco from "$lib/assets/bottles/carmeleta-blanco.avif"
+  import tabira from "$lib/assets/bottles/tabira.avif"
+  import cabecitaLoca from "$lib/assets/bottles/cabecita-loca.avif"
+  import padroBlanco from "$lib/assets/bottles/padro-blanco.avif"
+  import padroDorado from "$lib/assets/bottles/padro-dorado.avif"
+  import padroEspecial from "$lib/assets/bottles/padro-reserva-especial.avif"
+  import anaCaballo from "$lib/assets/bottles/ana-caballo.avif"
 
-  const vermouth = [
+  const vermouths = [
     {
       brand: "Forzudo",
       name: "Rojo",
-      image: "/src/lib/assets/bottles/forzudo-rojo.avif",
+      image: forzudoRojo,
     },
 
     {
       brand: "Forzudo",
       name: "Blanco",
-      image: "/src/lib/assets/bottles/forzudo-blanco.avif",
+      image: forzudoBlanco,
     },
 
     {
       brand: "Sardino",
       name: "Rojo",
-      image: "/src/lib/assets/bottles/sardino-rojo.avif",
+      image: sardinoRojo,
     },
     {
       brand: "Sardino",
       name: "Blanco",
-      image: "/src/lib/assets/bottles/sardino-blanco.avif",
+      image: sardinoBlanco,
     },
 
     {
       brand: "Carmeleta",
       name: "Orange ",
-      image: "/src/lib/assets/bottles/orange-carmeleta.avif",
+      image: carmeletaOrange,
     },
     {
       brand: "Carmeleta",
       name: "Blanco",
-      image: "/src/lib/assets/bottles/carmeleta-blanco.avif",
+      image: carmeletaBlanco,
     },
 
     {
       brand: "Tabira",
       name: "-",
-      image: "/src/lib/assets/bottles/tabira.avif",
+      image: tabira,
     },
 
     {
       brand: "Cabecita Loca",
       name: "-",
-      image: "/src/lib/assets/bottles/cabecita-loca.avif",
+      image: cabecitaLoca,
     },
 
     {
       brand: "Padro & Co",
       name: "Blanco Reserva",
-      image: "/src/lib/assets/bottles/padro-blanco.avif",
+      image: padroBlanco,
     },
     {
       brand: "Padro & Co",
       name: "Dorado Amargo Suave",
-      image: "/src/lib/assets/bottles/padro-dorado.avif",
+      image: padroDorado,
     },
     {
       brand: "Padro & Co",
       name: "Blanco reserva Especial",
-      image: "/src/lib/assets/bottles/padro-reserva-especial.avif",
+      image: padroEspecial,
     },
 
     {
       brand: "Ana Caballo",
       name: "-",
-      image: "/src/lib/assets/bottles/ana-caballo.avif",
+      image: anaCaballo,
     },
   ]
 </script>
 
 <section>
-  <Product {vermouth} />
+  <Product {vermouths} />
 </section>
 
 <style>

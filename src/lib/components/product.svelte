@@ -6,11 +6,14 @@
     name: string
     image: string
   }
-  export let vermouth: vermouthTypes[]
+  export let vermouths: vermouthTypes[]
+  vermouths.forEach((element) => {
+    console.log(element.image)
+  })
 </script>
 
 <div class="container">
-  {#each vermouth as { image, name, brand }, index}
+  {#each vermouths as { image, name, brand }, index}
     <a href="/technical-file">
       <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
         <img src={image} alt="" />

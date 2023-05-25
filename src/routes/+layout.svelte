@@ -2,14 +2,16 @@
   import "../app.postcss"
   import Footer from "$lib/components/footer.svelte"
   import Header from "$lib/components/header.svelte"
+  import logDesktop from "$lib/assets/logo-home.svg"
+  import logoMobile from "$lib/assets/diagonal-logo.svg"
 </script>
 
 <Header />
 <div class="logo-mobile">
-  <img src="/src/lib/assets/diagonal-logo.svg" alt="logo" />
+  <img src={logoMobile} alt="logo" />
 </div>
 <div class="logo-desktop">
-  <img src="/src/lib/assets/logo-home.svg" alt="logo" />
+  <img src={logDesktop} alt="logo" />
 </div>
 <slot />
 

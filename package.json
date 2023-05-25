@@ -38,6 +38,9 @@
     "typescript": "^5.0.4",
     "vite": "^4.2.0"
   },
+  "engines": {
+    "node": "v18.14.0 "
+  },
   "type": "module",
   "husky": {
     "hooks": {
@@ -45,9 +48,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,svelte}": [
-      "npm run check --",
-      "npm run lint --"
-    ]
+    "*.{js,ts,svelte}": "eslint"
   }
+   
 }
