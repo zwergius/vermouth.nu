@@ -9,7 +9,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "check:lint": "eslint --max-warnings=0 --ignore-path .eslintignore ./src",
-    "check:prettier": "prettier --check  --plugin-search-dir=. ./src",
+    "check:prettier": "prettier --check ./src",
     "prepare": "husky install",
     "lint": "eslint --max-warnings=0 ./src"
   },
@@ -51,6 +51,10 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,svelte}": "eslint"
+    "*.{js,ts,svelte}": [
+      "npm run check:prettier -- --write",
+      "npm run check:lint --",
+      "npm run check --"
+    ]
   }
 }
