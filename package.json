@@ -8,8 +8,10 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check:lint": "eslint --max-warnings=0 --ignore-path .eslintignore",
+    "check:prettier": "prettier -c",
     "prepare": "husky install",
-    "lint": "eslint --max-warnings=0 ."
+    "lint": "eslint --max-warnings=0 ./src"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^2.0.2",
@@ -29,7 +31,7 @@
     "lint-staged": "^13.2.2",
     "postcss": "^8.4.23",
     "postcss-load-config": "^4.0.1",
-    "prettier": "2.8.7",
+    "prettier": "^2.8.7",
     "prettier-plugin-svelte": "^2.10.0",
     "svelte": "^3.54.0",
     "svelte-check": "^3.0.1",
@@ -47,7 +49,8 @@
   "lint-staged": {
     "*.{js,ts,svelte}": [
       "npm run check --",
-      "npm run lint --"
+      "npm run check:lint --",
+      "npm run check:prettier -- --write"
     ]
   }
 }
