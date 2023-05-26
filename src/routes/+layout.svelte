@@ -1,6 +1,6 @@
 <script>
-  import "../app.postcss"
-  import Footer from "$lib/components/footer.svelte"
+  import '../app.postcss'
+  import Footer from '$lib/components/footer.svelte'
 </script>
 
 <slot />
