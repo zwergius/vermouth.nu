@@ -15,7 +15,7 @@
 
   const vermouths = [
     {
-      brand: 'Forzudo',
+      brand: 'Forzudos',
       name: 'Rojo',
       image: forzudoRojo,
     },
