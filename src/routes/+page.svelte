@@ -1,23 +1,24 @@
 <script lang="ts">
-  import Carrousel from "$lib/components/carrousel.svelte"
-  import forzudo from "$lib/assets/forzudo.webp"
-  import banner from "$lib/assets/banner.webp"
-  import tabira from "$lib/assets/tabira.webp"
+  import Carrousel from '$lib/components/carrousel.svelte'
+  import forzudo from '$lib/assets/forzudo.webp'
+  import banner from '$lib/assets/banner.webp'
+  import tabira from '$lib/assets/tabira.webp'
+
   const images = [
     {
       path: forzudo,
-      id: "image1",
-      alt: "",
+      id: 'image1',
+      alt: '',
     },
     {
       path: banner,
-      id: "image2",
-      alt: "",
+      id: 'image2',
+      alt: '',
     },
     {
       path: tabira,
-      id: "image3",
-      alt: "",
+      id: 'image3',
+      alt: '',
     },
   ]
 </script>
