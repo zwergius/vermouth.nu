@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { browser } from "$app/environment"
-  import { fade } from "svelte/transition"
+  import { browser } from '$app/environment'
+  import { fade } from 'svelte/transition'
   type ImageType = {
     id: string
     path: string
@@ -27,14 +27,7 @@
   {#if images.length}
     {#each [images[index]] as { id, path } (index)}
       <div class="image">
-        <img
-          transition:fade
-          sizes="80vw"
-          srcset="{path}, 1200w"
-          {id}
-          src={path}
-          alt={id}
-        />
+        <img transition:fade sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
       </div>
     {/each}
   {/if}
@@ -45,7 +38,7 @@
     <ul>
       {#each [...Array(images.length).keys()] as i}
         <button
-          aria-controls={index === i ? "carousel" : undefined}
+          aria-controls={index === i ? 'carousel' : undefined}
           class="carousel-indicator"
           on:click={() => {
             index = i
