@@ -31,7 +31,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: auto;
     background-color: var(--secondary);
   }
   @media only screen and (max-width: 1024px) {
