@@ -8,10 +8,10 @@
   import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco.avif'
   import tabira from '$lib/assets/bottles/tabira.avif'
   import cabecitaLoca from '$lib/assets/bottles/cabecita-loca.avif'
-  import padroBlanco from '$lib/assets/bottles/padro-blanco.avif'
-  import padroDorado from '$lib/assets/bottles/padro-dorado.avif'
-  import padroEspecial from '$lib/assets/bottles/padro-reserva-especial.avif'
-  import anaCaballo from '$lib/assets/bottles/ana-caballo.avif'
+  import padroBlancos from '$lib/assets/bottles/padro-blanco.avif'
+  import padroDorados from '$lib/assets/bottles/padro-dorado.avif'
+  import padroEspeciales from '$lib/assets/bottles/padro-reserva-especial.avif'
+  import anaCaballos from '$lib/assets/bottles/ana-caballo.avif'
 
   const vermouths = [
     {
@@ -63,23 +63,23 @@
     {
       brand: 'Padro & Co',
       name: 'Blanco Reserva',
-      image: padroBlanco,
+      image: padroBlancos,
     },
     {
       brand: 'Padro & Co',
       name: 'Dorado Amargo Suave',
-      image: padroDorado,
+      image: padroDorados,
     },
     {
       brand: 'Padro & Co',
       name: 'Blanco reserva Especial',
-      image: padroEspecial,
+      image: padroEspeciales,
     },
 
     {
       brand: 'Ana Caballo',
       name: '-',
-      image: anaCaballo,
+      image: anaCaballos,
     },
   ]
 </script>
