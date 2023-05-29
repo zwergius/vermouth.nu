@@ -8,8 +8,8 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "check:lint": "eslint --max-warnings=0 --ignore-path .eslintignore ./src",
-    "check:prettier": "prettier -c ./src/",
+    "check:lint": "eslint --max-warnings=0 --ignore-path .eslintignore",
+    "check:prettier": "prettier -c",
     "prepare": "husky install",
     "lint": "eslint --max-warnings=0 ./src"
   },
