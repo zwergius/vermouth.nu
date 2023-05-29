@@ -80,17 +80,18 @@
     font-size: 100px;
     position: absolute;
     z-index: 100;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 30%;
   }
   button.left {
-    padding: 20px 30px 20px 0;
     left: -45px;
+  }
+  span {
+    padding: 0;
+    margin: 0;
   }
 
   button.right {
     right: -45px;
-    padding: 20px 0px 20px 30px;
   }
   ul {
     padding-top: 10px;

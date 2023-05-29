@@ -8,7 +8,7 @@
 </script>
 
 <!-- <a href="#"> -->
-<div in:fade={{ duration: 300, delay: index * 200 }} class="product">
+<div in:fade={{ duration: 300, delay: index * 150 + 400 }} class="product">
   <img src={image} alt="" />
   <h2>{brand}</h2>
   <h4>{name}</h4>
@@ -20,7 +20,6 @@
   .product {
     border: 2px solid var(--secondary);
     border-radius: 20px;
-
     transition: transform 0.2s ease-in-out;
   }
 

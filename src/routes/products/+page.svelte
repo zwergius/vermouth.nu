@@ -102,7 +102,6 @@
     gap: 30px;
   }
   section {
-    display: flex;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
