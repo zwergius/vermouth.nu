@@ -45,7 +45,7 @@
               index = i
             }}
           >
-            <div class="second-circle">
+            <div class="circle-border">
               <svg width="18" height="18">
                 <circle cx="7" cy="7" r="7" />
               </svg>
@@ -97,7 +97,7 @@
   }
   ul {
     position: absolute;
-    top: 87%;
+    bottom: 90px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -107,7 +107,7 @@
   .carousel-indicator[aria-controls] circle {
     fill: var(--secondary);
   }
-  .second-circle {
+  .circle-border {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,7 +136,7 @@
       aspect-ratio: 4/3;
     }
     ul {
-      top: 83%;
+      bottom: 75px;
     }
 
     button.left,
@@ -146,7 +146,7 @@
   }
   @media only screen and (max-width: 767px) {
     ul {
-      top: 90%;
+      bottom: 30px;
     }
     .image {
       bottom: 0;
