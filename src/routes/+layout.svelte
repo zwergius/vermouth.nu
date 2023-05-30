@@ -7,18 +7,23 @@
 </script>
 
 <Header />
-<div class="logo-mobile">
-  <img src={logoMobile} alt="logo" />
-</div>
+<div class="container">
+  <div class="logo-mobile">
+    <img src={logoMobile} alt="logo" />
+  </div>
 
-<div class="logo-desktop">
-  <img src={logoDesktop} alt="logo" />
+  <div class="logo-desktop">
+    <img src={logoDesktop} alt="logo" />
+  </div>
+  <slot />
 </div>
-<slot />
 
 <Footer />
 
 <style>
+  .container {
+    flex: 1;
+  }
   img {
     z-index: 10;
     object-fit: cover;

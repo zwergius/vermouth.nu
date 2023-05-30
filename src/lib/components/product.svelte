@@ -1,39 +1,25 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
 
-  type Vermouth = {
-    brand: string
-    name: string
-    image: string
-  }
-  export let vermouths: Vermouth[]
+  export let index: number
+  export let image: string
+  export let name: string
+  export let brand: string
 </script>
 
-<div class="container">
-  {#each vermouths as { image, name, brand }, index}
-    <!-- <a href="#"> -->
-    <div in:fade={{ duration: 300, delay: index * 200 }} class="product">
-      <img src={image} alt="" />
-      <h2>{brand}</h2>
-      <h4>{name}</h4>
-    </div>
-    <!-- </a> -->
-  {/each}
+<!-- <a href="#"> -->
+<div in:fade={{ duration: 300, delay: index * 150 + 400 }} class="product">
+  <img src={image} alt="" />
+  <h2>{brand}</h2>
+  <h4>{name}</h4>
 </div>
 
+<!-- </a> -->
+
 <style>
-  .container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 30px;
-  }
   .product {
     border: 2px solid var(--secondary);
     border-radius: 20px;
-
     transition: transform 0.2s ease-in-out;
   }
 

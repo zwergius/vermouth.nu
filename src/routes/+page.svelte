@@ -23,10 +23,8 @@
   ]
 </script>
 
-<div class="container">
-  <div class="main">
-    <Carrousel {images} />
-  </div>
+<div class="main">
+  <Carrousel {images} />
 </div>
 
 <slot />

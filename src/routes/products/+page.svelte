@@ -85,12 +85,23 @@
 </script>
 
 <section>
-  <Product {vermouths} />
+  <div class="container">
+    {#each vermouths as { image, name, brand }, index}
+      <Product {image} {name} {brand} {index} />
+    {/each}
+  </div>
 </section>
 
 <style>
-  section {
+  .container {
+    width: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+  section {
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
