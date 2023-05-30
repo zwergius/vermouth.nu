@@ -1,10 +1,10 @@
 <div class="container">
   <div class="header">
     <nav>
-      <a href="/">Hjem</a>
+      <a href="/" class="link selection">Hjem</a>
       <div class="menu">
-        <a href="/">Bodegaer</a>
-        <a href="/products">Produkt</a>
+        <a class="link selection" href="/">Bodegaer</a>
+        <a class="link selection" href="/products">Produkt</a>
       </div>
     </nav>
   </div>
@@ -14,35 +14,42 @@
   .menu {
     width: 100%;
     display: flex;
+    gap: 20px;
     justify-content: flex-end;
   }
   a {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 5px;
     text-decoration: none;
     font-size: var(--30px);
-    color: var(--secondary);
     font-weight: bold;
   }
-
+  .link {
+    color: var(--secondary);
+    display: block;
+    position: relative;
+  }
+  .selection:before {
+    content: '';
+    height: 1px;
+    width: 100%;
+    background-color: var(--red30);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    transition: height 0.2s ease-in-out;
+  }
+  .selection:hover::before {
+    height: 10px;
+  }
   nav {
     width: 100%;
     display: flex;
-    gap: 15px;
   }
-
   .container {
     background-color: var(--primary);
     padding: 10px 100px 0 100px;
   }
 
-  .header {
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-  }
   @media only screen and (max-width: 1024px) {
     .header {
       left: 0;
@@ -53,6 +60,7 @@
       align-items: flex-start;
     }
   }
+
   @media only screen and (max-width: 767px) {
     a {
       font-size: var(--25px);
@@ -63,10 +71,15 @@
       justify-content: center;
       align-items: center;
     }
-
     .header {
       padding-left: 0px;
       position: static;
+    }
+  }
+
+  @media (hover: hover) {
+    a:hover {
+      cursor: pointer;
     }
   }
 </style>
