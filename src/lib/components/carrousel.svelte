@@ -1,13 +1,13 @@
 <script lang="ts">
   import { browser } from '$app/environment'
   import { fade } from 'svelte/transition'
-  type ImageType = {
+  type CarrouselImage = {
     id: string
     path: string
   }
   let index = 0
   let interval: number
-  export let images: ImageType[]
+  export let images: CarrouselImage[]
 
   const next = () => {
     index = (index + images.length + 1) % images.length
@@ -80,17 +80,18 @@
     font-size: 100px;
     position: absolute;
     z-index: 100;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 30%;
   }
   button.left {
-    padding: 20px 30px 20px 0;
     left: -45px;
+  }
+  span {
+    padding: 0;
+    margin: 0;
   }
 
   button.right {
     right: -45px;
-    padding: 20px 0px 20px 30px;
   }
   ul {
     padding-top: 10px;

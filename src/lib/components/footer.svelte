@@ -27,16 +27,15 @@
     text-align: right;
   }
   .container {
-    padding: 50px 100px;
+    padding: 10px 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: auto;
     background-color: var(--secondary);
   }
   @media only screen and (max-width: 1024px) {
     .container {
-      padding: 90px 40px;
+      padding: 20px 40px;
     }
   }
   @media only screen and (max-width: 767px) {

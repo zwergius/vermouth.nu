@@ -2,20 +2,28 @@
   import '../app.postcss'
   import Footer from '$lib/components/footer.svelte'
   import Header from '$lib/components/header.svelte'
+  import logoDesktop from '$lib/assets/logo-home.svg'
+  import logoMobile from '$lib/assets/diagonal-logo.svg'
 </script>
 
 <Header />
-<div class="logo-mobile">
-  <img src="/src/lib/assets/diagonal-logo.svg" alt="logo" />
+<div class="container">
+  <div class="logo-mobile">
+    <img src={logoMobile} alt="logo" />
+  </div>
+
+  <div class="logo-desktop">
+    <img src={logoDesktop} alt="logo" />
+  </div>
+  <slot />
 </div>
-<div class="logo-desktop">
-  <img src="/src/lib/assets/logo-home.svg" alt="logo" />
-</div>
-<slot />
 
 <Footer />
 
 <style>
+  .container {
+    flex: 1;
+  }
   img {
     z-index: 10;
     object-fit: cover;
