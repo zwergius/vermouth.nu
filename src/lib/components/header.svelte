@@ -1,10 +1,10 @@
 <div class="container">
   <div class="header">
     <nav>
-      <a href="/" class="link selection">Hjem</a>
+      <a href="/" class="link">Hjem</a>
       <div class="menu">
-        <a class="link selection" href="/">Bodegaer</a>
-        <a class="link selection" href="/products">Produkt</a>
+        <a class="link" href="/">Bodegaer</a>
+        <a class="link" href="/products">Produkt</a>
       </div>
     </nav>
   </div>
@@ -27,7 +27,7 @@
     display: block;
     position: relative;
   }
-  .selection:before {
+  .link:before {
     content: '';
     height: 1px;
     width: 100%;
@@ -35,11 +35,7 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    z-index: 100;
     transition: height 0.2s ease-in-out;
-  }
-  .selection:hover::before {
-    height: 10px;
   }
   nav {
     width: 100%;
@@ -80,6 +76,9 @@
   @media (hover: hover) {
     a:hover {
       cursor: pointer;
+    }
+    .link:hover::before {
+      height: 10px;
     }
   }
 </style>
