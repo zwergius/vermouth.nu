@@ -17,25 +17,26 @@
     gap: 20px;
     justify-content: flex-end;
   }
-  a {
+  .link {
     text-decoration: none;
     font-size: var(--30px);
     font-weight: bold;
-  }
-  .link {
     color: var(--secondary);
     display: block;
     position: relative;
+    border-bottom: 1px solid var(--red30);
   }
   .link:before {
     content: '';
-    height: 1px;
+    height: 10px;
     width: 100%;
     background-color: var(--red30);
     position: absolute;
     bottom: 0;
     left: 0;
-    transition: height 0.2s ease-in-out;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease-in-out;
   }
   nav {
     width: 100%;
@@ -78,7 +79,8 @@
       cursor: pointer;
     }
     .link:hover::before {
-      height: 10px;
+      transform: scaleY(1);
+      transform-origin: bottom;
     }
   }
 </style>
