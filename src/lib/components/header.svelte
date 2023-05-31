@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="header">
+  <div>
     <nav>
       <a href="/" class="link">Hjem</a>
       <div class="menu">
@@ -48,14 +48,6 @@
   }
 
   @media only screen and (max-width: 1024px) {
-    /* .header {
-      left: 0;
-      right: none;
-      padding-right: 0;
-      padding-left: 100px;
-      justify-content: flex-start;
-      align-items: flex-start;
-    } */
     .menu {
       justify-content: flex-start;
     }
@@ -79,10 +71,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-    .header {
-      padding-left: 0px;
-      position: static;
     }
   }
 
