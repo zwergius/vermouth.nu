@@ -48,19 +48,31 @@
   }
 
   @media only screen and (max-width: 1024px) {
-    .header {
+    /* .header {
       left: 0;
       right: none;
       padding-right: 0;
       padding-left: 100px;
       justify-content: flex-start;
       align-items: flex-start;
+    } */
+    .menu {
+      justify-content: flex-start;
+    }
+    nav {
+      gap: 20px;
+    }
+    .link {
+      font-size: var(--25px);
     }
   }
 
   @media only screen and (max-width: 767px) {
-    a {
-      font-size: var(--25px);
+    nav {
+      gap: 15px;
+    }
+    .menu {
+      gap: 15px;
     }
     .container {
       padding: 25px 0px;
