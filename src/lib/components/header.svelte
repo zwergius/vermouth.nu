@@ -1,10 +1,37 @@
+<script lang="ts">
+  import Link from '$lib/components/link.svelte'
+  const home = [
+    {
+      size: '',
+      name: 'Hjem',
+      route: '/',
+    },
+  ]
+
+  const menu = [
+    {
+      size: '',
+      name: 'Bodegaer',
+      route: '/list-store',
+    },
+    {
+      size: '',
+      name: 'Produkt',
+      route: '/products',
+    },
+  ]
+</script>
+
 <div class="container">
   <div>
     <nav>
-      <a href="/" class="link">Hjem</a>
+      {#each home as { name, route, size }}
+        <Link {route} {name} {size} />
+      {/each}
       <div class="menu">
-        <a class="link" href="/">Bodegaer</a>
-        <a class="link" href="/products">Produkt</a>
+        {#each menu as { name, route, size }}
+          <Link {route} {name} {size} />
+        {/each}
       </div>
     </nav>
   </div>
@@ -17,27 +44,7 @@
     gap: 20px;
     justify-content: flex-end;
   }
-  .link {
-    text-decoration: none;
-    font-size: var(--30px);
-    font-weight: bold;
-    color: var(--secondary);
-    display: block;
-    position: relative;
-    border-bottom: 1px solid var(--red30);
-  }
-  .link:before {
-    content: '';
-    height: 10px;
-    width: 100%;
-    background-color: var(--red30);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    transform: scaleY(0);
-    transform-origin: bottom;
-    transition: transform 0.2s ease-in-out;
-  }
+
   nav {
     width: 100%;
     display: flex;
@@ -54,9 +61,6 @@
     nav {
       gap: 20px;
     }
-    .link {
-      font-size: var(--25px);
-    }
   }
 
   @media only screen and (max-width: 767px) {
@@ -71,16 +75,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-  }
-
-  @media (hover: hover) {
-    a:hover {
-      cursor: pointer;
-    }
-    .link:hover::before {
-      transform: scaleY(1);
-      transform-origin: bottom;
     }
   }
 </style>
