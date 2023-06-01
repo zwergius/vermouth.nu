@@ -5,7 +5,7 @@
 <div class="container">
   <div>
     <nav>
-      <Link href="/">{'Hjme'}</Link>
+      <Link href="/">{'Hjem'}</Link>
       <div class="menu">
         <Link href="/list-store">{'Bodegaer'}</Link>
         <Link href="/products">{'Produkt'}</Link>
