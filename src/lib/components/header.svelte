@@ -7,8 +7,8 @@
     <nav>
       <Link href="/">{'Hjme'}</Link>
       <div class="menu">
-        <Link href="/products">{'Bodegaer'}</Link>
-        <Link href="/list-store">{'Produkt'}</Link>
+        <Link href="/list-store">{'Bodegaer'}</Link>
+        <Link href="/products">{'Produkt'}</Link>
       </div>
     </nav>
   </div>
