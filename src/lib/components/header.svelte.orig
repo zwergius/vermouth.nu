@@ -1,0 +1,82 @@
+<script lang="ts">
+  import Link from '$lib/components/link.svelte'
+</script>
+
+<div class="container">
+  <div>
+    <nav>
+      <Link href="/">Hjem</Link>
+      <div class="menu">
+        <Link href="/list-store">Bodegaer</Link>
+        <Link href="/products">Produkt</Link>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<style>
+  .menu {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    justify-content: flex-end;
+  }
+  .container :global(a) {
+    font-size: var(--30px);
+<<<<<<< HEAD
+=======
+    font-weight: bold;
+    color: var(--secondary);
+    display: block;
+    position: relative;
+    border-bottom: 1px solid var(--highlight);
+  }
+  .link:before {
+    content: '';
+    height: 10px;
+    width: 100%;
+    background-color: var(--highlight);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease-in-out;
+>>>>>>> animations-link
+  }
+  nav {
+    width: 100%;
+    display: flex;
+  }
+  .container {
+    background-color: var(--primary);
+    padding: 10px 100px 0 100px;
+  }
+
+  @media only screen and (max-width: 1024px) {
+    .menu {
+      justify-content: flex-start;
+    }
+    nav {
+      gap: 20px;
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    .container :global(a) {
+      font-size: var(--25px);
+    }
+    nav {
+      gap: 15px;
+    }
+    .menu {
+      gap: 15px;
+    }
+    .container {
+      padding: 25px 0px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+</style>
