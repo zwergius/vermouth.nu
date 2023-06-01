@@ -2,7 +2,7 @@
   export let href: string
 </script>
 
-<a {href} class="link"> <slot /></a>
+<a {href} class="link"><slot /></a>
 
 <style>
   .link {
@@ -25,7 +25,6 @@
     transform-origin: bottom;
     transition: transform 0.2s ease-in-out;
   }
-
   @media (hover: hover) {
     a:hover {
       cursor: pointer;

@@ -47,16 +47,11 @@
   .container :global(a) {
     font-size: var(--40px);
   }
-  ul {
-    justify-content: center;
-    align-items: center;
-  }
   span {
     font-size: 40px;
     color: var(--secondary);
     transition: transform 0.3s ease-in-out;
   }
-
   li {
     align-items: center;
     display: flex;
@@ -79,7 +74,6 @@
     span {
       font-size: 30px;
     }
-
     .container {
       padding: 50px 100px;
     }
@@ -91,7 +85,6 @@
     span {
       font-size: 25px;
     }
-
     .container {
       padding: 50px 5px;
     }

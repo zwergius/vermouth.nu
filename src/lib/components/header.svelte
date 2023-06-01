@@ -5,10 +5,10 @@
 <div class="container">
   <div>
     <nav>
-      <Link href="/">{'Hjem'}</Link>
+      <Link href="/">Hjem</Link>
       <div class="menu">
-        <Link href="/list-store">{'Bodegaer'}</Link>
-        <Link href="/products">{'Produkt'}</Link>
+        <Link href="/list-store">Bodegaer</Link>
+        <Link href="/products">Produkt</Link>
       </div>
     </nav>
   </div>
