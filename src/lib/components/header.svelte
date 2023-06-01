@@ -1,10 +1,10 @@
 <div class="container">
-  <div class="header">
+  <div>
     <nav>
-      <a href="/">Hjem</a>
+      <a href="/" class="link">Hjem</a>
       <div class="menu">
-        <a href="/">Bodegaer</a>
-        <a href="/products">Produkt</a>
+        <a class="link" href="/">Bodegaer</a>
+        <a class="link" href="/products">Produkt</a>
       </div>
     </nav>
   </div>
@@ -14,48 +14,57 @@
   .menu {
     width: 100%;
     display: flex;
+    gap: 20px;
     justify-content: flex-end;
   }
-  a {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 5px;
+  .link {
     text-decoration: none;
     font-size: var(--30px);
-    color: var(--secondary);
     font-weight: bold;
+    color: var(--secondary);
+    display: block;
+    position: relative;
+    border-bottom: 1px solid var(--highlight);
   }
-
+  .link:before {
+    content: '';
+    height: 10px;
+    width: 100%;
+    background-color: var(--highlight);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease-in-out;
+  }
   nav {
     width: 100%;
     display: flex;
-    gap: 15px;
   }
-
   .container {
     background-color: var(--primary);
     padding: 10px 100px 0 100px;
   }
 
-  .header {
-    z-index: 100;
-    display: flex;
-    justify-content: space-between;
-  }
   @media only screen and (max-width: 1024px) {
-    .header {
-      left: 0;
-      right: none;
-      padding-right: 0;
-      padding-left: 100px;
+    .menu {
       justify-content: flex-start;
-      align-items: flex-start;
+    }
+    nav {
+      gap: 20px;
+    }
+    .link {
+      font-size: var(--25px);
     }
   }
+
   @media only screen and (max-width: 767px) {
-    a {
-      font-size: var(--25px);
+    nav {
+      gap: 15px;
+    }
+    .menu {
+      gap: 15px;
     }
     .container {
       padding: 25px 0px;
@@ -63,10 +72,15 @@
       justify-content: center;
       align-items: center;
     }
+  }
 
-    .header {
-      padding-left: 0px;
-      position: static;
+  @media (hover: hover) {
+    a:hover {
+      cursor: pointer;
+    }
+    .link:hover::before {
+      transform: scaleY(1);
+      transform-origin: bottom;
     }
   }
 </style>

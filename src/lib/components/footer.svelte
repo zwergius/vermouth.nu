@@ -1,8 +1,8 @@
 <div class="container">
   <div>
     <div>
-      <h3>Følg os</h3>
-      <h3>Ophavsret © 2021,</h3>
+      <h3>F&#248;gos</h3>
+      <h3>Ophavsret &#169; 2021,</h3>
       <h3>Vermouth NU.</h3>
       <h3>Drevet af Shopify</h3>
     </div>
