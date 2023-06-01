@@ -1,37 +1,14 @@
 <script lang="ts">
   import Link from '$lib/components/link.svelte'
-  const home = [
-    {
-      size: '',
-      name: 'Hjem',
-      route: '/',
-    },
-  ]
-
-  const menu = [
-    {
-      size: '',
-      name: 'Bodegaer',
-      route: '/list-store',
-    },
-    {
-      size: '',
-      name: 'Produkt',
-      route: '/products',
-    },
-  ]
 </script>
 
 <div class="container">
   <div>
     <nav>
-      {#each home as { name, route, size }}
-        <Link {route} {name} {size} />
-      {/each}
+      <Link href="/">{'Hjme'}</Link>
       <div class="menu">
-        {#each menu as { name, route, size }}
-          <Link {route} {name} {size} />
-        {/each}
+        <Link href="/products">{'Bodegaer'}</Link>
+        <Link href="/list-store">{'Produkt'}</Link>
       </div>
     </nav>
   </div>
@@ -44,7 +21,9 @@
     gap: 20px;
     justify-content: flex-end;
   }
-
+  .container :global(a) {
+    font-size: var(--30px);
+  }
   nav {
     width: 100%;
     display: flex;

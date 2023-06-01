@@ -3,63 +3,51 @@
 
   const stores = [
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
     {
-      name: 'Tres  cerditos Restaurante Madrid',
-      size: '40',
-      route:
-        'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
+      name: 'Tres cerditos Restaurante Madrid',
+      href: 'https://www.google.es/maps/place/Palos+de+la+Frontera,+Madrid/@40.4039389,-3.6992133,16z/data=!3m1!4b1!4m6!3m5!1s0xd42262fc21d3803:0x91783e9a241dff74!8m2!3d40.4039957!4d-3.6999529!16s%2Fg%2F120nf699?hl=es&entry=ttu',
     },
   ]
 </script>
 
 <div class="container">
-  <div class="stores">
-    {#each stores as { name, route, size }}
-      <div class="links">
-        <Links {route} {name} {size} />
-        <span>&#10170;</span>
-      </div>
+  <ul>
+    {#each stores as { name, href }}
+      <li>
+        <Links {href}>{name} <span>&#10170;</span></Links>
+      </li>
     {/each}
-  </div>
+  </ul>
 </div>
 
 <style>
-  .stores {
+  .container :global(a) {
+    font-size: var(--40px);
+  }
+  ul {
     justify-content: center;
     align-items: center;
   }
@@ -69,7 +57,7 @@
     transition: transform 0.3s ease-in-out;
   }
 
-  .links {
+  li {
     align-items: center;
     display: flex;
     padding: 30px 0;
@@ -80,7 +68,7 @@
     padding: 50px 200px;
   }
   @media (hover: hover) {
-    .links:hover span {
+    li:hover span {
       transform: translateX(50px);
     }
   }
