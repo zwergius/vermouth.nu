@@ -43,6 +43,9 @@
   }
 
   @media only screen and (max-width: 767px) {
+    .container :global(a) {
+      font-size: var(--25px);
+    }
     nav {
       gap: 15px;
     }

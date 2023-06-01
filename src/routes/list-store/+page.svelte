@@ -73,11 +73,25 @@
     }
   }
   @media only screen and (max-width: 1024px) {
+    .container :global(a) {
+      font-size: var(--30px);
+    }
+    span {
+      font-size: 30px;
+    }
+
     .container {
-      padding: 50px 30px;
+      padding: 50px 100px;
     }
   }
   @media only screen and (max-width: 767px) {
+    .container :global(a) {
+      font-size: var(--25px);
+    }
+    span {
+      font-size: 25px;
+    }
+
     .container {
       padding: 50px 5px;
     }
