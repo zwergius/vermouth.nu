@@ -24,13 +24,13 @@
     color: var(--secondary);
     display: block;
     position: relative;
-    border-bottom: 1px solid var(--red30);
+    border-bottom: 1px solid var(--color-selection);
   }
   .link:before {
     content: '';
     height: 10px;
     width: 100%;
-    background-color: var(--red30);
+    background-color: var(--color-selection);
     position: absolute;
     bottom: 0;
     left: 0;
