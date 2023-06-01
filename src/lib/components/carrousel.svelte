@@ -34,8 +34,8 @@
     {/if}
     <slot {index} />
     {#if images.length > 0}
-      <button class="left" on:click={previous}><span>&#8592;</span> </button>
-      <button class="right" on:click={next}> <span>&#8594;</span> </button>
+      <button class="left" on:click={previous}> <span>&#10170;</span> </button>
+      <button class="right" on:click={next}> <span>&#10170;</span> </button>
       <ul>
         {#each [...Array(images.length).keys()] as i}
           <button
@@ -85,6 +85,7 @@
     top: 30%;
   }
   button.left {
+    transform: rotateY(180deg);
     left: -45px;
   }
   span {

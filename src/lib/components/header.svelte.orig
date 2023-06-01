@@ -23,6 +23,26 @@
   }
   .container :global(a) {
     font-size: var(--30px);
+<<<<<<< HEAD
+=======
+    font-weight: bold;
+    color: var(--secondary);
+    display: block;
+    position: relative;
+    border-bottom: 1px solid var(--highlight);
+  }
+  .link:before {
+    content: '';
+    height: 10px;
+    width: 100%;
+    background-color: var(--highlight);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease-in-out;
+>>>>>>> animations-link
   }
   nav {
     width: 100%;
