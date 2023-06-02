@@ -3,11 +3,11 @@
     <div>
       <div class="social-media">
         <h3>F&#248;lg os</h3>
-        <a href="/">
+        <a href="https://www.instagram.com">
           <h3>Ig</h3>
         </a>
 
-        <a href="/">
+        <a href="https://es-es.facebook.com">
           <h3>Fb</h3>
         </a>
       </div>
