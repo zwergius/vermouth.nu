@@ -37,7 +37,7 @@
   <ul>
     {#each stores as { name, href }}
       <li>
-        <Links {href}>{name} <span>&#10170;</span></Links>
+        <Links {href}>{name} &#8594;</Links>
       </li>
     {/each}
   </ul>
@@ -45,48 +45,43 @@
 
 <style>
   .container :global(a) {
-    font-size: var(--40px);
-  }
-  span {
-    font-size: 40px;
-    color: var(--secondary);
-    transition: transform 0.3s ease-in-out;
+    font-size: 50px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   li {
-    align-items: center;
-    display: flex;
     padding: 30px 0;
   }
   .container {
+    flex: 1;
     display: flex;
     justify-content: space-between;
     padding: 50px 200px;
   }
-  @media (hover: hover) {
-    li:hover span {
-      transform: translateX(50px);
-    }
-  }
+
   @media only screen and (max-width: 1024px) {
     .container :global(a) {
-      font-size: var(--30px);
+      font-size: 40px;
+      border: none;
     }
-    span {
-      font-size: 30px;
+    ul {
+      width: 100%;
     }
+
     .container {
-      padding: 50px 100px;
+      padding: 50px 50px;
     }
   }
   @media only screen and (max-width: 767px) {
     .container :global(a) {
-      font-size: var(--25px);
+      font-size: 35px;
     }
-    span {
-      font-size: 25px;
+    li {
+      padding: 0 0 30px;
     }
     .container {
-      padding: 50px 5px;
+      padding: 0px 15px 50px 15px;
     }
   }
 </style>

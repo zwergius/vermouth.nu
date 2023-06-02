@@ -1,7 +1,16 @@
 <div class="container">
   <div>
     <div>
-      <h3>F&#248;gos</h3>
+      <div class="social-media">
+        <h3>F&#248;lg os</h3>
+        <a href="/">
+          <h3>Ig</h3>
+        </a>
+
+        <a href="/">
+          <h3>Fb</h3>
+        </a>
+      </div>
       <h3>Ophavsret &#169; 2021,</h3>
       <h3>Vermouth NU.</h3>
       <h3>Drevet af Shopify</h3>
@@ -18,8 +27,16 @@
 </div>
 
 <style>
+  a h3 {
+    color: var(--interactive-button);
+  }
+  .social-media {
+    gap: 10px;
+    display: flex;
+  }
+
   h3 {
-    font-size: var(--25px);
+    font-size: 25px;
     line-height: 1.5;
     color: var(--secondary-text-color);
   }

@@ -8,19 +8,21 @@
   .link {
     text-decoration: none;
     font-weight: bold;
-    color: var(--secondary);
+    color: var(--interactive-button);
     display: block;
     position: relative;
-    border-bottom: 1px solid var(--red30);
+    z-index: 1;
+    border-bottom: 1px solid var(--highlight);
   }
   .link:before {
     content: '';
     height: 10px;
     width: 100%;
-    background-color: var(--red30);
+    background-color: var(--highlight);
     position: absolute;
     bottom: 0;
     left: 0;
+    z-index: -1;
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform 0.2s ease-in-out;

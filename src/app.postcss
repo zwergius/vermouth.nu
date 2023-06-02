@@ -15,12 +15,14 @@
   --black: hsl(0, 0%, 0%);
   --pink: hsl(1, 70%, 80%);
   --blue: hsl(220, 66%, 21%);
-  --red30: hsl(4.02, 100%, 46.87%, 0.3);
+  --blue30: hsl(220, 66%, 21%, 0.3);
+  --red30: hsl(4.02, 100%, 46.87%);
   --primary: var(--pink);
-  --secondary: val(--blue);
+  --secondary: var(--blue);
   --primary-text-color: var(--black);
   --secondary-text-color: var(--white);
-  --highlight: var(--red30);
+  --highlight: var(--blue30);
+  --interactive-button: var(--red30);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -51,7 +53,9 @@
   --header-height: calc(100vw * var(--aspect-ratio));
 }
 body {
+  width: 100%;
   display: flex;
+  flex: 1;
   flex-direction: column;
   font-family: GTAlpina;
 }
