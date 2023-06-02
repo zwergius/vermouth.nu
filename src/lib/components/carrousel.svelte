@@ -34,8 +34,8 @@
     {/if}
     <slot {index} />
     {#if images.length > 0}
-      <button class="left" on:click={previous}><span>&#8592;</span> </button>
-      <button class="right" on:click={next}> <span>&#8594;</span> </button>
+      <button class="left" on:click={previous}> <span>&#10170;</span> </button>
+      <button class="right" on:click={next}> <span>&#10170;</span> </button>
       <ul>
         {#each [...Array(images.length).keys()] as i}
           <button
@@ -45,9 +45,11 @@
               index = i
             }}
           >
-            <svg width="35" height="20">
-              <circle cx="10" cy="10" r="10" />
-            </svg>
+            <div class="circle-border">
+              <svg width="18" height="18">
+                <circle cx="7" cy="7" r="7" />
+              </svg>
+            </div>
           </button>
         {/each}
       </ul>
@@ -83,6 +85,7 @@
     top: 30%;
   }
   button.left {
+    transform: rotateY(180deg);
     left: -45px;
   }
   span {
@@ -94,24 +97,33 @@
     right: -45px;
   }
   ul {
-    padding-top: 10px;
     position: absolute;
-    left: 100px;
-    bottom: 0px;
+    bottom: 90px;
+    left: 50%;
     transform: translateX(-50%);
     display: flex;
-  }
-
-  .carousel-indicator {
-    padding: 5px 10px;
+    gap: 15px;
   }
 
   .carousel-indicator[aria-controls] circle {
     fill: var(--secondary);
   }
+  .circle-border {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+    height: 25px;
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+  }
+  svg {
+    border: 2px solid var(--secondary);
+    border-radius: 50%;
+  }
 
   circle {
-    fill: var(--grey);
+    fill: transparent;
     transition: fill 0.1s linear;
   }
   @media only screen and (max-width: 1024px) {
@@ -124,17 +136,19 @@
       justify-content: center;
       aspect-ratio: 4/3;
     }
+    ul {
+      bottom: 75px;
+    }
 
     button.left,
     button.right {
       display: none;
     }
-    ul {
-      top: 100%;
-      left: 50%;
-    }
   }
   @media only screen and (max-width: 767px) {
+    ul {
+      bottom: 30px;
+    }
     .image {
       bottom: 0;
       aspect-ratio: 1/1;
