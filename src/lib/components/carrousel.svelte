@@ -31,7 +31,7 @@
   {/each}
 
   <slot {index} />
-  {#if images.length > 0}
+  {#if images.length}
     <button class="left" on:click={previous}> <span>&#10170;</span> </button>
     <button class="right" on:click={next}> <span>&#10170;</span> </button>
     <ul>

@@ -20,16 +20,15 @@
     </a>
   </div>
 </div>
-<div class="box">
-  <slot />
-</div>
+
+<slot />
+
 <Footer />
 
 <style>
-  .box {
-    margin: auto 0;
+  .container {
+    flex: 1;
   }
-
   img {
     z-index: 10;
     object-fit: cover;
