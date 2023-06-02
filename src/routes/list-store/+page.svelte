@@ -45,7 +45,7 @@
 
 <style>
   .container :global(a) {
-    font-size: 50px;
+    font-size: var(--50px);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -62,7 +62,7 @@
 
   @media only screen and (max-width: 1024px) {
     .container :global(a) {
-      font-size: 40px;
+      font-size: var(--40px);
       border: none;
     }
     ul {
@@ -75,7 +75,7 @@
   }
   @media only screen and (max-width: 767px) {
     .container :global(a) {
-      font-size: 35px;
+      font-size: var(--35px);
     }
     li {
       padding: 0 0 30px;

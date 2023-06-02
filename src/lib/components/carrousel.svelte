@@ -24,13 +24,12 @@
 </script>
 
 <div class="carrousel">
-  {#if images.length}
-    {#each [images[index]] as { id, path } (index)}
-      <div class="image">
-        <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
-      </div>
-    {/each}
-  {/if}
+  {#each [images[index]] as { id, path } (index)}
+    <div class="image">
+      <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
+    </div>
+  {/each}
+
   <slot {index} />
   {#if images.length > 0}
     <button class="left" on:click={previous}> <span>&#10170;</span> </button>
@@ -45,8 +44,8 @@
           }}
         >
           <div class="circle-border">
-            <svg width="18" height="18">
-              <circle cx="7" cy="7" r="7" />
+            <svg width="14" height="14">
+              <circle cx="5" cy="5" r="5" />
             </svg>
           </div>
         </button>
@@ -76,7 +75,7 @@
   button.left,
   button.right {
     color: var(--interactive-button);
-    font-size: 55px;
+    font-size: var(--55px);
     position: absolute;
     z-index: 100;
     top: 40%;
@@ -109,8 +108,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 27px;
-    height: 27px;
+    width: 25px;
+    height: 25px;
     border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }

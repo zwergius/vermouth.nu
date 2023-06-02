@@ -36,7 +36,7 @@
   }
 
   h3 {
-    font-size: 25px;
+    font-size: var(--25px);
     line-height: 1.5;
     color: var(--secondary-text-color);
   }
