@@ -6,10 +6,10 @@
 
 <style>
   .link {
+    display: flex;
     text-decoration: none;
     font-weight: bold;
     color: var(--interactive-button);
-    display: block;
     position: relative;
     z-index: 1;
     border-bottom: 1px solid var(--highlight);

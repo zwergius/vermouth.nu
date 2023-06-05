@@ -30,8 +30,6 @@
     justify-content: space-between;
   }
   .container {
-    width: 100%;
-    position: fixed;
     background-color: var(--primary);
     padding: 20px 100px 0 100px;
   }

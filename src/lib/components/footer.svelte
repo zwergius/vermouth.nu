@@ -2,7 +2,7 @@
   <div>
     <div>
       <div class="social-media">
-        <h3>F&#248;lg os</h3>
+        <h3>F&oslash;lg os</h3>
         <a href="https://www.instagram.com">
           <h3>Ig</h3>
         </a>
