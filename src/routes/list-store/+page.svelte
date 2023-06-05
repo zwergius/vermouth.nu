@@ -33,15 +33,17 @@
   ]
 </script>
 
-<div class="container">
-  <ul>
-    {#each stores as { name, href }}
-      <li>
-        <Links {href}>{name} &#8594;</Links>
-      </li>
-    {/each}
-  </ul>
-</div>
+<section>
+  <div class="container">
+    <ul>
+      {#each stores as { name, href }}
+        <li>
+          <Links {href}>{name} &#8594;</Links>
+        </li>
+      {/each}
+    </ul>
+  </div>
+</section>
 
 <style>
   .container :global(a) {
@@ -51,19 +53,26 @@
     overflow: hidden;
   }
   li {
-    padding: 30px 0;
+    padding-bottom: 60px;
   }
   .container {
-    flex: 1;
     display: flex;
-    justify-content: space-between;
-    padding: 50px 200px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 100px;
+  }
+  section {
+    width: 100%;
+    padding: 100px;
   }
 
   @media only screen and (max-width: 1024px) {
     .container :global(a) {
       font-size: var(--40px);
       border: none;
+    }
+    section {
+      padding: 0px;
     }
     ul {
       width: 100%;
@@ -78,7 +87,7 @@
       font-size: var(--35px);
     }
     li {
-      padding: 0 0 30px;
+      padding-bottom: 30px;
     }
     .container {
       padding: 0px 15px 50px 15px;

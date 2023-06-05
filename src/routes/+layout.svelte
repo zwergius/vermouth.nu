@@ -20,19 +20,24 @@
     </a>
   </div>
 </div>
-
-<slot />
+<div class="box">
+  <slot />
+</div>
 
 <Footer />
 
 <style>
-  .container {
+  .box {
+    display: flex;
     flex: 1;
+  }
+  .container {
+    margin-top: 60px;
   }
   img {
     z-index: 10;
     object-fit: cover;
-    height: 100%;
+    height: auto;
     width: 100%;
   }
   .logo-desktop {
