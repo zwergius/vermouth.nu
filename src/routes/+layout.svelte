@@ -6,8 +6,8 @@
   import logoMobile from '$lib/assets/diagonal-logo.svg'
 </script>
 
-<Header />
 <div class="container">
+  <Header />
   <div class="logo-mobile">
     <a href="/">
       <img src={logoMobile} alt="logo" />
@@ -20,19 +20,22 @@
     </a>
   </div>
 </div>
-<div class="box">
+<div class="wraper">
   <slot />
 </div>
 
 <Footer />
 
 <style>
-  .box {
+  .wraper {
     display: flex;
     flex: 1;
+    margin-top: 280px;
   }
   .container {
-    margin-top: 60px;
+    z-index: 100;
+    width: 100%;
+    position: fixed;
   }
   img {
     z-index: 10;
@@ -49,6 +52,10 @@
     display: none;
   }
   @media only screen and (max-width: 1024px) {
+    .wraper {
+      margin-top: 350px;
+    }
+
     .logo-desktop {
       display: none;
     }
@@ -59,6 +66,9 @@
     }
   }
   @media only screen and (max-width: 767px) {
+    .wraper {
+      margin-top: 200px;
+    }
     .logo-desktop {
       display: none;
     }
