@@ -106,7 +106,7 @@
   }
   @media only screen and (max-width: 1024px) {
     section {
-      padding: 65px 0;
+      padding: 50px 0 60px 0;
     }
   }
 </style>

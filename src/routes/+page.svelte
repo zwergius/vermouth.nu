@@ -31,11 +31,10 @@
 
 <style>
   .main {
-    padding: 0 100px 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+    flex: 1;
+    margin: auto 0;
+    width: 100%;
+    padding: 0 100px 30px;
   }
 
   @media only screen and (max-width: 1024px) {
@@ -45,9 +44,7 @@
   }
   @media only screen and (max-width: 767px) {
     .main {
-      display: flex;
       margin: 0;
-      flex-direction: column;
       padding: 0px 10px 80px;
     }
   }

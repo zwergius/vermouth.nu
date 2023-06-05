@@ -8,7 +8,7 @@
 </script>
 
 <!-- <a href="#"> -->
-<div in:fade={{ duration: 300, delay: index * 150 + 400 }} class="product">
+<div in:fade={{ duration: 300, delay: index * 150 }} class="product">
   <img src={image} alt="" />
   <h2>{brand}</h2>
   <h4>{name}</h4>

@@ -6,28 +6,41 @@
   import logoMobile from '$lib/assets/diagonal-logo.svg'
 </script>
 
-<Header />
 <div class="container">
+  <Header />
   <div class="logo-mobile">
-    <img src={logoMobile} alt="logo" />
+    <a href="/">
+      <img src={logoMobile} alt="logo" />
+    </a>
   </div>
 
   <div class="logo-desktop">
-    <img src={logoDesktop} alt="logo" />
+    <a href="/">
+      <img src={logoDesktop} alt="logo" />
+    </a>
   </div>
+</div>
+<div class="wrapper">
   <slot />
 </div>
 
 <Footer />
 
 <style>
-  .container {
+  .wrapper {
+    display: flex;
     flex: 1;
+    padding-top: 280px;
+  }
+  .container {
+    z-index: 100;
+    width: 100%;
+    position: fixed;
   }
   img {
     z-index: 10;
     object-fit: cover;
-    height: 100%;
+    height: auto;
     width: 100%;
   }
   .logo-desktop {
@@ -39,6 +52,10 @@
     display: none;
   }
   @media only screen and (max-width: 1024px) {
+    .wrapper {
+      padding-top: 370px;
+    }
+
     .logo-desktop {
       display: none;
     }
@@ -49,14 +66,15 @@
     }
   }
   @media only screen and (max-width: 767px) {
+    .wrapper {
+      padding-top: 200px;
+    }
     .logo-desktop {
       display: none;
     }
+
     .logo-mobile {
-      position: static;
-      align-items: center;
-      display: flex;
-      justify-content: center;
+      margin-bottom: 20px;
     }
   }
 </style>

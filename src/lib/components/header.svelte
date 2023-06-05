@@ -7,8 +7,8 @@
     <nav>
       <Link href="/">Hjem</Link>
       <div class="menu">
-        <Link href="/list-store">Bodegaer</Link>
-        <Link href="/products">Produkt</Link>
+        <Link href="/list-store">Forhandlere</Link>
+        <Link href="/products">Produkter</Link>
       </div>
     </nav>
   </div>
@@ -27,15 +27,16 @@
   nav {
     width: 100%;
     display: flex;
+    justify-content: space-between;
   }
   .container {
     background-color: var(--primary);
-    padding: 10px 100px 0 100px;
+    padding: 20px 100px 0 100px;
   }
 
   @media only screen and (max-width: 1024px) {
-    .menu {
-      justify-content: flex-start;
+    .container {
+      padding: 20px 40px 20px;
     }
     nav {
       gap: 20px;
@@ -44,19 +45,16 @@
 
   @media only screen and (max-width: 767px) {
     .container :global(a) {
-      font-size: var(--25px);
+      font-size: var(--20px);
     }
     nav {
-      gap: 15px;
+      gap: 10px;
     }
     .menu {
-      gap: 15px;
+      gap: 10px;
     }
     .container {
-      padding: 25px 0px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 20px 15px 20px;
     }
   }
 </style>

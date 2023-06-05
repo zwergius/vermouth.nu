@@ -23,47 +23,43 @@
   }
 </script>
 
-<div class="container">
-  <div class="carrousel">
-    {#if images.length}
-      {#each [images[index]] as { id, path } (index)}
-        <div class="image">
-          <img transition:fade sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
-        </div>
+<div class="carrousel">
+  {#each [images[index]] as { id, path } (index)}
+    <div class="image">
+      <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
+    </div>
+  {/each}
+
+  <slot {index} />
+  {#if images.length}
+    <button class="left" on:click={previous}> <span>&#10170;</span> </button>
+    <button class="right" on:click={next}> <span>&#10170;</span> </button>
+    <ul>
+      {#each [...Array(images.length).keys()] as i}
+        <button
+          aria-controls={index === i ? 'carousel' : undefined}
+          class="carousel-indicator"
+          on:click={() => {
+            index = i
+          }}
+        >
+          <div class="circle-border">
+            <svg width="14" height="14">
+              <circle cx="5" cy="5" r="5" />
+            </svg>
+          </div>
+        </button>
       {/each}
-    {/if}
-    <slot {index} />
-    {#if images.length > 0}
-      <button class="left" on:click={previous}> <span>&#10170;</span> </button>
-      <button class="right" on:click={next}> <span>&#10170;</span> </button>
-      <ul>
-        {#each [...Array(images.length).keys()] as i}
-          <button
-            aria-controls={index === i ? 'carousel' : undefined}
-            class="carousel-indicator"
-            on:click={() => {
-              index = i
-            }}
-          >
-            <div class="circle-border">
-              <svg width="18" height="18">
-                <circle cx="7" cy="7" r="7" />
-              </svg>
-            </div>
-          </button>
-        {/each}
-      </ul>
-    {/if}
-  </div>
+    </ul>
+  {/if}
 </div>
 
 <style>
-  .container {
+  .carrousel {
     position: relative;
     width: 100%;
     aspect-ratio: 16/7;
   }
-
   .image {
     z-index: -1;
     position: absolute;
@@ -78,15 +74,15 @@
   }
   button.left,
   button.right {
-    color: var(--secondary);
-    font-size: 100px;
+    color: var(--interactive-button);
+    font-size: var(--55px);
     position: absolute;
     z-index: 100;
-    top: 30%;
+    top: 40%;
   }
   button.left {
     transform: rotateY(180deg);
-    left: -45px;
+    left: -30px;
   }
   span {
     padding: 0;
@@ -94,7 +90,7 @@
   }
 
   button.right {
-    right: -45px;
+    right: -30px;
   }
   ul {
     position: absolute;
@@ -106,7 +102,7 @@
   }
 
   .carousel-indicator[aria-controls] circle {
-    fill: var(--secondary);
+    fill: var(--interactive-button);
   }
   .circle-border {
     display: flex;
@@ -114,11 +110,11 @@
     align-items: center;
     width: 25px;
     height: 25px;
-    border: 2px solid var(--secondary);
+    border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }
   svg {
-    border: 2px solid var(--secondary);
+    border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }
 
@@ -159,7 +155,7 @@
   }
   @media (hover: hover) {
     .carousel-indicator:hover circle {
-      fill: var(--secondary);
+      fill: var(--interactive-button);
     }
   }
 </style>

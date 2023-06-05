@@ -33,60 +33,70 @@
   ]
 </script>
 
-<div class="container">
-  <ul>
-    {#each stores as { name, href }}
-      <li>
-        <Links {href}>{name} <span>&#10170;</span></Links>
-      </li>
-    {/each}
-  </ul>
-</div>
+<section>
+  <div class="container">
+    <ul>
+      {#each stores as { name, href }}
+        <li>
+          <Links {href}><span class="truncate">{name}</span> &#8594;</Links>
+        </li>
+      {/each}
+    </ul>
+  </div>
+</section>
 
 <style>
   .container :global(a) {
-    font-size: var(--40px);
+    font-size: var(--50px);
+    justify-content: center;
+    align-items: center;
   }
-  span {
-    font-size: 40px;
-    color: var(--secondary);
-    transition: transform 0.3s ease-in-out;
+
+  .truncate {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   li {
-    align-items: center;
-    display: flex;
-    padding: 30px 0;
+    padding-bottom: 60px;
   }
   .container {
     display: flex;
-    justify-content: space-between;
-    padding: 50px 200px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 100px;
   }
-  @media (hover: hover) {
-    li:hover span {
-      transform: translateX(50px);
-    }
+  section {
+    width: 100%;
+    padding: 100px;
   }
+
   @media only screen and (max-width: 1024px) {
     .container :global(a) {
-      font-size: var(--30px);
+      font-size: var(--40px);
+      border: none;
     }
-    span {
-      font-size: 30px;
+    section {
+      padding: 0px;
     }
+    ul {
+      width: 100%;
+    }
+
     .container {
-      padding: 50px 100px;
+      padding: 50px 50px;
     }
   }
   @media only screen and (max-width: 767px) {
     .container :global(a) {
-      font-size: var(--25px);
+      font-size: var(--35px);
     }
-    span {
-      font-size: 25px;
+    li {
+      padding-bottom: 30px;
     }
     .container {
-      padding: 50px 5px;
+      padding: 0px 15px 50px 15px;
     }
   }
 </style>
