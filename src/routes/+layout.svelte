@@ -20,17 +20,17 @@
     </a>
   </div>
 </div>
-<div class="wraper">
+<div class="wrapper">
   <slot />
 </div>
 
 <Footer />
 
 <style>
-  .wraper {
+  .wrapper {
     display: flex;
     flex: 1;
-    margin-top: 280px;
+    padding-top: 280px;
   }
   .container {
     z-index: 100;
@@ -52,8 +52,8 @@
     display: none;
   }
   @media only screen and (max-width: 1024px) {
-    .wraper {
-      margin-top: 350px;
+    .wrapper {
+      padding-top: 370px;
     }
 
     .logo-desktop {
@@ -66,8 +66,8 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    .wraper {
-      margin-top: 200px;
+    .wrapper {
+      padding-top: 200px;
     }
     .logo-desktop {
       display: none;
