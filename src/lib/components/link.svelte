@@ -6,13 +6,12 @@
 
 <style>
   .link {
-    display: flex;
     text-decoration: none;
     font-weight: bold;
     color: var(--interactive-button);
     position: relative;
-    justify-content: space-between;
     z-index: 1;
+    gap: 10px;
     border-bottom: 1px solid var(--highlight);
   }
   .link:before {
@@ -27,6 +26,12 @@
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform 0.2s ease-in-out;
+  }
+  @media only screen and (max-width: 1024px) {
+    .link {
+      display: flex;
+      gap: 3px;
+    }
   }
   @media (hover: hover) {
     a:hover {
