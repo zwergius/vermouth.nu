@@ -1,0 +1,44 @@
+<div class="rounded-text rotating">
+  <svg viewBox="0 0 200 200">
+    <path
+      id="textPath"
+      d="M 80,0 A 80,80 0 0 1 -80,0 A 80,80 0 0 1 80,0"
+      transform="translate(100,100)"
+      fill="none"
+      stroke-width="0"
+    />
+    <g>
+      <text>
+        <textPath xlink:href="#textPath" startOffset="0%"
+          >Importeret af venner siden 2019 - Vermouth NU -</textPath
+        >
+      </text>
+    </g>
+  </svg>
+</div>
+
+<style>
+  g {
+    font-size: 23px;
+    fill: var(--secondary);
+  }
+  .rounded-text {
+    display: flex;
+    width: 120px;
+    height: 120px;
+    transform: rotate(-103deg);
+    font-weight: bold;
+    z-index: -1;
+  }
+  @keyframes rotating {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+  .rotating {
+    animation: rotating 12s linear infinite;
+  }
+</style>
