@@ -50,7 +50,7 @@
     <ul>
       {#each stores as { name, href }}
         <li>
-          <Links {href}><span class="truncate">{name} </span> &#8594;</Links>
+          <Links {href}><span class="truncate">{name}</span> &#8594;</Links>
         </li>
       {/each}
     </ul>
