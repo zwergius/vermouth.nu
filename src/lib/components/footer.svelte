@@ -13,14 +13,14 @@
       </div>
       <h3>Ophavsret &#169; 2021,</h3>
       <h3>Vermouth NU.</h3>
-      <h3>Drevet af Shopify</h3>
+      <h3>CVR - 40649395</h3>
     </div>
   </div>
   <div>
     <div class="right">
       <h3>Newsletter</h3>
       <h3>tlf:784-449-333</h3>
-      <h3>noseymeil@gmail.com</h3>
+      <h3>info@vermouth.nu</h3>
       <h3>Nyhedsbrev</h3>
     </div>
   </div>
