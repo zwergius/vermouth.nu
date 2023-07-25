@@ -11,6 +11,7 @@
     font-weight: bold;
     color: var(--interactive-button);
     position: relative;
+    justify-content: space-between;
     z-index: 1;
     border-bottom: 1px solid var(--highlight);
   }

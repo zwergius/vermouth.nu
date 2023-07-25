@@ -40,8 +40,11 @@
     margin-bottom: 20px;
   }
   @media (hover: hover) {
-    .product:hover {
+    /* .product:hover {
       transform: scale(1.03);
+    } */
+    .product:hover {
+      cursor: pointer;
     }
   }
 </style>
