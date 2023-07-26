@@ -2,10 +2,11 @@
   export let href: string
 </script>
 
-<a class="link" {href}><slot /></a>
+<a class="link" rel="noopener" {href}><slot /></a>
 
 <style>
   .link {
+    max-width: 100%;
     text-decoration: none;
     font-weight: bold;
     display: inline-flex;

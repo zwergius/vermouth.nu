@@ -1,6 +1,6 @@
 <div class="container">
   <div>
-    <p>Ophavsret &#169; 2021,</p>
+    <p>Ophavsret &#169; 2023</p>
     <p>Vermouth NU.</p>
     <p>CVR - 40649395</p>
   </div>
@@ -32,6 +32,7 @@
     line-height: 1.5;
     color: var(--secondary-text-color);
     padding: 10px 100px;
+    display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: var(--secondary);
@@ -42,10 +43,8 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    p {
-      font-size: var(--16px);
-    }
     .container {
+      font-size: var(--16px);
       padding: 30px 10px;
     }
   }

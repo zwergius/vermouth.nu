@@ -50,7 +50,9 @@
     <ul>
       {#each stores as { name, href }}
         <li>
-          <Link {href}><span class="truncate">{name}</span>&#8594;</Link>
+          <Link {href}>
+            <span class="truncate">{name}</span>&#8594;</Link
+          >
         </li>
       {/each}
     </ul>
@@ -98,10 +100,12 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+
   @media only screen and (max-width: 1024px) {
     .container :global(a) {
       font-size: var(--40px);
     }
+
     section {
       padding: 0px;
     }
@@ -119,7 +123,7 @@
     }
     h2 {
       font-size: var(--40px);
-      padding-bottom: 30px;
+      padding-bottom: 10px;
     }
     li {
       padding-bottom: 30px;
