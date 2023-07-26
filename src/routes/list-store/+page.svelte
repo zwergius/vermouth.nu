@@ -125,7 +125,7 @@
       padding-bottom: 30px;
     }
     .container {
-      padding: 0px 15px 50px 15px;
+      padding: 50px 15px 50px 15px;
     }
   }
 </style>
