@@ -26,12 +26,19 @@
 
 <div class="main">
   <Carrousel {images} />
-  <RingText />
+  <div class="ringtext">
+    <RingText />
+  </div>
 </div>
 
 <slot />
 
 <style>
+  .ringtext {
+    position: absolute;
+    right: 20px;
+    bottom: 0px;
+  }
   .main {
     flex: 1;
     margin: auto 0;
