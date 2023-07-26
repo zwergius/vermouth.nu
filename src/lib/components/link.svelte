@@ -8,8 +8,10 @@
   .link {
     text-decoration: none;
     font-weight: bold;
+    display: flex;
     color: var(--interactive-button);
     position: relative;
+    gap: 10px;
     z-index: 1;
     border-bottom: 1px solid var(--highlight);
   }
@@ -28,7 +30,6 @@
   }
   @media only screen and (max-width: 1024px) {
     .link {
-      display: flex;
       gap: 3px;
     }
   }
