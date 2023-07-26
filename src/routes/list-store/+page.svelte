@@ -83,7 +83,7 @@
     padding-bottom: 20px;
   }
   .truncate {
-    margin-right: 10px;
+    padding-right: 10px;
   }
   .container {
     flex-direction: column;
