@@ -1,33 +1,33 @@
 <div class="container">
   <div>
     <div>
-      <h3>Ophavsret &#169; 2021,</h3>
-      <h3>Vermouth NU.</h3>
-      <h3>CVR - 40649395</h3>
+      <p>Ophavsret &#169; 2021,</p>
+      <p>Vermouth NU.</p>
+      <p>CVR - 40649395</p>
     </div>
   </div>
   <div>
     <div class="right">
       <div class="social-media">
-        <h3>F&oslash;lg os</h3>
+        <p>F&oslash;lg os</p>
         <a href="https://www.instagram.com">
-          <h2>Ig</h2>
+          <p>Ig</p>
         </a>
 
         <a href="https://es-es.facebook.com">
-          <h2>Fb</h2>
+          <p>Fb</p>
         </a>
       </div>
       <a href="mailto:info@vermouth.nu">
-        <h3>info@vermouth.nu</h3>
+        <p>info@vermouth.nu</p>
       </a>
-      <h3>Nyhedsbrev</h3>
+      <p>Nyhedsbrev</p>
     </div>
   </div>
 </div>
 
 <style>
-  a h2 {
+  .social-media a p {
     color: var(--interactive-button);
   }
   .social-media {
@@ -36,8 +36,9 @@
     justify-content: flex-end;
   }
 
-  h3 {
+  p {
     font-size: var(--25px);
+    font-weight: 900;
     line-height: 1.5;
     color: var(--secondary-text-color);
   }
@@ -57,7 +58,7 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    h3 {
+    p {
       font-size: var(--16px);
     }
     .container {

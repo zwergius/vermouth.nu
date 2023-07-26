@@ -11,7 +11,6 @@
     color: var(--interactive-button);
     position: relative;
     z-index: 1;
-    gap: 10px;
     border-bottom: 1px solid var(--highlight);
   }
   .link:before {

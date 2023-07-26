@@ -82,6 +82,9 @@
   ul {
     padding-bottom: 20px;
   }
+  .truncate {
+    margin-right: 10px;
+  }
   .container {
     flex-direction: column;
     display: flex;
