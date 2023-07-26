@@ -1,5 +1,5 @@
 <script>
-  import Links from '$lib/components/link.svelte'
+  import Link from '$lib/components/link.svelte'
 
   const stores = [
     {
@@ -50,7 +50,7 @@
     <ul>
       {#each stores as { name, href }}
         <li>
-          <Links {href}><span class="truncate">{name}</span> &#8594;</Links>
+          <Link {href}><span class="truncate">{name}</span> &#8594;</Link>
         </li>
       {/each}
     </ul>
@@ -58,7 +58,7 @@
     <ul>
       {#each bar as { name, href }}
         <li>
-          <Links {href}><span class="truncate">{name}</span> &#8594;</Links>
+          <Link {href}><span class="truncate">{name}</span> &#8594;</Link>
         </li>
       {/each}
     </ul>

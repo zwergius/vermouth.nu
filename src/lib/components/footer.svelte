@@ -1,6 +1,13 @@
 <div class="container">
   <div>
     <div>
+      <h3>Ophavsret &#169; 2021,</h3>
+      <h3>Vermouth NU.</h3>
+      <h3>CVR - 40649395</h3>
+    </div>
+  </div>
+  <div>
+    <div class="right">
       <div class="social-media">
         <h3>F&oslash;lg os</h3>
         <a href="https://www.instagram.com">
@@ -11,14 +18,6 @@
           <h2>Fb</h2>
         </a>
       </div>
-      <h3>Ophavsret &#169; 2021,</h3>
-      <h3>Vermouth NU.</h3>
-      <h3>CVR - 40649395</h3>
-    </div>
-  </div>
-  <div>
-    <div class="right">
-      <h3>Newsletter</h3>
       <a href="mailto:info@vermouth.nu">
         <h3>info@vermouth.nu</h3>
       </a>
@@ -34,6 +33,7 @@
   .social-media {
     gap: 10px;
     display: flex;
+    justify-content: flex-end;
   }
 
   h3 {
