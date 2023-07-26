@@ -2,13 +2,13 @@
   export let href: string
 </script>
 
-<a {href} class="link"><slot /></a>
+<a class="link" {href}><slot /></a>
 
 <style>
   .link {
     text-decoration: none;
     font-weight: bold;
-    display: flex;
+    display: inline-flex;
     color: var(--interactive-button);
     position: relative;
     gap: 10px;
