@@ -1,3 +1,24 @@
+<script>
+  /**
+   * @param {string | any[]} text
+   * @param {number} initialFontSize
+   * @param {number} constantSpace
+   */
+  function calculateFontSize(text, initialFontSize, constantSpace) {
+    const numCharacters = text.length
+    const charDiff = numCharacters - constantSpace
+    const fontSizeChange = Math.floor(charDiff / 2)
+    const fontSize = initialFontSize - fontSizeChange
+    return fontSize
+  }
+
+  const textContent = 'Importeret af venner siden 2019 - Vermouth NU-'
+  const initialFontSize = 23
+  const constantSpace = 45
+
+  const fontSize = calculateFontSize(textContent, initialFontSize, constantSpace)
+</script>
+
 <div class="rounded-text rotating">
   <svg viewBox="0 0 200 200">
     <path
@@ -7,11 +28,9 @@
       fill="none"
       stroke-width="0"
     />
-    <g>
+    <g style="font-size: {fontSize}">
       <text>
-        <textPath xlink:href="#textPath" startOffset="0%"
-          >Importeret af venner siden 2019 - Vermouth NU -</textPath
-        >
+        <textPath xlink:href="#textPath" startOffset="0%"> {textContent}</textPath>
       </text>
     </g>
   </svg>
