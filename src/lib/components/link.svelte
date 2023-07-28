@@ -1,9 +1,9 @@
 <script lang="ts">
   export let href: string
-  export let rel: string
+  export let rel: string | undefined = ''
 </script>
 
-<a class="link" {rel} {href}><slot /></a>
+<a class="link" {href} {rel}><slot /></a>
 
 <style>
   .link {
