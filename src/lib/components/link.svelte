@@ -1,17 +1,20 @@
 <script lang="ts">
   export let href: string
+  export let rel: string | undefined = ''
 </script>
 
-<a {href} class="link"><slot /></a>
+<a class="link" {href} {rel}><slot /></a>
 
 <style>
   .link {
+    max-width: 100%;
     text-decoration: none;
     font-weight: bold;
+    display: inline-flex;
     color: var(--interactive-button);
     position: relative;
-    z-index: 1;
     gap: 10px;
+    z-index: 1;
     border-bottom: 1px solid var(--highlight);
   }
   .link:before {
@@ -29,7 +32,6 @@
   }
   @media only screen and (max-width: 1024px) {
     .link {
-      display: flex;
       gap: 3px;
     }
   }

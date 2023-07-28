@@ -44,8 +44,8 @@
           }}
         >
           <div class="circle-border">
-            <svg width="14" height="14">
-              <circle cx="5" cy="5" r="5" />
+            <svg width="13" height="13">
+              <circle cx="10" cy="10" r="15" />
             </svg>
           </div>
         </button>
