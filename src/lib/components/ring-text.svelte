@@ -38,7 +38,7 @@
 <style>
   g {
     font-size: 23px;
-    fill: var(--secondary);
+    fill: var(--interactive-button);
   }
   .rounded-text {
     display: flex;

@@ -3,7 +3,6 @@
   import forzudo from '$lib/assets/forzudo.webp'
   import banner from '$lib/assets/banner.webp'
   import tabira from '$lib/assets/tabira.webp'
-  import RingText from '$lib/components/ring-text.svelte'
 
   const images = [
     {
@@ -26,19 +25,11 @@
 
 <div class="main">
   <Carrousel {images} />
-  <div class="ringtext">
-    <RingText />
-  </div>
 </div>
 
 <slot />
 
 <style>
-  .ringtext {
-    position: fixed;
-    right: 20px;
-    bottom: 150px;
-  }
   .main {
     position: relative;
     flex: 1;
