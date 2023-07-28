@@ -2,15 +2,17 @@
   export let href: string
 </script>
 
-<a {href} class="link"><slot /></a>
+<a class="link" rel="noopener external" {href}><slot /></a>
 
 <style>
   .link {
-    display: flex;
+    max-width: 100%;
     text-decoration: none;
     font-weight: bold;
+    display: inline-flex;
     color: var(--interactive-button);
     position: relative;
+    gap: 10px;
     z-index: 1;
     border-bottom: 1px solid var(--highlight);
   }
@@ -26,6 +28,11 @@
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform 0.2s ease-in-out;
+  }
+  @media only screen and (max-width: 1024px) {
+    .link {
+      gap: 3px;
+    }
   }
   @media (hover: hover) {
     a:hover {
