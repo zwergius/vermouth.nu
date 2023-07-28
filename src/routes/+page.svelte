@@ -37,7 +37,7 @@
   .ringtext {
     position: fixed;
     right: 20px;
-    bottom: 180px;
+    bottom: 150px;
   }
   .main {
     position: relative;
