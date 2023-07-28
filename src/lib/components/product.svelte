@@ -75,9 +75,6 @@
     margin-bottom: 20px;
   }
   @media (hover: hover) {
-    .card:hover:before {
-      transform: translate(0) scale(2.5);
-    }
     .card:hover img {
       transform: scale(1.5) rotateZ(10deg);
       transition: transform 0.2s 0.3s;
