@@ -7,8 +7,8 @@
   <div class="right">
     <div class="social-media">
       <p>F&oslash;lg os</p>
-      <a href="https://www.instagram.com">Ig</a>
-      <a href="https://es-es.facebook.com">Fb</a>
+      <a rel="noopener external" href="https://www.instagram.com">Ig</a>
+      <a rel="noopener external" href="https://es-es.facebook.com">Fb</a>
     </div>
     <a href="mailto:info@vermouth.nu">info@vermouth.nu</a>
   </div>
