@@ -2,7 +2,7 @@
   export let href: string
 </script>
 
-<a class="link" rel="noopener" {href}><slot /></a>
+<a class="link" rel="noopener external" {href}><slot /></a>
 
 <style>
   .link {
