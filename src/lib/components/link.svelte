@@ -1,6 +1,6 @@
 <script lang="ts">
   export let href: string
-  export let rel: string | undefined = ''
+  export let rel = ''
 </script>
 
 <a class="link" {href} {rel}><slot /></a>

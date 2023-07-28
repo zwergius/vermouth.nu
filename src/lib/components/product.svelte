@@ -27,25 +27,11 @@
 <!-- </a> -->
 
 <style>
-  /* .card:before {
-    background-image: linear-gradient(var(--white), var(--blue30));
-    bottom: 0;
-    content: '';
-    height: 0;
-    left: 0;
-    padding-bottom: 100%;
-    position: absolute;
-    transform: translate(-50%, 50%) scale(0.01);
-    transition: inherit;
-    width: 100%;
-    z-index: 1;
-  } */
   .card {
     margin: auto;
     overflow: hidden;
     position: relative;
     transition: transform 0.3s;
-    width: 16em;
     border: 2px solid var(--secondary);
     border-radius: 20px;
     transition: transform 0.2s ease-in-out;
@@ -56,7 +42,7 @@
     width: 100%;
   }
   .content {
-    background-color: var(--white50);
+    background-color: var(--white);
     color: var(--secondary);
     font-size: var(--16x);
     display: flex;
@@ -64,7 +50,7 @@
     height: 100%;
     justify-content: center;
     left: 0;
-    padding: 1em;
+    padding: 16px;
     position: absolute;
     top: 0;
     transform: translate(0, 100%);
