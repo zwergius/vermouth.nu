@@ -37,7 +37,7 @@
   .ringtext {
     position: absolute;
     right: 20px;
-    bottom: 0px;
+    bottom: 0;
   }
   .main {
     flex: 1;
