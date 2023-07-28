@@ -108,7 +108,6 @@
     ul {
       width: 100%;
     }
-
     .container {
       padding: 50px 50px;
     }
