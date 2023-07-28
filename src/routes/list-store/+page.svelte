@@ -16,7 +16,7 @@
     },
   ]
 
-  const bar = [
+  const bars = [
     {
       name: 'Bevars',
       href: 'https://www.google.es/maps/place/Bevar%E2%80%99s/@55.6884205,12.5593955,17z/data=!3m1!4b1!4m6!3m5!1s0x465253072c7ff84b:0xf8d5f5e314ac7281!8m2!3d55.6884205!4d12.5619704!16s%2Fg%2F1hm2pgrh0?entry=ttu',
@@ -56,7 +56,7 @@
     </ul>
     <h2>Her kan du f&#229; serveret:</h2>
     <ul>
-      {#each bar as { name, href }}
+      {#each bars as { name, href }}
         <li>
           <Link {href}><span class="truncate">{name}</span>&#8594;</Link>
         </li>
@@ -75,7 +75,6 @@
     font-size: var(--50px);
     align-items: center;
   }
-
   li {
     padding-bottom: 40px;
   }
@@ -93,17 +92,15 @@
     width: 100%;
     padding: 100px;
   }
-
+  .truncate {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   @media only screen and (max-width: 1024px) {
-    .truncate {
-      display: block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
     .container :global(a) {
       font-size: var(--40px);
-      border: none;
     }
     section {
       padding: 0px;
@@ -111,7 +108,6 @@
     ul {
       width: 100%;
     }
-
     .container {
       padding: 50px 50px;
     }
@@ -122,13 +118,13 @@
     }
     h2 {
       font-size: var(--40px);
-      padding-bottom: 30px;
+      padding-bottom: 10px;
     }
     li {
       padding-bottom: 30px;
     }
     .container {
-      padding: 0px 15px 50px 15px;
+      padding: 50px 15px 50px 15px;
     }
   }
 </style>
