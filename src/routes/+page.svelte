@@ -35,9 +35,9 @@
 
 <style>
   .ringtext {
-    position: absolute;
+    position: fixed;
     right: 20px;
-    bottom: 0;
+    bottom: 180px;
   }
   .main {
     position: relative;
