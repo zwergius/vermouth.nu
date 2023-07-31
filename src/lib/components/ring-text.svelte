@@ -12,7 +12,7 @@
   //   return fontSize
   // }
 
-  const textContent = 'Importeret af venner siden 2019 - Vermouth NU-'
+  const textContent = 'Importeret af venner siden 2019 - Vermouth NU -'
   // const initialFontSize = 23
   // const constantSpace = 45
   // const fontSize = calculateFontSize(textContent, initialFontSize, constantSpace)
