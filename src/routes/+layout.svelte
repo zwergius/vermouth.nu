@@ -34,7 +34,7 @@
   .ringtext {
     position: fixed;
     right: -60px;
-    bottom: 5px;
+    bottom: 0px;
   }
   .wrapper {
     display: flex;
@@ -62,8 +62,8 @@
   }
   @media only screen and (max-width: 1024px) {
     .ringtext {
-      right: -70px;
-      bottom: 20px;
+      right: -80px;
+      bottom: 0px;
     }
     .wrapper {
       padding-top: 370px;
@@ -80,7 +80,7 @@
   }
   @media only screen and (max-width: 767px) {
     .ringtext {
-      bottom: 10px;
+      bottom: 0;
     }
     .wrapper {
       padding-top: 200px;
