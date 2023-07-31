@@ -31,7 +31,6 @@
 
 <style>
   .main {
-    position: relative;
     flex: 1;
     margin: auto 0;
     width: 100%;
