@@ -18,11 +18,11 @@
   // const fontSize = calculateFontSize(textContent, initialFontSize, constantSpace)
 </script>
 
-<div class="rounded-text rotating">
+<div class="rotating">
   <svg viewBox="0 0 200 200">
     <path
       id="textPath"
-      d="M 80,0 A 80,80 0 0 1 -80,0 A 80,80 0 0 1 80,0"
+      d="M 41.5,0 A 41.5,41.5 0 0 1 -41.5,0 A 41.5,41.5 0 0 1 41.5,0"
       transform="translate(100,100)"
       fill="none"
       stroke-width="0"
@@ -36,18 +36,16 @@
 </div>
 
 <style>
+  svg {
+    height: auto;
+    max-width: 100%;
+    width: 100%;
+  }
   g {
-    font-size: 23px;
+    font-size: 12px;
     fill: var(--interactive-button);
   }
-  .rounded-text {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    transform: rotate(-103deg);
-    font-weight: bold;
-    z-index: -1;
-  }
+
   @keyframes rotating {
     from {
       transform: rotate(360deg);
