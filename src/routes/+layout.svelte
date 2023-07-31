@@ -63,7 +63,7 @@
   @media only screen and (max-width: 1024px) {
     .ringtext {
       right: -70px;
-      bottom: -30px;
+      bottom: 20px;
     }
     .wrapper {
       padding-top: 370px;
@@ -80,7 +80,7 @@
   }
   @media only screen and (max-width: 767px) {
     .ringtext {
-      bottom: 75px;
+      bottom: 10px;
     }
     .wrapper {
       padding-top: 200px;
