@@ -22,7 +22,7 @@
   <svg viewBox="0 0 200 200">
     <path
       id="textPath"
-      d="M 35,0 A 35,35 0 0 1 -35,0 A 35,35 0 0 1 35,0"
+      d="M 80,0 A 80,80 0 0 1 -80,0 A 80,80 0 0 1 80,0"
       transform="translate(100,100)"
       fill="none"
       stroke-width="0"
@@ -39,10 +39,10 @@
   svg {
     height: auto;
     max-width: 100%;
-    width: 100%;
+    width: 120px;
   }
   g {
-    font-size: 10px;
+    font-size: 23px;
     fill: var(--interactive-button);
   }
 
