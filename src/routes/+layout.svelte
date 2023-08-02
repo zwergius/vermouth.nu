@@ -27,14 +27,13 @@
     <RingText />
   </div>
 </div>
-
 <Footer />
 
 <style>
   .ringtext {
     position: fixed;
     right: 5px;
-    bottom: 80px;
+    bottom: 67px;
   }
   .wrapper {
     display: flex;
@@ -79,7 +78,7 @@
   }
   @media only screen and (max-width: 767px) {
     .ringtext {
-      bottom: 75px;
+      bottom: 13svh;
     }
     .wrapper {
       padding-top: 200px;
