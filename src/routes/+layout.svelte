@@ -4,6 +4,7 @@
   import Header from '$lib/components/header.svelte'
   import logoDesktop from '$lib/assets/logo-home.svg'
   import logoMobile from '$lib/assets/diagonal-logo.svg'
+  import RingText from '$lib/components/ring-text.svelte'
 </script>
 
 <div class="container">
@@ -22,11 +23,18 @@
 </div>
 <div class="wrapper">
   <slot />
+  <div class="ringtext">
+    <RingText />
+  </div>
 </div>
-
 <Footer />
 
 <style>
+  .ringtext {
+    position: fixed;
+    right: 5px;
+    bottom: 67px;
+  }
   .wrapper {
     display: flex;
     flex: 1;
@@ -52,6 +60,9 @@
     display: none;
   }
   @media only screen and (max-width: 1024px) {
+    .ringtext {
+      bottom: 90px;
+    }
     .wrapper {
       padding-top: 370px;
     }
@@ -66,6 +77,9 @@
     }
   }
   @media only screen and (max-width: 767px) {
+    .ringtext {
+      top: 66svh;
+    }
     .wrapper {
       padding-top: 200px;
     }
