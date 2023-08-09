@@ -7,11 +7,6 @@
   import carmeletaOrange from '$lib/assets/bottles/orange-carmeleta.avif'
   import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco.avif'
   import tabira from '$lib/assets/bottles/tabira.avif'
-  import cabecitaLoca from '$lib/assets/bottles/cabecita-loca.avif'
-  import padroBlanco from '$lib/assets/bottles/padro-blanco.avif'
-  import padroDorado from '$lib/assets/bottles/padro-dorado.avif'
-  import padroEspecial from '$lib/assets/bottles/padro-reserva-especial.avif'
-  import anaCaballo from '$lib/assets/bottles/ana-caballo.avif'
 
   const vermouths = [
     {
@@ -60,6 +55,7 @@
         'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
       mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
     },
+    
     {
       brand: 'Carmeleta',
       name: 'Blanco',
@@ -79,7 +75,7 @@
         'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
       mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
     },
-
+    
     {
       brand: 'Cabecita Loca',
       name: '-',
@@ -99,6 +95,7 @@
         'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
       mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
     },
+    
     {
       brand: 'Padro & Co',
       name: 'Dorado Amargo Suave',

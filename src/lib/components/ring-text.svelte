@@ -1,25 +1,25 @@
 <script>
-  /**
-   * @param {string | any[]} text
-   * @param {number} initialFontSize
-   * @param {number} constantSpace
-   */
-  function calculateFontSize(text, initialFontSize, constantSpace) {
-    const numCharacters = text.length
-    const charDiff = numCharacters - constantSpace
-    const fontSizeChange = Math.floor(charDiff / 2)
-    const fontSize = initialFontSize - fontSizeChange
-    return fontSize
-  }
+  // /**
+  //  * @param {string | any[]} text
+  //  * @param {number} initialFontSize
+  //  * @param {number} constantSpace
+  //  */
+  // function calculateFontSize(text, initialFontSize, constantSpace) {
+  //   const numCharacters = text.length
+  //   const charDiff = numCharacters - constantSpace
+  //   const fontSizeChange = Math.floor(charDiff / 2)
+  //   const fontSize = initialFontSize - fontSizeChange
+  //   return fontSize
+  // }
 
-  const textContent = 'Importeret af venner siden 2019 - Vermouth NU-'
-  const initialFontSize = 23
-  const constantSpace = 45
-
-  const fontSize = calculateFontSize(textContent, initialFontSize, constantSpace)
+  const textContent = 'Importeret af venner siden 2019 - Vermouth NU -'
+  // const initialFontSize = 23
+  // const constantSpace = 45
+  // const fontSize = calculateFontSize(textContent, initialFontSize, constantSpace)
 </script>
 
-<div class="rounded-text rotating">
+<div class="rotating">
+
   <svg viewBox="0 0 200 200">
     <path
       id="textPath"
@@ -28,26 +28,24 @@
       fill="none"
       stroke-width="0"
     />
-    <g style="font-size: {fontSize}">
+    <g>
       <text>
-        <textPath xlink:href="#textPath" startOffset="0%"> {textContent}</textPath>
+        <textPath xlink:href="#textPath" startOffset="0%">{textContent}</textPath>
       </text>
     </g>
   </svg>
 </div>
 
 <style>
+
+  svg {
+    height: auto;
+    max-width: 100%;
+    width: 120px;
+  }
   g {
     font-size: 23px;
-    fill: var(--secondary);
-  }
-  .rounded-text {
-    display: flex;
-    width: 120px;
-    height: 120px;
-    transform: rotate(-103deg);
-    font-weight: bold;
-    z-index: -1;
+    fill: var(--interactive-button);
   }
   @keyframes rotating {
     from {
