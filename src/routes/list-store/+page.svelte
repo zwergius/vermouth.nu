@@ -54,7 +54,9 @@
     <ul>
       {#each stores as { name, href }}
         <li>
-          <Link rel="noopener external" {href}><span class="truncate">{name}</span>&#8594;</Link>
+          <Link target="_blank" rel="noopener external" {href}
+            ><span class="truncate">{name}</span>&#8594;</Link
+          >
         </li>
       {/each}
     </ul>
@@ -62,7 +64,9 @@
     <ul>
       {#each bars as { name, href }}
         <li>
-          <Link rel="noopener external" {href}><span class="truncate">{name}</span>&#8594;</Link>
+          <Link target="_blank" rel="noopener external" {href}
+            ><span class="truncate">{name}</span>&#8594;</Link
+          >
         </li>
       {/each}
     </ul>
