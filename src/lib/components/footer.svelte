@@ -34,7 +34,7 @@
     padding: 10px 100px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     background-color: var(--secondary);
   }
   @media only screen and (max-width: 1024px) {
