@@ -45,7 +45,6 @@
     font-size: 23px;
     fill: var(--interactive-button);
   }
-
   @keyframes rotating {
     from {
       transform: rotate(360deg);

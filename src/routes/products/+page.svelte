@@ -55,6 +55,7 @@
         'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
       mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
     },
+
     {
       brand: 'Carmeleta',
       name: 'Blanco',
