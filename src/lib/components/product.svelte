@@ -5,9 +5,9 @@
   export let image: string
   export let name: string
   export let brand: string
-  export let visuel: string
-  export let oldactory: string
-  export let mund: string
+  export let mund: string | undefined
+  export let visuel: string | undefined
+  export let oldactory: string | undefined
 </script>
 
 <!-- <a href="#"> -->

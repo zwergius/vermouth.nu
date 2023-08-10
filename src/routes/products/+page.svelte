@@ -69,6 +69,10 @@
       brand: 'Tabira',
       name: '-',
       image: tabira,
+      visuel: 'Mørkerød med ravfarvet kant og kobberglimt. Ren, lys og krystallinsk.',
+      oldactory:
+        'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
+      mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
     },
   ]
 </script>
