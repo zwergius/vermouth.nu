@@ -13,75 +13,62 @@
       brand: 'Forzudo',
       name: 'Rojo',
       image: forzudoRojo,
-      visuel: 'Mørkerød med ravfarvet kant og kobberglimt. Ren, lys og krystallinsk.',
-      oldactory:
-        'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
-      mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
+      region: 'Bierzo, Leon, Nordvest',
+      size: '100 cl. / 15%',
     },
-
     {
       brand: 'Forzudo',
       name: 'Blanco',
       image: forzudoBlanco,
-      visuel: 'Strågul. Ren og krystalklar.',
-      oldactory: 'Frugtagtig og attraktiv duft af citrus, æble og krat eller friske grønne urter.',
-      mund: 'Cremet fornemmelse med nuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter.',
+      region: 'Bierzo, Leon, Nordvest',
+      size: '100 cl. / 15%',
     },
 
     {
       brand: 'Sardino',
       name: 'Rojo',
       image: sardinoRojo,
-      visuel: 'Mahognirød farve, det fremstår som en meget ren vermouth uden uklarhed.',
-      oldactory:
-        'Meget aromatisk og leder tankerne hen på minder om vanilje, kamille og kanel macerater.',
-      mund: 'Lidt alkoholisk konnotation og en perfekt balance mellem bitterhed, sødme og syre, som et resultat opnår vi en lang eftersmag af sømandsvermouth.',
+      region: 'Galicien, Nordvestkysten',
+      size: '75 cl. / 15%',
     },
     {
       brand: 'Sardino',
       name: 'Blanco',
       image: sardinoBlanco,
-      visuel: 'Strågul farve.',
-      oldactory: 'Friske og frugtige nuancer, meget aromatisk.',
-      mund: 'Stor harmoni og balance af smag, sød og bitter med friske og frugtige nuancer, meget aromatisk og med en lang vedholdenhed på ganen.',
+      region: 'Galicien, Nordvestkysten',
+      size: '75 cl. / 15%',
     },
 
     {
       brand: 'Carmeleta',
       name: 'Orange ',
       image: carmeletaOrange,
-      visuel: 'Mørkerød med ravfarvet kant og kobberglimt. Ren, lys og krystallinsk.',
-      oldactory:
-        'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
-      mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
+      region: 'L’Alquería de la Comtessa, Valencia',
+      size: '75 cl. / 15%',
     },
 
     {
       brand: 'Carmeleta',
       name: 'Blanco',
       image: carmeletaBlanco,
-      visuel: 'Mørkerød med ravfarvet kant og kobberglimt. Ren, lys og krystallinsk.',
-      oldactory:
-        'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
-      mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
+      region: 'L’Alquería de la Comtessa, Valencia',
+      size: '75 cl. / 15%',
     },
 
     {
       brand: 'Tabira',
-      name: '-',
+      name: '',
       image: tabira,
-      visuel: 'Mørkerød med ravfarvet kant og kobberglimt. Ren, lys og krystallinsk.',
-      oldactory:
-        'Aromaer af moden frugt, markurter, krat, vanilje og toffee. Noter af fin balsamico og krydrede nuancer.',
-      mund: 'Frisk indgang med en perfekt balance mellem syre og sødme. Med et bittert og forfriskende punkt, en delikat mellemsmag og en kompleks og elegant finish.',
+      region: 'Leon, Nordvest',
+      size: '100 cl. / 15%',
     },
   ]
 </script>
 
 <section>
   <div class="container">
-    {#each vermouths as { image, name, brand, visuel, oldactory, mund }, index}
-      <Product {image} {name} {mund} {brand} {visuel} {oldactory} {index} />
+    {#each vermouths as { image, name, brand, region, size }, index}
+      <Product {image} {name} {size} {brand} {region} {index} />
     {/each}
   </div>
 </section>
