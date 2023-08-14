@@ -1,9 +1,18 @@
 <script>
+  import sardinoBlanco from '$lib/assets/bottles/sardino-blancoi.avif'
+  import sardinoRojo from '$lib/assets/bottles/sardino-rojo-big.avif'
+  import forzudoRojo from '$lib/assets/bottles/forzudo-rojo-big.webp'
+  import forzudoBlanco from '$lib/assets/bottles/forzudo-blanco-big.webp'
+  import carmeletaOrange from '$lib/assets/bottles/sardino-rojo-big.avif'
+  import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco-big.avif'
+  import tabira from '$lib/assets/bottles/tabira-big.avif'
+
   const vermouths = [
     {
+      id: 1,
       brand: 'Forzudo',
+      image: forzudoRojo,
       name: 'Rojo',
-      image: '/src/lib/assets/bottles/Forzudo-rojo_med_skygge_900x.webp',
       intro: 'Klassens frække dreng',
       introtext:
         'Med sin mørke mahogni farve, præsenterer denne vermouth sig på klassisk vis, og dog med et tvist.',
@@ -13,9 +22,10 @@
     },
 
     {
+      id: 2,
       brand: 'Forzudo',
       name: 'Blanco',
-      image: '',
+      image: forzudoBlanco,
       intro: 'Forfriskende og stærke vanedanende ',
       introtext: 'Forzudo Blanco er yderste populær, og et perfekt følgeskab til en dag i solen.',
       taste:
@@ -25,9 +35,10 @@
     },
 
     {
+      id: 3,
       brand: 'Sardino',
       name: 'Rojo',
-      image: '',
+      image: sardinoRojo,
       intro: 'Sømandens foretrukne.',
       introtext:
         'Sardino slår sig selv op på at være en maritim vermouth, den kommer helt fra den Spanske vestkyst, hvor der er store fiske traditioner og lækre råvarer.',
@@ -36,9 +47,10 @@
       recommendation: 'bør nydes afkølet og med en skive grape.',
     },
     {
+      id: 4,
       brand: 'Sardino',
       name: 'Blanco',
-      image: '',
+      image: sardinoBlanco,
       intro: 'Maritim Vermouth fra den Spanske vestkyst.',
       introtext:
         'Sardino Blanco, lagret i lerkrukker ved Atlanterhavets kyst - Her i den hvide udgave som er en anelse lettere.',
@@ -49,9 +61,10 @@
     },
 
     {
+      id: 5,
       brand: 'Carmeleta',
       name: 'Orange ',
-      image: '',
+      image: carmeletaOrange,
       intro: 'Orange og Trendy',
       introtext:
         'Carmeleta Vermouth Orange præsenterer en levende orange farve, en hyldest til Appelsinen fra Valencia. Brygget på hvide druer fra middelhavsområdet, herunder Malvasía, Moscatel, Planta, udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Sødere og lettere end en traditionel vermouth, egner sig til alle tidspunkter af dagen. En ny vermouth til nye tider.',
@@ -60,9 +73,10 @@
       recommendation: 'Serveres kold med is, og evt. et jordbær eller appelsin.',
     },
     {
+      id: 6,
       brand: 'Carmeleta',
       name: 'Blanco',
-      image: '',
+      image: carmeletaBlanco,
       intro: 'Hvid og Autentisk',
       introtext:
         'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
@@ -73,9 +87,10 @@
     },
 
     {
+      id: 7,
       brand: 'Tabira',
       name: '-',
-      image: '',
+      image: tabira,
       intro: 'Elegant Vermouth med dragende næse og smag - en absolut favorit',
       introtext:
         'Vinhuset Meoriga, fra byen Leon præsenterer den første vermouth lavet på druen “Prieto Picudo”. En premium vermouth med begrænset årlig produktion, baseret på en original opskrift som er mere end 90 år gammel (1927).',
@@ -89,7 +104,7 @@
 <div class="content">
   <div>
     {vermouths}
-    <img src="/src/lib/assets/bottles/Forzudo-rojo_med_skygge_900x.webp" alt="" />
+    <img src={forzudoRojo} alt="" />
   </div>
 
   <div class="text">

@@ -9,41 +9,23 @@
   import tabira from '$lib/assets/bottles/tabira.avif'
 
   const vermouths = [
-    {
-      brand: 'Forzudo',
-      name: 'Rojo',
-      image: forzudoRojo,
-    },
+    { id: 1, brand: 'Forzudo', name: 'Rojo', image: forzudoRojo },
 
     {
+      id: 2,
       brand: 'Forzudo',
       name: 'Blanco',
       image: forzudoBlanco,
     },
 
-    {
-      brand: 'Sardino',
-      name: 'Rojo',
-      image: sardinoRojo,
-    },
-    {
-      brand: 'Sardino',
-      name: 'Blanco',
-      image: sardinoBlanco,
-    },
+    { id: 3, brand: 'Sardino', name: 'Rojo', image: sardinoRojo },
+    { id: 4, brand: 'Sardino', name: 'Blanco', image: sardinoBlanco },
+
+    { id: 5, brand: 'Carmeleta', name: 'Orange ', image: carmeletaOrange },
+    { id: 6, brand: 'Carmeleta', name: 'Blanco', image: carmeletaBlanco },
 
     {
-      brand: 'Carmeleta',
-      name: 'Orange ',
-      image: carmeletaOrange,
-    },
-    {
-      brand: 'Carmeleta',
-      name: 'Blanco',
-      image: carmeletaBlanco,
-    },
-
-    {
+      id: 7,
       brand: 'Tabira',
       name: '-',
       image: tabira,
