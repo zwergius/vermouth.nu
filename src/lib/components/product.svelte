@@ -7,14 +7,13 @@
   export let brand: string
 </script>
 
-<!-- <a href="#"> -->
-<div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-  <img src={image} alt="" />
-  <h2>{brand}</h2>
-  <h4>{name}</h4>
-</div>
-
-<!-- </a> -->
+<a href="/info">
+  <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
+    <img src={image} alt="" />
+    <h2>{brand}</h2>
+    <h4>{name}</h4>
+  </div>
+</a>
 
 <style>
   .product {
