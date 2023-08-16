@@ -1,45 +1,36 @@
 <script>
-  import forzudoRojo from '$lib/assets/bottles/forzudo-rojo-big.webp'
+  export let data
 </script>
 
 <div class="content">
-  <div>
-    <img src={forzudoRojo} alt="" />
+  <div class="image">
+    <img src={data.vermouth.image} alt="" />
   </div>
-
-  <div class="text">
-    <h1>Forzudo Rojo</h1>
+  <div class="container">
+    <h1>{data.vermouth.brand}</h1>
     <div class="wrap">
       <div class="info">
-        <h2>titulo</h2>
+        <h2>{data.vermouth.subName}</h2>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque iusto, commodi eveniet
-          iure facere, nisi consectetur minus quia voluptas at aliquam quis, vero deserunt
-          accusamus. A voluptatum nostrum totam rerum.
+          {data.vermouth.introtext}
         </p>
       </div>
       <div class="info">
         <h2>Smag & Duft</h2>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque iusto, commodi eveniet
-          iure facere, nisi consectetur minus quia voluptas at aliquam quis, vero deserunt
-          accusamus. A voluptatum nostrum totam rerum.
+          {data.vermouth.taste}
         </p>
       </div>
       <div class="info">
         <h2>Anbefaling</h2>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque iusto, commodi eveniet
-          iure facere, nisi consectetur minus quia voluptas at aliquam quis, vero deserunt
-          accusamus. A voluptatum nostrum totam rerum.
+          {data.vermouth.recommendation}
         </p>
       </div>
       <div class="info">
         <h2>Oprindelse</h2>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque iusto, commodi eveniet
-          iure facere, nisi consectetur minus quia voluptas at aliquam quis, vero deserunt
-          accusamus. A voluptatum nostrum totam rerum.
+          {data.vermouth.origin}
         </p>
       </div>
     </div>
@@ -47,6 +38,14 @@
 </div>
 
 <style>
+  .image {
+    width: 25%;
+  }
+  img {
+    width: 100%;
+    object-fit: cover;
+    height: 100%;
+  }
   .wrap {
     display: flex;
     flex-wrap: wrap;
@@ -65,10 +64,10 @@
   p {
     padding-left: 15px;
   }
-  .text {
+  .container {
     display: flex;
     justify-content: center;
-    width: 100%;
+    width: 75%;
     flex-direction: column;
 
     border-radius: 19px;
@@ -77,5 +76,35 @@
     padding: 20px 100px;
     color: var(--secondary);
     display: flex;
+  }
+  @media only screen and (max-width: 1024px) {
+    .content {
+      padding: 0px 50px 30px 50px;
+    }
+    .image {
+      width: 50%;
+    }
+    .container {
+      width: 50%;
+    }
+    .wrap {
+      display: block;
+    }
+    .info {
+      width: 100%;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    .content {
+      flex-direction: column;
+      justify-content: center;
+      padding: 0px 10px 30px 10px;
+    }
+    .image {
+      width: 100%;
+    }
+    .container {
+      width: 100%;
+    }
   }
 </style>

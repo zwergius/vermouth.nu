@@ -2,18 +2,14 @@
   import { fade } from 'svelte/transition'
 
   export let index: number
-  export let image: string
-  export let name: string
+  export let cardImage: string
   export let brand: string
 </script>
 
-<a href="/info">
-  <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-    <img src={image} alt="" />
-    <h2>{brand}</h2>
-    <h4>{name}</h4>
-  </div>
-</a>
+<div in:fade={{ duration: 300, delay: index * 150 }} class="product">
+  <img src={cardImage} alt="" />
+  <h2>{brand}</h2>
+</div>
 
 <style>
   .product {
@@ -21,7 +17,6 @@
     border-radius: 20px;
     transition: transform 0.2s ease-in-out;
   }
-
   img {
     width: 100%;
     object-fit: cover;
@@ -31,12 +26,6 @@
     color: var(--secondary);
     text-align: center;
     font-size: var(--25px);
-  }
-  h4 {
-    color: var(--secondary);
-    font-size: var(--20px);
-    text-align: center;
-    margin-bottom: 20px;
   }
   @media (hover: hover) {
     .product:hover {
