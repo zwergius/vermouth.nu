@@ -8,7 +8,7 @@
       <Link href="/">Hjem</Link>
       <div class="menu">
         <Link href="/list-store">Forhandlere</Link>
-        <Link href="/products">Produkter</Link>
+        <a href="/products"> Produkter </a>
       </div>
     </nav>
   </div>
