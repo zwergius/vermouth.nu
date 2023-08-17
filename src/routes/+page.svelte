@@ -34,7 +34,7 @@
     flex: 1;
     margin: auto 0;
     width: 100%;
-    padding: 30px 100px;
+    padding: 40px 100px;
   }
 
   @media only screen and (max-width: 1024px) {
