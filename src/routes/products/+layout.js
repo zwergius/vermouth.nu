@@ -1,5 +1,5 @@
 import { vermouths } from './data.js'
-
+/** @type {import('./$types').LayoutLoad} */
 export function load() {
   return {
     card: vermouths.map((vermouth) => ({
