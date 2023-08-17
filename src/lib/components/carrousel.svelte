@@ -63,7 +63,7 @@
   .image {
     z-index: -1;
     position: absolute;
-    bottom: 50px;
+    bottom: 0px;
     aspect-ratio: 16/7;
     width: 100%;
   }

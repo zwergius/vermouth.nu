@@ -69,7 +69,7 @@
     gap: 30px;
   }
   section {
-    padding: 100px;
+    padding: 50px 100px 60px;
   }
   @media only screen and (max-width: 1024px) {
     section {

@@ -95,10 +95,11 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding-left: 100px;
+    padding-top: 50px;
   }
   section {
     width: 100%;
-    padding: 100px;
+    padding: 0px 100px;
   }
   .truncate {
     display: block;
@@ -117,7 +118,7 @@
       width: 100%;
     }
     .container {
-      padding: 50px 50px;
+      padding: 45px 50px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -132,7 +133,7 @@
       padding-bottom: 30px;
     }
     .container {
-      padding: 50px 15px 50px 15px;
+      padding: 40px 15px 50px 15px;
     }
   }
 </style>

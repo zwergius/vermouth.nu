@@ -38,7 +38,7 @@
   .wrapper {
     display: flex;
     flex: 1;
-    padding-top: 280px;
+    padding-top: 260px;
   }
   .container {
     z-index: 100;
@@ -52,8 +52,10 @@
     width: 100%;
   }
   .logo-desktop {
+    background-image: linear-gradient(#f0a9a8 90%, #9e9e9f00 100%);
     width: 100%;
     z-index: 10;
+    padding-bottom: 30px;
   }
 
   .logo-mobile {
@@ -66,14 +68,15 @@
     .wrapper {
       padding-top: 370px;
     }
-
     .logo-desktop {
       display: none;
     }
     .logo-mobile {
+      background-image: linear-gradient(#f0a9a8 90%, #9e9e9f00 100%);
       display: block;
       z-index: 10;
       width: 100%;
+      padding-bottom: 20px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -85,10 +88,6 @@
     }
     .logo-desktop {
       display: none;
-    }
-
-    .logo-mobile {
-      margin-bottom: 20px;
     }
   }
 </style>
