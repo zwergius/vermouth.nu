@@ -3,32 +3,32 @@
   export let data
 </script>
 
-<div class="content">
+<div class="container">
   <div class="image">
     <img src={data.vermouth.image} alt="" />
   </div>
-  <div class="container">
+  <div class="content">
     <h1>{data.vermouth.brand}</h1>
     <div class="wrap">
-      <div class="info">
-        <h2>{data.vermouth.subName}</h2>
+      <div class="paragraphs">
+        <h2>{data.vermouth.titleName}</h2>
         <p>
-          {data.vermouth.introtext}
+          {data.vermouth.intro}
         </p>
       </div>
-      <div class="info">
+      <div class="paragraphs">
         <h2>Smag & Duft</h2>
         <p>
           {data.vermouth.taste}
         </p>
       </div>
-      <div class="info">
+      <div class="paragraphs">
         <h2>Anbefaling</h2>
         <p>
           {data.vermouth.recommendation}
         </p>
       </div>
-      <div class="info">
+      <div class="paragraphs">
         <h2>Oprindelse</h2>
         <p>
           {data.vermouth.origin}
@@ -51,7 +51,7 @@
     display: flex;
     flex-wrap: wrap;
   }
-  .info {
+  .paragraphs {
     width: 50%;
   }
   h1 {
@@ -65,7 +65,7 @@
   p {
     padding-left: 15px;
   }
-  .container {
+  .content {
     display: flex;
     justify-content: center;
     width: 75%;
@@ -73,30 +73,30 @@
 
     border-radius: 19px;
   }
-  .content {
+  .container {
     padding: 20px 100px;
     color: var(--secondary);
     display: flex;
   }
   @media only screen and (max-width: 1024px) {
-    .content {
+    .container {
       padding: 0px 50px 30px 50px;
     }
     .image {
       width: 50%;
     }
-    .container {
+    .content {
       width: 50%;
     }
     .wrap {
       display: block;
     }
-    .info {
+    .paragraphs {
       width: 100%;
     }
   }
   @media only screen and (max-width: 767px) {
-    .content {
+    .container {
       flex-direction: column;
       justify-content: center;
       padding: 0px 10px 30px 10px;
@@ -104,7 +104,7 @@
     .image {
       width: 100%;
     }
-    .container {
+    .content {
       width: 100%;
     }
   }

@@ -19,8 +19,8 @@ export const vermouths = [
     image: forzudoRojo,
     cardImage: forzudoRojoSmall,
     name: 'forzudo-rojo',
-    subName: 'Klassens frække dreng',
-    introtext:
+    titleName: 'Klassens frække dreng',
+    intro:
       'Med sin mørke mahogni farve, præsenterer denne vermouth sig på klassisk vis, og dog med et tvist.',
     taste:
       'Smagen er levende og koncentreret, hvor især kardemommen og de tørrede frugter er stærke, derudover er der nuancer af lakrids og vanilje. Duften er intens af søde krydderier blandet med tørret frugt som afsluttes med noter af kaffe. Dette gør sig gældende i en lang og vedvarende sødme med et perfekt bitter touch.',
@@ -33,8 +33,8 @@ export const vermouths = [
     name: 'forzudo-blanco',
     image: forzudoBlanco,
     cardImage: forzudoBlancoSmall,
-    subName: 'Forfriskende og stærke vanedanende ',
-    introtext: 'Forzudo Blanco er yderste populær, og et perfekt følgeskab til en dag i solen.',
+    titleName: 'Forfriskende og stærke vanedanende ',
+    intro: 'Forzudo Blanco er yderste populær, og et perfekt følgeskab til en dag i solen.',
     taste:
       'Forzudo Blanco giver en cremet fornemmelse med smagsnuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter. Her fås en meget balanceret Vermouth med lige dele sødme og bitter.',
     recommendation: 'Bør nydes afkølet og med en skive grape.',
@@ -46,8 +46,8 @@ export const vermouths = [
     name: 'sardino-rojo',
     image: sardinoRojo,
     cardImage: sardinoRojoSmall,
-    subName: 'Sømandens foretrukne.',
-    introtext:
+    titleName: 'Sømandens foretrukne.',
+    intro:
       'Sardino slår sig selv op på at være en maritim vermouth, den kommer helt fra den Spanske vestkyst, hvor der er store fiske traditioner og lækre råvarer.',
     taste:
       'En rigtig god allround rød Vermouth som hverken er for sød, tør eller bitter - perfekt til enhver lejlighed. Noter af karamel, camille & kanel.',
@@ -60,8 +60,8 @@ export const vermouths = [
     name: 'sardino-blanco',
     image: sardinoBlanco,
     cardImage: sardinoBlancoSmall,
-    subName: 'Maritim Vermouth fra den Spanske vestkyst.',
-    introtext:
+    titleName: 'Maritim Vermouth fra den Spanske vestkyst.',
+    intro:
       'Sardino Blanco, lagret i lerkrukker ved Atlanterhavets kyst - Her i den hvide udgave som er en anelse lettere.',
     taste:
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',
@@ -75,8 +75,8 @@ export const vermouths = [
     name: 'carmeleta-orange',
     image: carmeletaOrange,
     cardImage: carmeletaOrangeSmall,
-    subName: 'Orange og Trendy',
-    introtext:
+    titleName: 'Orange og Trendy',
+    intro:
       'Carmeleta Vermouth Orange præsenterer en levende orange farve, en hyldest til Appelsinen fra Valencia. Brygget på hvide druer fra middelhavsområdet, herunder Malvasía, Moscatel, Planta, udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Sødere og lettere end en traditionel vermouth, egner sig til alle tidspunkter af dagen. En ny vermouth til nye tider.',
     taste:
       'Noter af citrusfrugter, kager, vanille karamel. Intens smag, afbalanceret med syrlighed. Let bitter citrus og krydret eftersmag. Carmeleta Orange har en frisk duft, balanceret med syrlighed samt søde og bitre undertoner.',
@@ -88,8 +88,8 @@ export const vermouths = [
     name: 'carmeleta-blanco',
     image: carmeletaBlanco,
     cardImage: carmeletaBlancoSmall,
-    subName: 'Hvid og Autentisk',
-    introtext:
+    titleName: 'Hvid og Autentisk',
+    intro:
       'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
     taste:
       'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian.Næsen er forfriskende og har klare noter af timian og fennikel.',
@@ -103,8 +103,8 @@ export const vermouths = [
     name: 'tabira',
     image: tabira,
     cardImage: tabiraSmall,
-    subName: 'Elegant Vermouth med dragende næse og smag - en absolut favorit',
-    introtext:
+    titleName: 'Elegant Vermouth med dragende næse og smag - en absolut favorit',
+    intro:
       'Vinhuset Meoriga, fra byen Leon præsenterer den første vermouth lavet på druen “Prieto Picudo”. En premium vermouth med begrænset årlig produktion, baseret på en original opskrift som er mere end 90 år gammel (1927).',
     taste:
       'Sødlig og blød i sin smag, dens friskhed og duft af appelsin gør den nem at drikke. Eftersmagen ligger langt tilbage i munden og arbejder sig ind, igennem sine mange aromaer og krydderier. Perfekt balance mellem det søde og det friske, som gør denne vermouth meget komplet. Bør nydes kold med is og appelsinskive, og med oliven som snack.',

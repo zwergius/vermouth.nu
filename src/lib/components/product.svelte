@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition'
 
   export let index: number
-  export let cardImage: string | undefined
+  export let cardImage: string
   export let brand: string
 </script>
 
