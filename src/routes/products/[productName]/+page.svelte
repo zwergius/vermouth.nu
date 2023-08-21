@@ -65,7 +65,6 @@
   #info .paragraphs {
     width: 75%;
   }
-
   .image {
     width: 25%;
   }
@@ -74,7 +73,6 @@
     object-fit: cover;
     height: 100%;
   }
-
   .paragraphs {
     width: 100%;
   }
@@ -95,7 +93,6 @@
     justify-content: center;
     width: 50%;
     flex-direction: column;
-
     border-radius: 19px;
   }
   .wrap {
