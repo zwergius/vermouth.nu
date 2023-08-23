@@ -5,99 +5,80 @@
   export let image: string
   export let name: string
   export let brand: string
-  export let size: string | undefined
+  export let sizeAndDegrees: string | undefined
   export let region: string | undefined
 </script>
 
-<!-- <a href="#"> -->
 <div in:fade={{ duration: 300, delay: index * 150 }} class="card">
   <img src={image} alt="" />
-
   <div class="content">
-    <h2 class="title">{brand} {name}</h2>
-    <p class="origin"><stronge>Oprindelse</stronge></p>
+    <h2>{brand} {name}</h2>
+    <p class="origin">Oprindelse</p>
     <p class="region">{region}</p>
     <div class="footer">
       <p>Spanien</p>
-      <p class="size">{size}</p>
+      <p class="sizeAndDegrees">{sizeAndDegrees}</p>
     </div>
   </div>
 </div>
 
-<!-- </a> -->
-
 <style>
-  .footer {
-    display: flex;
-    justify-content: space-between;
-  }
-  .region {
-    padding-bottom: 5px;
-  }
-  .size {
+  .sizeAndDegrees {
     padding-bottom: 5px;
     text-align: right;
   }
   .origin {
     font-size: 13px;
-    font-weight: 800;
-    padding-bottom: 5px;
+    font-weight: 900;
+  }
+  h2 {
+    padding: 20px 0px;
+    color: var(--white);
+    text-align: center;
+    font-size: var(--25px);
   }
   .card {
-    margin: auto;
     overflow: hidden;
     position: relative;
-    transition: transform 0.3s;
     border: 2px solid var(--secondary);
     border-radius: 20px;
-    transition: transform 0.2s ease-in-out;
     padding-bottom: 50px;
   }
   img {
     display: block;
-    transition: transform 0.2s;
+    transition: transform 0.15s;
     width: 100%;
     object-fit: cover;
     padding: 50px;
   }
-  .title {
-    padding-bottom: 10px;
-    color: var(--white);
-  }
   .content {
+    height: 33%;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    position: absolute;
+    padding: 0px 16px 10px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transform: translate(0, 52%);
+    transition: transform 0.15s;
     font-size: 12px;
     font-weight: 500;
     background-color: var(--blue90);
     color: var(--white);
-    display: flex;
-    flex-direction: column;
-    height: 33%;
-    justify-content: center;
-    left: 0;
-    padding: 14px 16px 0 16px;
-    position: absolute;
-    top: 0;
-    transform: translate(0, 256%);
-    transition: transform 0.2s;
-    width: 100%;
-    z-index: 1;
+    gap: 5px;
   }
-  h2 {
-    color: var(--secondary);
-    text-align: center;
-    font-size: var(--25px);
+  .footer {
+    display: flex;
+    justify-content: space-between;
   }
   @media (hover: hover) {
     .card:hover img {
       transform: scale(1.5) rotateZ(10deg);
-      transition: transform 0.2s 0.3s;
     }
     .card:hover .content {
-      transform: translate(0, 204%);
-      transition: transform 0.2s 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.03);
+      transform: translate(0, 0);
     }
   }
 </style>
