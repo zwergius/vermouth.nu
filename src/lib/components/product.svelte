@@ -24,7 +24,6 @@
 
 <style>
   .sizeAndDegrees {
-    padding-bottom: 5px;
     text-align: right;
   }
   .origin {
@@ -57,7 +56,7 @@
     left: 0;
     bottom: 0;
     position: absolute;
-    padding: 0px 16px 10px 16px;
+    padding: 0px 16px 13px 16px;
     display: flex;
     flex-direction: column;
     justify-content: center;
