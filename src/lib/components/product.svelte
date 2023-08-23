@@ -56,7 +56,7 @@
     left: 0;
     bottom: 0;
     position: absolute;
-    padding: 0px 16px 13px 16px;
+    padding: 0px 16px 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -66,7 +66,7 @@
     font-weight: 500;
     background-color: var(--blue90);
     color: var(--white);
-    gap: 5px;
+    gap: 10px;
   }
   .footer {
     display: flex;
