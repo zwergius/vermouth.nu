@@ -1,4 +1,5 @@
 <script>
+  import SEO from '$lib/components/SEO.svelte'
   import Link from '$lib/components/link.svelte'
 
   const stores = [
@@ -47,6 +48,8 @@
     },
   ]
 </script>
+
+<SEO />
 
 <section>
   <div class="container">

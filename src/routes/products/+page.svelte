@@ -7,6 +7,7 @@
   import carmeletaOrange from '$lib/assets/bottles/orange-carmeleta.avif'
   import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco.avif'
   import tabira from '$lib/assets/bottles/tabira.avif'
+  import SEO from '$lib/components/SEO.svelte'
 
   const vermouths = [
     {
@@ -50,6 +51,8 @@
     },
   ]
 </script>
+
+<SEO />
 
 <section>
   <div class="container">
