@@ -2,13 +2,13 @@
   import { fade } from 'svelte/transition'
 
   export let image: string
-  export let name: string
   export let index: number
+  export let name: string
 </script>
 
 <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-  <img src={image} alt={name} />
-  <h1>{name}</h1>
+  <img style="width: 300px; height: 350px;" src={image} alt={name} />
+  <h2>{name}</h2>
 </div>
 
 <style>
@@ -22,7 +22,7 @@
     object-fit: cover;
     padding: 50px;
   }
-  h1 {
+  h2 {
     color: var(--secondary);
     text-align: center;
     font-size: var(--25px);

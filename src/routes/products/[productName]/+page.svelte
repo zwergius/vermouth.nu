@@ -4,12 +4,12 @@
 </script>
 
 <div class="wrap">
-  <div class="image">
-    <img src={image} alt={name} />
+  <div class="boximage">
+    <img style="width: 430px; height: 440px;" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
-    <p class="origin">
+    <p class="italictext">
       {origin}
     </p>
     <div class="paragraphs">
@@ -48,11 +48,11 @@
     object-fit: cover;
     height: auto;
   }
-  .image {
+  .boximage {
     position: sticky;
     width: 35%;
   }
-  .origin {
+  .italictext {
     padding: 0;
     font-style: italic;
     padding-bottom: 30px;
@@ -75,7 +75,7 @@
     .wrap {
       padding: 50px;
     }
-    .image {
+    .boximage {
       width: 40%;
     }
     .content {
@@ -94,7 +94,7 @@
       justify-content: center;
       padding: 30px 10px;
     }
-    .image {
+    .boximage {
       width: 100%;
     }
     .content {

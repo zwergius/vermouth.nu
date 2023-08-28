@@ -3,7 +3,7 @@
   import { vermouths } from './data.js'
 
   const productInfo = vermouths.map((vermouth) => ({
-    dir: vermouth.name.toLocaleLowerCase().replace(' ', '-'),
+    dir: vermouth.name.toLowerCase().replace(' ', '-'),
     image: vermouth.cardImage,
     name: vermouth.name,
   }))
@@ -13,7 +13,7 @@
   <div class="container">
     {#each productInfo as { image, dir, name }, index}
       <a href="/products/{dir}">
-        <Product {image} {name} {index} />
+        <Product {image} {index} {name} />
       </a>
     {/each}
   </div>
