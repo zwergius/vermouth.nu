@@ -63,38 +63,30 @@
 
 <section class="container">
   {#each vermouths as { image, name, brand, region, sizeAndDegrees }, index}
-    <div class="wrap">
-      <Product {image} {name} {sizeAndDegrees} {brand} {region} {index} />
-    </div>
+    <Product {image} {name} {sizeAndDegrees} {brand} {region} {index} />
   {/each}
 </section>
 
 <style>
-  .wrap {
-    width: 24%;
-  }
   .container {
-    display: flex;
-    flex-wrap: wrap;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    display: grid;
+    align-items: center;
     width: 100%;
-    gap: 20px;
+    grid-gap: 20px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
-    .wrap {
-      width: 47%;
-    }
     .container {
-      gap: 40px;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 40px;
       padding: 50px;
     }
   }
   @media only screen and (max-width: 767px) {
     .container {
+      grid-template-columns: 1fr;
       padding: 50px 15px;
-    }
-    .wrap {
-      width: 100%;
     }
   }
 </style>
