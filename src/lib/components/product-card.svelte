@@ -1,13 +1,13 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
 
-  export let cardImage: string
+  export let image: string
   export let name: string
   export let index: number
 </script>
 
 <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-  <img src={cardImage} alt={name} />
+  <img src={image} alt={name} />
   <h1>{name}</h1>
 </div>
 

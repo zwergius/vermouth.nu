@@ -60,6 +60,7 @@
     padding-bottom: 15px;
     padding-left: 5px;
   }
+
   .content {
     display: flex;
     width: 65%;

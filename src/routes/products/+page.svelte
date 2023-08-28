@@ -4,16 +4,16 @@
 
   const productInfo = vermouths.map((vermouth) => ({
     dir: vermouth.name.toLocaleLowerCase().replace(' ', '-'),
-    cardImage: vermouth.cardImage,
+    image: vermouth.cardImage,
     name: vermouth.name,
   }))
 </script>
 
 <section>
   <div class="container">
-    {#each productInfo as { cardImage, dir, name }, index}
+    {#each productInfo as { image, dir, name }, index}
       <a href="/products/{dir}">
-        <Product {cardImage} {name} {index} />
+        <Product {image} {name} {index} />
       </a>
     {/each}
   </div>
