@@ -31,9 +31,11 @@
     font-weight: 900;
   }
   h2 {
-    padding: 20px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: var(--white);
-    text-align: center;
+
     font-size: var(--25px);
   }
   .card {
