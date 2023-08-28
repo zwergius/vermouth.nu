@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
 
-  export let index: number
   export let cardImage: string
   export let name: string
+  export let index: number
 </script>
 
 <div in:fade={{ duration: 300, delay: index * 150 }} class="product">

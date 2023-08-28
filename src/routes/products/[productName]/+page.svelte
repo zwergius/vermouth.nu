@@ -2,7 +2,7 @@
   /** @type {import('./$types').PageData} */
 
   export let data
-  let { name, image, intro, origin, recommendation, taste, titleName } = data.vermouth
+  let { image, intro, name, origin, recommendation, taste, titleName } = data.vermouth
 </script>
 
 <div class="wrap">

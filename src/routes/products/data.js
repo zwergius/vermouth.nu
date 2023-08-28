@@ -1,16 +1,16 @@
-import sardinoBlanco from '$lib/assets/bottles/sardino-blanco-big.avif'
-import sardinoRojo from '$lib/assets/bottles/sardino-rojo-big.avif'
-import forzudoRojo from '$lib/assets/bottles/forzudo-rojo-big.webp'
-import forzudoBlanco from '$lib/assets/bottles/Frozudo-Blanco_med_skygge_900x.webp'
-import carmeletaOrange from '$lib/assets/bottles/orange-carmelta-big.avif'
 import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco-big.avif'
-import tabira from '$lib/assets/bottles/tabira-big.avif'
-import sardinoBlancoSmall from '$lib/assets/bottles/sardino-blanco.avif'
-import sardinoRojoSmall from '$lib/assets/bottles/sardino-rojo.avif'
-import forzudoRojoSmall from '$lib/assets/bottles/forzudo-rojo.avif'
-import forzudoBlancoSmall from '$lib/assets/bottles/forzudo-blanco.avif'
-import carmeletaOrangeSmall from '$lib/assets/bottles/orange-carmeleta.avif'
 import carmeletaBlancoSmall from '$lib/assets/bottles/carmeleta-blanco.avif'
+import carmeletaOrange from '$lib/assets/bottles/orange-carmelta-big.avif'
+import carmeletaOrangeSmall from '$lib/assets/bottles/orange-carmeleta.avif'
+import forzudoBlanco from '$lib/assets/bottles/Frozudo-Blanco_med_skygge_900x.webp'
+import forzudoBlancoSmall from '$lib/assets/bottles/forzudo-blanco.avif'
+import forzudoRojo from '$lib/assets/bottles/forzudo-rojo-big.webp'
+import forzudoRojoSmall from '$lib/assets/bottles/forzudo-rojo.avif'
+import sardinoBlanco from '$lib/assets/bottles/sardino-blanco-big.avif'
+import sardinoBlancoSmall from '$lib/assets/bottles/sardino-blanco.avif'
+import sardinoRojo from '$lib/assets/bottles/sardino-rojo-big.avif'
+import sardinoRojoSmall from '$lib/assets/bottles/sardino-rojo.avif'
+import tabira from '$lib/assets/bottles/tabira-big.avif'
 import tabiraSmall from '$lib/assets/bottles/tabira.avif'
 
 export const vermouths = [
@@ -26,7 +26,6 @@ export const vermouths = [
       'Smagen er levende og koncentreret, hvor især kardemommen og de tørrede frugter er stærke, derudover er der nuancer af lakrids og vanilje. Duften er intens af søde krydderier blandet med tørret frugt som afsluttes med noter af kaffe. Dette gør sig gældende i en lang og vedvarende sødme med et perfekt bitter touch.',
     titleName: 'Klassens frække dreng',
   },
-
   {
     cardImage: forzudoBlancoSmall,
     image: forzudoBlanco,
@@ -38,7 +37,6 @@ export const vermouths = [
       'Forzudo Blanco giver en cremet fornemmelse med smagsnuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter. Her fås en meget balanceret Vermouth med lige dele sødme og bitter.',
     titleName: 'Forfriskende og stærke vanedanende',
   },
-
   {
     cardImage: sardinoRojoSmall,
     image: sardinoRojo,
@@ -65,7 +63,6 @@ export const vermouths = [
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',
     titleName: 'Maritim Vermouth fra den Spanske vestkyst',
   },
-
   {
     cardImage: carmeletaOrangeSmall,
     image: carmeletaOrange,
@@ -91,7 +88,6 @@ export const vermouths = [
       'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian.Næsen er forfriskende og har klare noter af timian og fennikel.',
     titleName: 'Hvid og Autentisk',
   },
-
   {
     name: 'Tabira',
     cardImage: tabiraSmall,
