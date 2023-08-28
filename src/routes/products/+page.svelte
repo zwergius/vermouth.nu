@@ -73,7 +73,7 @@
     display: grid;
     align-items: center;
     width: 100%;
-    grid-gap: 20px;
+    grid-gap: 50px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {

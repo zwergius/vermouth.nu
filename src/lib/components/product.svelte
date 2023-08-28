@@ -27,7 +27,7 @@
     text-align: right;
   }
   .origin {
-    font-size: 13px;
+    font-size: var(--13px);
     font-weight: 900;
   }
   h2 {
