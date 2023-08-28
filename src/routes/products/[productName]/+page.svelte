@@ -1,6 +1,4 @@
 <script>
-  /** @type {import('./$types').PageData} */
-
   export let data
   let { image, intro, name, origin, recommendation, taste, titleName } = data.vermouth
 </script>
@@ -57,8 +55,7 @@
   .origin {
     padding: 0;
     font-style: italic;
-    padding-bottom: 15px;
-    padding-left: 5px;
+    padding-bottom: 30px;
   }
 
   .content {
