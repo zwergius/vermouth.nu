@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transform: translate(0, 52%);
+    transform: translate(0, 59%);
     transition: transform 0.15s;
     font-size: 12px;
     font-weight: 500;
