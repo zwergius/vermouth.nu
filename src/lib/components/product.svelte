@@ -74,7 +74,7 @@
   }
   @media (hover: hover) {
     .card:hover img {
-      transform: scale(1.5) rotateZ(10deg);
+      transform: scale(1.4) rotateZ(10deg);
     }
     .card:hover .content {
       transform: translate(0, 0);

@@ -76,6 +76,7 @@
   .container {
     display: flex;
     flex-wrap: wrap;
+    width: 100%;
     gap: 20px;
     padding: 100px;
   }
