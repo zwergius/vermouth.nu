@@ -3,12 +3,12 @@
 
   export let index: number
   export let cardImage: string
-  export let brand: string
+  export let name: string
 </script>
 
 <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-  <img src={cardImage} alt="" />
-  <h2>{brand}</h2>
+  <img src={cardImage} alt={name} />
+  <h1>{name}</h1>
 </div>
 
 <style>
@@ -22,7 +22,7 @@
     object-fit: cover;
     padding: 50px;
   }
-  h2 {
+  h1 {
     color: var(--secondary);
     text-align: center;
     font-size: var(--25px);

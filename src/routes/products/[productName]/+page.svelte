@@ -2,134 +2,98 @@
   /** @type {import('./$types').PageData} */
 
   export let data
+  let { name, image, intro, origin, recommendation, taste, titleName } = data.vermouth
 </script>
 
-<div class="container">
-  <div class="wrap">
-    <div class="image">
-      <img src={data.vermouth.image} alt="" />
-    </div>
-    <div class="content">
-      <h1>{data.vermouth.brand}</h1>
-
-      <div class="paragraphs">
-        <h2>{data.vermouth.titleName}</h2>
-        <p>
-          {data.vermouth.intro}
-        </p>
-      </div>
-      <a class="info" href="#info"> <p>Flere oplysninger</p> </a>
-    </div>
+<div class="wrap">
+  <div class="image">
+    <img src={image} alt={name} />
   </div>
-
-  <div id="info">
-    <h2 class="description">Produkt beskrivelse</h2>
+  <div class="content">
+    <h1>{name}</h1>
+    <p class="origin">
+      {origin}
+    </p>
     <div class="paragraphs">
-      <h2>Smag & Duft</h2>
+      <h3>{titleName}</h3>
       <p>
-        {data.vermouth.taste}
+        {intro}
       </p>
     </div>
     <div class="paragraphs">
-      <h2>Anbefaling</h2>
+      <h3>Smag & Duft</h3>
       <p>
-        {data.vermouth.recommendation}
+        {taste}
       </p>
     </div>
     <div class="paragraphs">
-      <h2>Oprindelse</h2>
+      <h3>Anbefaling</h3>
       <p>
-        {data.vermouth.origin}
+        {recommendation}
       </p>
     </div>
   </div>
 </div>
 
 <style>
-  .description {
-    font-size: 30px;
+  h3 {
+    font-weight: 700;
+    padding: 10px 5px;
   }
-  .info {
-    padding-top: 30px;
-    text-align: right;
-    color: var(--red);
-  }
-  #info {
-    padding: 50px;
-    color: var(--secondary);
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-  }
-  #info .paragraphs {
-    width: 75%;
-  }
-  .image {
-    width: 25%;
+  p {
+    line-height: 30px;
+    font-size: 20px;
+    padding: 0 0 15px 15px;
   }
   img {
     width: 100%;
     object-fit: cover;
-    height: 100%;
+    height: auto;
   }
-  .paragraphs {
-    width: 100%;
+  .image {
+    position: sticky;
+    width: 35%;
   }
-  h1 {
-    text-align: center;
-    padding: 20px 10px;
-    border-bottom: 2px solid var(--secondary);
-  }
-  h2 {
-    padding: 10px 5px;
-  }
-  p {
-    font-size: 20px;
-    padding-left: 15px;
+  .origin {
+    padding: 0;
+    font-style: italic;
+    padding-bottom: 15px;
+    padding-left: 5px;
   }
   .content {
     display: flex;
-    justify-content: center;
-    width: 50%;
+    width: 65%;
     flex-direction: column;
-    border-radius: 19px;
   }
   .wrap {
-    padding: 100px;
     color: var(--secondary);
-    display: flex;
     justify-content: center;
+    display: flex;
+    padding: 100px 250px;
+    gap: 20px;
+    width: 100%;
   }
   @media only screen and (max-width: 1024px) {
     .wrap {
       padding: 50px;
     }
     .image {
-      width: 50%;
+      width: 40%;
     }
     .content {
-      width: 50%;
+      width: 60%;
     }
-
-    #info {
-      padding: 170px 50px 100px;
-    }
-
-    #info .paragraphs {
-      width: 100%;
-    }
-    .paragraphs {
-      width: 100%;
+    img {
+      height: 70%;
     }
   }
   @media only screen and (max-width: 767px) {
+    p {
+      font-size: 16px;
+    }
     .wrap {
       flex-direction: column;
       justify-content: center;
-      padding: 30px 10px;
-    }
-    #info {
       padding: 30px 10px;
     }
     .image {
@@ -137,6 +101,9 @@
     }
     .content {
       width: 100%;
+    }
+    img {
+      height: 100%;
     }
   }
 </style>

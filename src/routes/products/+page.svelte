@@ -1,14 +1,19 @@
 <script lang="ts">
-  import Product from '$lib/components/product.svelte'
+  import Product from '$lib/components/product-card.svelte'
+  import { vermouths } from './data.js'
 
-  export let data
+  const productInfo = vermouths.map((vermouth) => ({
+    dir: vermouth.name.toLocaleLowerCase().replace(' ', '-'),
+    cardImage: vermouth.cardImage,
+    name: vermouth.name,
+  }))
 </script>
 
 <section>
   <div class="container">
-    {#each data.card as { cardImage, name, brand }, index}
-      <a href="/products/{name}">
-        <Product {cardImage} {brand} {index} />
+    {#each productInfo as { cardImage, dir, name }, index}
+      <a href="/products/{dir}">
+        <Product {cardImage} {name} {index} />
       </a>
     {/each}
   </div>
