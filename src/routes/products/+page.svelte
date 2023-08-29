@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import Product from '$lib/components/product.svelte'
   import sardinoBlanco from '$lib/assets/bottles/sardino-blanco.avif'
   import sardinoRojo from '$lib/assets/bottles/sardino-rojo.avif'
@@ -63,13 +64,22 @@
 
 <section class="container">
   {#each vermouths as { image, name, brand, region, sizeAndDegrees }, index}
-    <Product {image} {name} {sizeAndDegrees} {brand} {region} {index} />
+    <div in:fade={{ duration: 300, delay: index * 150 }} class="card">
+      <Product {image} {name} {sizeAndDegrees} {brand} {region} />
+    </div>
   {/each}
 </section>
 
 <style>
+  .card {
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--secondary);
+    border-radius: 20px;
+    padding-bottom: 50px;
+  }
   .container {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     display: grid;
     align-items: center;
     width: 100%;
@@ -78,14 +88,12 @@
   }
   @media only screen and (max-width: 1024px) {
     .container {
-      grid-template-columns: 1fr 1fr;
       grid-gap: 40px;
       padding: 50px;
     }
   }
   @media only screen and (max-width: 767px) {
     .container {
-      grid-template-columns: 1fr;
       padding: 50px 15px;
     }
   }
