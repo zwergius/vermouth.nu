@@ -64,20 +64,13 @@
 
 <section class="container">
   {#each vermouths as { image, name, brand, region, sizeAndDegrees }, index}
-    <div in:fade={{ duration: 300, delay: index * 150 }} class="card">
+    <div in:fade={{ duration: 300, delay: index * 150 }}>
       <Product {image} {name} {sizeAndDegrees} {brand} {region} />
     </div>
   {/each}
 </section>
 
 <style>
-  .card {
-    overflow: hidden;
-    position: relative;
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
-    padding-bottom: 50px;
-  }
   .container {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     display: grid;

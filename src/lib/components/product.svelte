@@ -19,6 +19,13 @@
 </div>
 
 <style>
+  .container {
+    overflow: hidden;
+    position: relative;
+    border: 2px solid var(--secondary);
+    border-radius: 20px;
+    padding-bottom: 50px;
+  }
   .sizeAndDegrees {
     text-align: right;
   }
@@ -28,7 +35,7 @@
     justify-content: center;
     align-items: center;
     color: var(--white);
-    font-size: var(--25px);
+    font-size: var(--font-5);
   }
   img {
     display: block;
@@ -36,6 +43,9 @@
     width: 100%;
     object-fit: cover;
     padding: 50px;
+  }
+  p {
+    font-size: var(--12px);
   }
   .content {
     width: 100%;
@@ -46,9 +56,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transform: translate(0, 33%);
+    transform: translate(0, 32px);
     transition: transform 0.15s;
-    font-size: 12px;
     font-weight: 500;
     background-color: var(--blue90);
     color: var(--white);
