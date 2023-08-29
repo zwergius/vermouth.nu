@@ -10,7 +10,6 @@
   <img src={image} alt={name} />
   <div class="content">
     <h2>{brand}{name}</h2>
-
     <p class="region">{region}</p>
     <div class="footer">
       <p>Spanien</p>
