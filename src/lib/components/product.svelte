@@ -22,7 +22,6 @@
   .sizeAndDegrees {
     text-align: right;
   }
-
   h2 {
     padding: 15px;
     display: flex;
