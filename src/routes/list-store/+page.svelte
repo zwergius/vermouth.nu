@@ -47,9 +47,11 @@
       href: 'http://omegnogvenner.dk',
     },
   ]
+  const title = 'vermouth.nu stores'
+  const description = 'Butikker og barer, hvor du kan finde vores udvalg af vermouth'
 </script>
 
-<SEO />
+<SEO {title} {description} />
 
 <section>
   <div class="container">

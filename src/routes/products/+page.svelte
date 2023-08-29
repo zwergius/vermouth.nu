@@ -50,9 +50,11 @@
       image: tabira,
     },
   ]
+  const title = 'vermouth.nu products'
+  const description = 'Vores udvalg af vermouth for øjeblikket'
 </script>
 
-<SEO />
+<SEO {title} {description} />
 
 <section>
   <div class="container">

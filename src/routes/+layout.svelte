@@ -6,9 +6,11 @@
   import logoMobile from '$lib/assets/diagonal-logo.svg'
   import RingText from '$lib/components/ring-text.svelte'
   import SEO from '$lib/components/SEO.svelte'
+  const title = 'vermouth.nu'
+  const description = 'Spansk vermouth-distributør i premium drinks til en god pris'
 </script>
 
-<SEO />
+<SEO {title} {description} />
 <div class="container">
   <Header />
   <div class="logo-mobile">
