@@ -10,7 +10,7 @@
   <img src={image} alt={name} />
   <div class="content">
     <h2>{brand}{name}</h2>
-    <p class="origin">Oprindelse</p>
+
     <p class="region">{region}</p>
     <div class="footer">
       <p>Spanien</p>
@@ -23,12 +23,9 @@
   .sizeAndDegrees {
     text-align: right;
   }
-  .origin {
-    font-size: var(--13px);
-    font-weight: 900;
-  }
+
   h2 {
-    padding: 20px;
+    padding: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -51,13 +48,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transform: translate(0, 53%);
+    transform: translate(0, 33%);
     transition: transform 0.15s;
     font-size: 12px;
     font-weight: 500;
     background-color: var(--blue90);
     color: var(--white);
-    gap: 10px;
   }
   .footer {
     display: flex;
