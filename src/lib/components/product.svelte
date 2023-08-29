@@ -35,7 +35,7 @@
     justify-content: center;
     align-items: center;
     color: var(--white);
-    font-size: var(--font-5);
+    font-size: var(--25px);
   }
   img {
     display: block;
