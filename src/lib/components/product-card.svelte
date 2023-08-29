@@ -7,7 +7,7 @@
 </script>
 
 <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
-  <img style="width: 300px; height: 350px;" src={image} alt={name} />
+  <img width="300px" height="350px" src={image} alt={name} />
   <h2>{name}</h2>
 </div>
 

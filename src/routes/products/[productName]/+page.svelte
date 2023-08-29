@@ -5,7 +5,7 @@
 
 <div class="wrap">
   <div class="boximage">
-    <img style="width: 430px; height: 440px;" src={image} alt={name} />
+    <img width="430px" height="440px" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
