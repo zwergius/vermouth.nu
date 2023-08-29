@@ -4,12 +4,12 @@
 </script>
 
 <div class="wrap">
-  <div class="boximage">
-    <img width="430px" height="440px" src={image} alt={name} />
+  <div class="image-container">
+    <img width="330px" height="440px" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
-    <p class="italictext">
+    <p class="region">
       {origin}
     </p>
     <div class="paragraphs">
@@ -48,19 +48,17 @@
     object-fit: cover;
     height: auto;
   }
-  .boximage {
+  .image-container {
     position: sticky;
-    width: 35%;
+    min-width: 430px;
   }
-  .italictext {
+  .region {
     padding: 0;
     font-style: italic;
     padding-bottom: 30px;
   }
-
   .content {
     display: flex;
-    width: 65%;
     flex-direction: column;
   }
   .wrap {
@@ -73,16 +71,11 @@
   }
   @media only screen and (max-width: 1024px) {
     .wrap {
+      align-items: center;
       padding: 50px;
     }
-    .boximage {
-      width: 40%;
-    }
-    .content {
-      width: 60%;
-    }
-    img {
-      height: 70%;
+    .image-container {
+      min-width: 320px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -93,15 +86,6 @@
       flex-direction: column;
       justify-content: center;
       padding: 30px 10px;
-    }
-    .boximage {
-      width: 100%;
-    }
-    .content {
-      width: 100%;
-    }
-    img {
-      height: 100%;
     }
   }
 </style>
