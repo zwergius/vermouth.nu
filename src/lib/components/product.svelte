@@ -56,7 +56,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transform: translate(0, 32px);
+    transform: translate(0, var(--hiddenSpace));
     transition: transform 0.15s;
     font-weight: 500;
     background-color: var(--blue90);
