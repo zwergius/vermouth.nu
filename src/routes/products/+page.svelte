@@ -14,7 +14,7 @@
 <section>
   <div class="container">
     {#each productInfo as { image, dir, name }, index}
-      <div in:fade={{ duration: 300, delay: index * 150 }} class="product">
+      <div in:fade={{ duration: 300, delay: index * 150 }}>
         <a href="/products/{dir}">
           <Product {image} {name} />
         </a>
@@ -24,11 +24,6 @@
 </section>
 
 <style>
-  .product {
-    border: 2px solid var(--secondary);
-    border-radius: 20px;
-    transition: transform 0.2s ease-in-out;
-  }
   .container {
     width: 100%;
     display: flex;

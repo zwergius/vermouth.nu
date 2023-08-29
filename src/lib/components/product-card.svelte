@@ -10,6 +10,11 @@
 </div>
 
 <style>
+  .container {
+    border: 2px solid var(--secondary);
+    border-radius: 20px;
+    transition: transform 0.2s ease-in-out;
+  }
   img {
     width: 100%;
     object-fit: cover;
