@@ -42,10 +42,9 @@
     width: 120px;
   }
   g {
-    font-size: 23px;
+    font-size: var(--23px);
     fill: var(--interactive-button);
   }
-
   @keyframes rotating {
     from {
       transform: rotate(360deg);
