@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-
   import Product from '$lib/components/product-card.svelte'
   import { vermouths } from './data.js'
 
@@ -8,36 +7,39 @@
     dir: vermouth.name.toLowerCase().replace(' ', '-'),
     image: vermouth.cardImage,
     name: vermouth.name,
+    sizeAndDegrees: vermouth.sizeAndDegrees,
+    region: vermouth.region,
   }))
 </script>
 
-<section>
-  <div class="container">
-    {#each productInfo as { image, dir, name }, index}
-      <div in:fade={{ duration: 300, delay: index * 150 }}>
-        <a href="/products/{dir}">
-          <Product {image} {name} />
-        </a>
-      </div>
-    {/each}
-  </div>
+<section class="container">
+  {#each productInfo as { image, name, dir, region, sizeAndDegrees }, index}
+    <div in:fade={{ duration: 300, delay: index * 150 }}>
+      <a href="/products/{dir}">
+        <Product {image} {name} {sizeAndDegrees} {region} />
+      </a>
+    </div>
+  {/each}
 </section>
 
 <style>
   .container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: grid;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 30px;
-  }
-  section {
+    width: 100%;
+    grid-gap: 50px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
-    section {
-      padding: 50px 0 60px 0;
+    .container {
+      grid-gap: 40px;
+      padding: 50px;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    .container {
+      padding: 50px 15px;
     }
   }
 </style>

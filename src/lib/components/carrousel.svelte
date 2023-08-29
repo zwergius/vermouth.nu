@@ -94,7 +94,7 @@
   }
   ul {
     position: absolute;
-    bottom: 90px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
