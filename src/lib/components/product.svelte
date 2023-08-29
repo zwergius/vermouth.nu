@@ -35,7 +35,6 @@
     justify-content: center;
     align-items: center;
     color: var(--white);
-
     font-size: var(--25px);
   }
   .card {
