@@ -61,11 +61,11 @@
     aspect-ratio: 21/7;
   }
   .image {
+    aspect-ratio: 21/7;
     z-index: -1;
     position: absolute;
-    bottom: 50px;
-    aspect-ratio: 21/7;
     width: 100%;
+    padding-bottom: 50px;
   }
   img {
     object-fit: cover;
@@ -124,16 +124,15 @@
   }
   @media only screen and (max-width: 1024px) {
     .image {
-      aspect-ratio: 4/3;
+      aspect-ratio: 5/3;
+      padding-bottom: 0;
+      padding: 30px;
     }
 
     .carrousel {
       display: flex;
       justify-content: center;
-      aspect-ratio: 4/3;
-    }
-    ul {
-      bottom: 75px;
+      aspect-ratio: 5/3;
     }
 
     button.left,
@@ -142,9 +141,6 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    ul {
-      bottom: 30px;
-    }
     .image {
       bottom: 0;
       aspect-ratio: 1/1;
