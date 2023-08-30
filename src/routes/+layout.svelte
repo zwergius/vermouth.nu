@@ -1,16 +1,18 @@
 <script>
   import '../app.postcss'
-  import Footer from '$lib/components/footer.svelte'
   import Header from '$lib/components/header.svelte'
+  import Footer from '$lib/components/footer.svelte'
   import logoDesktop from '$lib/assets/logo-home.svg'
   import logoMobile from '$lib/assets/diagonal-logo.svg'
   import RingText from '$lib/components/ring-text.svelte'
   import SEO from '$lib/components/SEO.svelte'
-  const title = 'vermouth.nu'
-  const description = 'Spansk vermouth-distributør i premium drinks til en god pris'
 </script>
 
-<SEO {title} {description} />
+<SEO
+  title={'vermouth.nu'}
+  description={'Spansk vermouth-distributør i premium drinks til en god pris'}
+  image={'$lib/assets/forzudo.webp'}
+/>
 <div class="container">
   <Header />
   <div class="logo-mobile">

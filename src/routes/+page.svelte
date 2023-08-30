@@ -1,9 +1,8 @@
 <script lang="ts">
-  import SEO from '$lib/components/SEO.svelte'
-
   import Carrousel from '$lib/components/carrousel.svelte'
   import forzudo from '$lib/assets/forzudo.webp'
   import banner from '$lib/assets/banner.webp'
+  import SEO from '$lib/components/SEO.svelte'
   import tabira from '$lib/assets/tabira.webp'
 
   const images = [
@@ -23,11 +22,13 @@
       alt: '',
     },
   ]
-  const title = 'vermouth.nu'
-  const description = 'Spansk vermouth-distributør i premium drinks til en god pris'
 </script>
 
-<SEO {title} {description} />
+<SEO
+  title={'vermouth.nu'}
+  description={'Spansk vermouth-distributør i premium drinks til en god pris'}
+  image={'$lib/assets/forzudo.webp'}
+/>
 
 <div class="main">
   <Carrousel {images} />

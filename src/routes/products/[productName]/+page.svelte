@@ -3,12 +3,9 @@
 
   export let data
   let { image, intro, name, origin, recommendation, taste, titleName } = data.vermouth
-
-  const title = name
-  const description = intro
 </script>
 
-<SEO {title} {description} />
+<SEO title={name} description={intro} {image} />
 
 <div class="wrapper">
   <div class="image-container">

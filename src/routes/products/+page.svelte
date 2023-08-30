@@ -1,14 +1,15 @@
 <script lang="ts">
-  import SEO from '$lib/components/SEO.svelte'
   import { fade } from 'svelte/transition'
   import Product from '$lib/components/product-card.svelte'
+  import SEO from '$lib/components/SEO.svelte'
   import { vermouths } from './data.js'
-
-  const title = 'vermouth.nu products'
-  const description = 'Vores udvalg af vermouth for øjeblikket'
 </script>
 
-<SEO {title} {description} />
+<SEO
+  title={'vermouth.nu products'}
+  description={'Vores udvalg af vermouth for øjeblikket'}
+  image={'$lib/assets/forzudo.webp'}
+/>
 
 <section class="container">
   {#each vermouths as vermouth, index}

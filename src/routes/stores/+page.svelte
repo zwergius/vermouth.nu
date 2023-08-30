@@ -1,6 +1,6 @@
 <script>
-  import SEO from '$lib/components/SEO.svelte'
   import Link from '$lib/components/link.svelte'
+  import SEO from '$lib/components/SEO.svelte'
 
   const stores = [
     {
@@ -47,11 +47,13 @@
       href: 'http://omegnogvenner.dk',
     },
   ]
-  const title = 'vermouth.nu stores'
-  const description = 'Butikker og barer, hvor du kan finde vores udvalg af vermouth'
 </script>
 
-<SEO {title} {description} />
+<SEO
+  title={'vermouth.nu stores'}
+  description={'Butikker og barer, hvor du kan finde vores udvalg af vermouth'}
+  image={'$lib/assets/forzudo.webp'}
+/>
 
 <section>
   <div class="container">
