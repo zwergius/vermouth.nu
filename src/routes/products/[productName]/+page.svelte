@@ -1,7 +1,14 @@
 <script>
+  import SEO from '$lib/components/SEO.svelte'
+
   export let data
   let { image, intro, name, origin, recommendation, taste, titleName } = data.vermouth
+
+  const title = name
+  const description = intro
 </script>
+
+<SEO {title} {description} />
 
 <div class="wrapper">
   <div class="image-container">
