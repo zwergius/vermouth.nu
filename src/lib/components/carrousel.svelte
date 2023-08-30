@@ -7,6 +7,7 @@
   }
   let index = 0
   let interval: number
+  let ms = 3500
   export let images: CarrouselImage[]
 
   const next = () => {
@@ -16,7 +17,6 @@
     index = (index + images.length - 1) % images.length
   }
 
-  let ms = 3500
   $: if (browser) {
     clearInterval(interval)
     interval = window.setInterval(next, ms)
@@ -29,7 +29,6 @@
       <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
     </div>
   {/each}
-
   <slot {index} />
   {#if images.length}
     <button class="left" on:click={previous}> <span>&#10170;</span> </button>
@@ -88,7 +87,6 @@
     padding: 0;
     margin: 0;
   }
-
   button.right {
     right: -30px;
   }
@@ -100,7 +98,6 @@
     display: flex;
     gap: 15px;
   }
-
   .carousel-indicator[aria-controls] circle {
     fill: var(--interactive-button);
   }
@@ -117,7 +114,6 @@
     border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }
-
   circle {
     fill: transparent;
     transition: fill 0.1s linear;
@@ -128,13 +124,11 @@
       padding-bottom: 0;
       padding: 30px;
     }
-
     .carrousel {
       display: flex;
       justify-content: center;
       aspect-ratio: 5/3;
     }
-
     button.left,
     button.right {
       display: none;
