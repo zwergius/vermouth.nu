@@ -18,7 +18,6 @@
       <img src={logoMobile} alt="logo" />
     </a>
   </div>
-
   <div class="logo-desktop">
     <a href="/">
       <img src={logoDesktop} alt="logo" />

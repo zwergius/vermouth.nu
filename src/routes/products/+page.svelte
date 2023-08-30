@@ -1,84 +1,43 @@
 <script lang="ts">
-  import Product from '$lib/components/product.svelte'
-  import sardinoBlanco from '$lib/assets/bottles/sardino-blanco.avif'
-  import sardinoRojo from '$lib/assets/bottles/sardino-rojo.avif'
-  import forzudoRojo from '$lib/assets/bottles/forzudo-rojo.avif'
-  import forzudoBlanco from '$lib/assets/bottles/forzudo-blanco.avif'
-  import carmeletaOrange from '$lib/assets/bottles/orange-carmeleta.avif'
-  import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco.avif'
-  import tabira from '$lib/assets/bottles/tabira.avif'
   import SEO from '$lib/components/SEO.svelte'
+  import { fade } from 'svelte/transition'
+  import Product from '$lib/components/product-card.svelte'
+  import { vermouths } from './data.js'
 
-  const vermouths = [
-    {
-      brand: 'Forzudo',
-      name: 'Rojo',
-      image: forzudoRojo,
-    },
-
-    {
-      brand: 'Forzudo',
-      name: 'Blanco',
-      image: forzudoBlanco,
-    },
-
-    {
-      brand: 'Sardino',
-      name: 'Rojo',
-      image: sardinoRojo,
-    },
-    {
-      brand: 'Sardino',
-      name: 'Blanco',
-      image: sardinoBlanco,
-    },
-
-    {
-      brand: 'Carmeleta',
-      name: 'Orange ',
-      image: carmeletaOrange,
-    },
-    {
-      brand: 'Carmeleta',
-      name: 'Blanco',
-      image: carmeletaBlanco,
-    },
-
-    {
-      brand: 'Tabira',
-      name: '-',
-      image: tabira,
-    },
-  ]
   const title = 'vermouth.nu products'
   const description = 'Vores udvalg af vermouth for øjeblikket'
 </script>
 
 <SEO {title} {description} />
 
-<section>
-  <div class="container">
-    {#each vermouths as { image, name, brand }, index}
-      <Product {image} {name} {brand} {index} />
-    {/each}
-  </div>
+<section class="container">
+  {#each vermouths as vermouth, index}
+    <div in:fade={{ duration: 300, delay: index * 150 }}>
+      <a href="/products/{vermouth.name.toLowerCase().replace(' ', '-')}">
+        <Product {vermouth} />
+      </a>
+    </div>
+  {/each}
 </section>
 
 <style>
   .container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    display: grid;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 30px;
-  }
-  section {
+    width: 100%;
+    grid-gap: 35px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
-    section {
-      padding: 50px 0 60px 0;
+    .container {
+      grid-gap: 40px;
+      padding: 50px;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    .container {
+      padding: 50px 15px;
     }
   }
 </style>
