@@ -1,82 +1,26 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import Product from '$lib/components/product.svelte'
-  import sardinoBlanco from '$lib/assets/bottles/sardino-blanco.avif'
-  import sardinoRojo from '$lib/assets/bottles/sardino-rojo.avif'
-  import forzudoRojo from '$lib/assets/bottles/forzudo-rojo.avif'
-  import forzudoBlanco from '$lib/assets/bottles/forzudo-blanco.avif'
-  import carmeletaOrange from '$lib/assets/bottles/orange-carmeleta.avif'
-  import carmeletaBlanco from '$lib/assets/bottles/carmeleta-blanco.avif'
-  import tabira from '$lib/assets/bottles/tabira.avif'
-
-  const vermouths = [
-    {
-      brand: 'Forzudo',
-      name: 'Rojo',
-      image: forzudoRojo,
-      region: 'Bierzo, Leon, Nordvest',
-      sizeAndDegrees: '100 cl. / 15%',
-    },
-    {
-      brand: 'Forzudo',
-      name: 'Blanco',
-      image: forzudoBlanco,
-      region: 'Bierzo, Leon, Nordvest',
-      sizeAndDegrees: '100 cl. / 15%',
-    },
-    {
-      brand: 'Sardino',
-      name: 'Rojo',
-      image: sardinoRojo,
-      region: 'Galicien, Nordvestkysten',
-      sizeAndDegrees: '75 cl. / 15%',
-    },
-    {
-      brand: 'Sardino',
-      name: 'Blanco',
-      image: sardinoBlanco,
-      region: 'Galicien, Nordvestkysten',
-      sizeAndDegrees: '75 cl. / 15%',
-    },
-    {
-      brand: 'Carmeleta',
-      name: 'Orange ',
-      image: carmeletaOrange,
-      region: 'L’Alquería de la Comtessa, Valencia',
-      sizeAndDegrees: '75 cl. / 15%',
-    },
-    {
-      brand: 'Carmeleta',
-      name: 'Blanco',
-      image: carmeletaBlanco,
-      region: 'L’Alquería de la Comtessa, Valencia',
-      sizeAndDegrees: '75 cl. / 15%',
-    },
-    {
-      brand: 'Tabira',
-      name: '',
-      image: tabira,
-      region: 'Leon, Nordvest',
-      sizeAndDegrees: '100 cl. / 15%',
-    },
-  ]
+  import Product from '$lib/components/product-card.svelte'
+  import { vermouths } from './data.js'
 </script>
 
 <section class="container">
-  {#each vermouths as { image, name, brand, region, sizeAndDegrees }, index}
+  {#each vermouths as vermouth, index}
     <div in:fade={{ duration: 300, delay: index * 150 }}>
-      <Product {image} {name} {sizeAndDegrees} {brand} {region} />
+      <a href="/products/{vermouth.name.toLowerCase().replace(' ', '-')}">
+        <Product {vermouth} />
+      </a>
     </div>
   {/each}
 </section>
 
 <style>
   .container {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     display: grid;
     align-items: center;
     width: 100%;
-    grid-gap: 50px;
+    grid-gap: 35px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {
