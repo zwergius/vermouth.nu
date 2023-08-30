@@ -32,7 +32,6 @@
 <style>
   .main {
     flex: 1;
-    margin: auto 0;
     width: 100%;
     padding: 0 100px 30px;
   }

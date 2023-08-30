@@ -58,13 +58,13 @@
   .carrousel {
     position: relative;
     width: 100%;
-    aspect-ratio: 16/7;
+    aspect-ratio: 21/7;
   }
   .image {
     z-index: -1;
     position: absolute;
     bottom: 50px;
-    aspect-ratio: 16/7;
+    aspect-ratio: 21/7;
     width: 100%;
   }
   img {

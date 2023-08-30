@@ -1,7 +1,6 @@
 <div class="container">
   <div>
-    <p>Ophavsret &#169; 2023</p>
-    <p>Vermouth NU.</p>
+    <p>&#169; Vermouth NU</p>
     <p>CVR - 40649395</p>
   </div>
   <div class="right">
