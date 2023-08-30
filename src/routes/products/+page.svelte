@@ -5,12 +5,12 @@
 
   const productInfo = vermouths.map((vermouth) => ({
     dir: vermouth.name.toLowerCase().replace(' ', '-'),
-    vermouth,
+    ...vermouth,
   }))
 </script>
 
 <section class="container">
-  {#each productInfo as { dir, vermouth }, index}
+  {#each productInfo as { dir, ...vermouth }, index}
     <div in:fade={{ duration: 300, delay: index * 150 }}>
       <a href="/products/{dir}">
         <Product {vermouth} />
