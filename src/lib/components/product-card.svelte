@@ -1,17 +1,16 @@
 <script lang="ts">
-  export let image: string
-  export let name: string
-  export let sizeAndDegrees: string | undefined
-  export let region: string | undefined
+  export let vermouth
+
+  const { name, region, cardImage, country, sizeAndDegrees } = vermouth
 </script>
 
 <div class="container">
-  <img width="300px" height="350px" src={image} alt={name} />
+  <img width="300" height="350" src={cardImage} alt={name} />
   <div class="content">
     <h2>{name}</h2>
     <p class="region">{region}</p>
     <div class="footer">
-      <p>Spanien</p>
+      <p>{country}</p>
       <p class="sizeAndDegrees">{sizeAndDegrees}</p>
     </div>
   </div>
@@ -24,6 +23,7 @@
     border: 2px solid var(--secondary);
     border-radius: 20px;
     padding-bottom: 50px;
+    padding: 50px;
   }
   .sizeAndDegrees {
     text-align: right;
@@ -41,7 +41,7 @@
     transition: transform 0.15s;
     width: 100%;
     object-fit: cover;
-    padding: 50px;
+    padding: 0 50px;
   }
   p {
     font-size: var(--12px);

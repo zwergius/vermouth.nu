@@ -3,9 +3,9 @@
   let { image, intro, name, origin, recommendation, taste, titleName } = data.vermouth
 </script>
 
-<div class="wrap">
+<div class="wrapper">
   <div class="image-container">
-    <img width="330px" height="440px" src={image} alt={name} />
+    <img width="330" height="440" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
@@ -40,7 +40,7 @@
   }
   p {
     line-height: 30px;
-    font-size: 20px;
+    font-size: var(--20px);
     padding: 0 0 15px 15px;
   }
   img {
@@ -61,16 +61,17 @@
     display: flex;
     flex-direction: column;
   }
-  .wrap {
+  .wrapper {
     color: var(--secondary);
     justify-content: center;
     display: flex;
+    align-items: center;
     padding: 100px 250px;
     gap: 20px;
     width: 100%;
   }
   @media only screen and (max-width: 1024px) {
-    .wrap {
+    .wrapper {
       align-items: center;
       padding: 50px;
     }
@@ -80,9 +81,9 @@
   }
   @media only screen and (max-width: 767px) {
     p {
-      font-size: 16px;
+      font-size: var(--16px);
     }
-    .wrap {
+    .wrapper {
       flex-direction: column;
       justify-content: center;
       padding: 30px 10px;

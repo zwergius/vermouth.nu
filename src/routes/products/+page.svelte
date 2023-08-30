@@ -5,18 +5,15 @@
 
   const productInfo = vermouths.map((vermouth) => ({
     dir: vermouth.name.toLowerCase().replace(' ', '-'),
-    image: vermouth.cardImage,
-    name: vermouth.name,
-    sizeAndDegrees: vermouth.sizeAndDegrees,
-    region: vermouth.region,
+    vermouth,
   }))
 </script>
 
 <section class="container">
-  {#each productInfo as { image, name, dir, region, sizeAndDegrees }, index}
+  {#each productInfo as { dir, vermouth }, index}
     <div in:fade={{ duration: 300, delay: index * 150 }}>
       <a href="/products/{dir}">
-        <Product {image} {name} {sizeAndDegrees} {region} />
+        <Product {vermouth} />
       </a>
     </div>
   {/each}
@@ -28,7 +25,7 @@
     display: grid;
     align-items: center;
     width: 100%;
-    grid-gap: 50px;
+    grid-gap: 35px;
     padding: 100px;
   }
   @media only screen and (max-width: 1024px) {

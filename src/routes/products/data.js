@@ -16,6 +16,7 @@ import tabiraSmall from '$lib/assets/bottles/tabira.avif'
 export const vermouths = [
   {
     cardImage: forzudoRojoSmall,
+    country: 'Spanien',
     image: forzudoRojo,
     intro:
       'Med sin mørke mahogni farve, præsenterer denne vermouth sig på klassisk vis, og dog med et tvist.',
@@ -30,6 +31,7 @@ export const vermouths = [
   },
   {
     cardImage: forzudoBlancoSmall,
+    country: 'Spanien',
     image: forzudoBlanco,
     intro: 'Forzudo Blanco er yderste populær, og et perfekt følgeskab til en dag i solen.',
     name: 'Forzudo Blanco',
@@ -43,6 +45,7 @@ export const vermouths = [
   },
   {
     cardImage: sardinoRojoSmall,
+    country: 'Spanien',
     image: sardinoRojo,
     intro:
       'Sardino slår sig selv op på at være en maritim vermouth, den kommer helt fra den Spanske vestkyst, hvor der er store fiske traditioner og lækre råvarer.',
@@ -58,6 +61,7 @@ export const vermouths = [
   },
   {
     cardImage: sardinoBlancoSmall,
+    country: 'Spanien',
     image: sardinoBlanco,
     intro:
       'Sardino Blanco, lagret i lerkrukker ved Atlanterhavets kyst - Her i den hvide udgave som er en anelse lettere.',
@@ -73,6 +77,7 @@ export const vermouths = [
   },
   {
     cardImage: carmeletaOrangeSmall,
+    country: 'Spanien',
     image: carmeletaOrange,
     intro:
       'Carmeleta Vermouth Orange præsenterer en levende orange farve, en hyldest til Appelsinen fra Valencia. Brygget på hvide druer fra middelhavsområdet, herunder Malvasía, Moscatel, Planta, udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Sødere og lettere end en traditionel vermouth, egner sig til alle tidspunkter af dagen. En ny vermouth til nye tider.',
@@ -86,11 +91,12 @@ export const vermouths = [
     titleName: 'Orange og Trendy',
   },
   {
-    name: 'Carmeleta Blanco',
     cardImage: carmeletaBlancoSmall,
+    country: 'Spanien',
     image: carmeletaBlanco,
     intro:
       'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
+    name: 'Carmeleta Blanco',
     origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
     recommendation:
       'Serveres kold med is, alternativt i drinks med gin som en forfriskende supplement.',
@@ -101,11 +107,12 @@ export const vermouths = [
     titleName: 'Hvid og Autentisk',
   },
   {
-    name: 'Tabira',
     cardImage: tabiraSmall,
+    country: 'Spanien',
     image: tabira,
     intro:
       'Vinhuset Meoriga, fra byen Leon præsenterer den første vermouth lavet på druen “Prieto Picudo”. En premium vermouth med begrænset årlig produktion, baseret på en original opskrift som er mere end 90 år gammel (1927).',
+    name: 'Tabira',
     origin: 'Leon Nordvest Spanien 100 cl. / 15%',
     recommendation: 'Kold, med is og oliven som aperitif. Eller til en cocktail med rom, whisky',
     region: 'Leon, Nordvest',
