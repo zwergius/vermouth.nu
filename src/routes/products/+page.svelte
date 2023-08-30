@@ -2,17 +2,12 @@
   import { fade } from 'svelte/transition'
   import Product from '$lib/components/product-card.svelte'
   import { vermouths } from './data.js'
-
-  const productInfo = vermouths.map((vermouth) => ({
-    dir: vermouth.name.toLowerCase().replace(' ', '-'),
-    ...vermouth,
-  }))
 </script>
 
 <section class="container">
-  {#each productInfo as { dir, ...vermouth }, index}
+  {#each vermouths as vermouth, index}
     <div in:fade={{ duration: 300, delay: index * 150 }}>
-      <a href="/products/{dir}">
+      <a href="/products/{vermouth.name.toLowerCase().replace(' ', '-')}">
         <Product {vermouth} />
       </a>
     </div>

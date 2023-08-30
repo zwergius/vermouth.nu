@@ -81,7 +81,7 @@ export const vermouths = [
     image: carmeletaOrange,
     intro:
       'Carmeleta Vermouth Orange præsenterer en levende orange farve, en hyldest til Appelsinen fra Valencia. Brygget på hvide druer fra middelhavsområdet, herunder Malvasía, Moscatel, Planta, udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Sødere og lettere end en traditionel vermouth, egner sig til alle tidspunkter af dagen. En ny vermouth til nye tider.',
-    name: 'Carmeleta Ornge',
+    name: 'Carmeleta Orange',
     origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
     recommendation: 'Serveres kold med is, og evt. et jordbær eller appelsin.',
     region: 'L’Alquería de la Comtessa, Valencia',

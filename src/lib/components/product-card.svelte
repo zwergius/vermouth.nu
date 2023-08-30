@@ -41,7 +41,6 @@
     transition: transform 0.15s;
     width: 100%;
     object-fit: cover;
-    padding: 0 50px;
   }
   p {
     font-size: var(--12px);
