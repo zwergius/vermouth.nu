@@ -21,7 +21,7 @@
 
 <style>
   .container {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     display: grid;
     align-items: center;
     width: 100%;
