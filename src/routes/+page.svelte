@@ -34,12 +34,12 @@
     flex: 1;
     margin: auto 0;
     width: 100%;
-    padding: 40px 100px;
+    padding: 50px 100px 100px;
   }
 
   @media only screen and (max-width: 1024px) {
     .main {
-      padding: 0px 50px 100px;
+      padding: 20px 50px 100px;
     }
   }
   @media only screen and (max-width: 767px) {
