@@ -77,7 +77,8 @@
   }
   @media only screen and (max-width: 767px) {
     .ringtext {
-      top: 66svh;
+      bottom: none;
+      top: 73svh;
     }
     .wrapper {
       padding-top: 200px;
