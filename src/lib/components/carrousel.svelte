@@ -136,6 +136,9 @@
     .image-container {
       aspect-ratio: var(--aspect-ratio-mobile);
     }
+    img {
+      padding-bottom: 25px;
+    }
     .carrousel {
       padding: 0;
       aspect-ratio: var(--aspect-ratio-mobile);

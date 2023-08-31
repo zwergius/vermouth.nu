@@ -80,7 +80,8 @@
       top: 73svh;
     }
     .wrapper {
-      padding-top: 150px;
+      padding-top: 140px;
+      padding-bottom: 15px;
     }
     .logo-desktop {
       display: none;
