@@ -125,8 +125,6 @@
       padding: 30px;
     }
     .carrousel {
-      display: flex;
-      justify-content: center;
       aspect-ratio: 5/3;
     }
     button.left,
@@ -136,11 +134,12 @@
   }
   @media only screen and (max-width: 767px) {
     .image {
-      bottom: 0;
+      padding: 0;
       aspect-ratio: 1/1;
     }
     img {
-      padding-bottom: 20px;
+      padding-bottom: 30px;
+      margin-bottom: 30px;
     }
     .carrousel {
       aspect-ratio: 1/1;

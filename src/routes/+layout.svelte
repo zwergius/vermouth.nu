@@ -36,13 +36,14 @@
   }
   .wrapper {
     display: flex;
-    flex: 1;
     padding-top: 280px;
+    flex: 1;
   }
   .container {
     z-index: 100;
     width: 100%;
     position: fixed;
+    padding-bottom: 20px;
   }
   img {
     z-index: 10;
@@ -65,7 +66,6 @@
     .wrapper {
       padding-top: 370px;
     }
-
     .logo-desktop {
       display: none;
     }
@@ -81,7 +81,7 @@
       top: 73svh;
     }
     .wrapper {
-      padding-top: 200px;
+      padding-top: 150px;
     }
     .logo-desktop {
       display: none;

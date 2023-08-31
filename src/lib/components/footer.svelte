@@ -26,6 +26,7 @@
     text-align: right;
   }
   .container {
+    flex: 1;
     font-size: var(--25px);
     font-weight: 900;
     line-height: 1.5;
@@ -44,7 +45,7 @@
   @media only screen and (max-width: 767px) {
     .container {
       font-size: var(--16px);
-      padding: 30px 10px;
+      padding: 10px 10px;
     }
   }
   @media (hover: hover) {
