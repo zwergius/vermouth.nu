@@ -1,7 +1,7 @@
 <script lang="ts">
+  import banner from '$lib/assets/banner.webp'
   import Carrousel from '$lib/components/carrousel.svelte'
   import forzudo from '$lib/assets/forzudo.webp'
-  import banner from '$lib/assets/banner.webp'
   import SEO from '$lib/components/SEO.svelte'
   import tabira from '$lib/assets/tabira.webp'
 

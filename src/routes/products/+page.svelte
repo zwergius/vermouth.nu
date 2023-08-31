@@ -6,9 +6,9 @@
 </script>
 
 <SEO
-  description="Vores udvalg af Vermouth for øjeblikket"
+  description="Vores udvalg af Vermouth"
   image="$lib/assets/forzudo.webp"
-  imageAlt="Vermouth.NU"
+  imageAlt="Forzudo Rojo"
   title="Produkter | Vermouth.NU"
 />
 
