@@ -25,7 +25,7 @@
 
 <div class="carrousel">
   {#each [images[index]] as { id, path } (index)}
-    <div class="image">
+    <div class="image-container">
       <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
     </div>
   {/each}
@@ -57,14 +57,14 @@
   .carrousel {
     position: relative;
     width: 100%;
-    aspect-ratio: 21/7;
+    aspect-ratio: var(--aspect-ratio);
+    padding-bottom: 50px;
   }
-  .image {
-    aspect-ratio: 21/7;
+  .image-container {
+    aspect-ratio: var(--aspect-ratio);
     z-index: -1;
     position: absolute;
     width: 100%;
-    padding-bottom: 50px;
   }
   img {
     object-fit: cover;
@@ -119,13 +119,13 @@
     transition: fill 0.1s linear;
   }
   @media only screen and (max-width: 1024px) {
-    .image {
-      aspect-ratio: 5/3;
-      padding-bottom: 0;
-      padding: 30px;
+    .image-container {
+      aspect-ratio: var(--aspect-ratio-tablet);
     }
     .carrousel {
-      aspect-ratio: 5/3;
+      aspect-ratio: var(--aspect-ratio-tablet);
+      padding-bottom: 0;
+      padding: 30px;
     }
     button.left,
     button.right {
@@ -133,16 +133,15 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    .image {
-      padding: 0;
-      aspect-ratio: 1/1;
+    .image-container {
+      aspect-ratio: var(--aspect-ratio-mobile);
     }
     img {
       padding-bottom: 30px;
-      margin-bottom: 30px;
     }
     .carrousel {
-      aspect-ratio: 1/1;
+      padding: 0;
+      aspect-ratio: var(--aspect-ratio-mobile);
     }
   }
   @media (hover: hover) {

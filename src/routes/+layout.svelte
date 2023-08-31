@@ -40,6 +40,7 @@
     flex: 1;
   }
   .container {
+    flex: 1;
     z-index: 100;
     width: 100%;
     position: fixed;
@@ -55,7 +56,6 @@
     width: 100%;
     z-index: 10;
   }
-
   .logo-mobile {
     display: none;
   }
@@ -86,7 +86,6 @@
     .logo-desktop {
       display: none;
     }
-
     .logo-mobile {
       margin-bottom: 20px;
     }
