@@ -25,9 +25,10 @@
 </script>
 
 <SEO
-  title={'vermouth.nu'}
-  description={'Spansk vermouth-distributør i premium drinks til en god pris'}
-  image={'$lib/assets/forzudo.webp'}
+  description="Vermouth distributør"
+  image="$lib/assets/forzudo.webp"
+  imageAlt="Vermouth.NU"
+  title="Vermouth.NU"
 />
 
 <div class="main">

@@ -6,9 +6,10 @@
 </script>
 
 <SEO
-  title={'vermouth.nu products'}
-  description={'Vores udvalg af vermouth for øjeblikket'}
-  image={'$lib/assets/forzudo.webp'}
+  description="Vores udvalg af Vermouth for øjeblikket"
+  image="$lib/assets/forzudo.webp"
+  imageAlt="Vermouth.NU"
+  title="Produkter | Vermouth.NU"
 />
 
 <section class="container">

@@ -50,9 +50,10 @@
 </script>
 
 <SEO
-  title={'vermouth.nu stores'}
-  description={'Butikker og barer, hvor du kan finde vores udvalg af vermouth'}
-  image={'$lib/assets/forzudo.webp'}
+  description="Butikker og barer, hvor du kan finde vores udvalg af Vermouth"
+  image="$lib/assets/forzudo.webp"
+  imageAlt="Vermouth.NU"
+  title="Forhandlere | Vermouth.NU"
 />
 
 <section>

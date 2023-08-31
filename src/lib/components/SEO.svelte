@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let altImage = 'vermotuh.nu'
   export let description: string
   export let image: string
+  export let imageAlt: string
   export let ogType = 'website'
   export let tags = ['vermouth', 'spansk', 'alkohol', 'premium']
   export let title: string
@@ -22,5 +22,5 @@
   <meta name="twitter:url" content={ogType} />
 
   <meta name="twitter:image" content={image} />
-  <meta name="twitter:image:alt" content={altImage} />
+  <meta name="twitter:image:alt" content={imageAlt} />
 </svelte:head>
