@@ -139,6 +139,9 @@
       bottom: 0;
       aspect-ratio: 1/1;
     }
+    img {
+      padding-bottom: 20px;
+    }
     .carrousel {
       aspect-ratio: 1/1;
     }

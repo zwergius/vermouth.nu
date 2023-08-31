@@ -44,7 +44,7 @@
   @media only screen and (max-width: 767px) {
     .main {
       margin: 0;
-      padding: 0px 10px 80px;
+      padding: 0px 10px 40px;
     }
   }
 </style>
