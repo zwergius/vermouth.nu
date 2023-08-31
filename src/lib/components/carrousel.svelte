@@ -58,7 +58,6 @@
     position: relative;
     width: 100%;
     aspect-ratio: var(--aspect-ratio);
-    padding-bottom: 50px;
   }
   .image-container {
     aspect-ratio: var(--aspect-ratio);
@@ -70,6 +69,7 @@
     object-fit: cover;
     height: 100%;
     width: 100%;
+    padding-bottom: 50px;
   }
   button.left,
   button.right {
@@ -135,9 +135,6 @@
   @media only screen and (max-width: 767px) {
     .image-container {
       aspect-ratio: var(--aspect-ratio-mobile);
-    }
-    img {
-      padding-bottom: 30px;
     }
     .carrousel {
       padding: 0;

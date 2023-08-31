@@ -36,11 +36,10 @@
   }
   .wrapper {
     display: flex;
-    padding-top: 280px;
     flex: 1;
+    padding-top: 280px;
   }
   .container {
-    flex: 1;
     z-index: 100;
     width: 100%;
     position: fixed;
