@@ -40,6 +40,8 @@
     padding-top: 280px;
   }
   .container {
+    display: flex;
+    flex: 1;
     z-index: 100;
     width: 100%;
     position: fixed;
