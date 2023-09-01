@@ -42,6 +42,7 @@
   .container {
     display: flex;
     flex: 1;
+    flex-direction: column;
     z-index: 100;
     width: 100%;
     position: fixed;

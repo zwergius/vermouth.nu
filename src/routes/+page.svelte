@@ -31,6 +31,8 @@
 
 <style>
   .main {
+    display: flex;
+    flex: 1;
     width: 100%;
     padding: 0 100px 30px;
   }
