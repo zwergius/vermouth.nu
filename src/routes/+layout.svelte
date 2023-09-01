@@ -38,11 +38,9 @@
     display: flex;
     flex: 1;
     padding-top: 280px;
+    padding-bottom: 5px;
   }
   .container {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
     z-index: 100;
     width: 100%;
     position: fixed;

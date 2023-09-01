@@ -137,7 +137,7 @@
       aspect-ratio: var(--aspect-ratio-mobile);
     }
     img {
-      padding-bottom: 25px;
+      padding-bottom: 30px;
     }
     .carrousel {
       padding: 0;

@@ -54,7 +54,7 @@
       gap: 10px;
     }
     .container {
-      padding: 20px 15px 20px;
+      padding: 15px;
     }
   }
 </style>
