@@ -82,7 +82,7 @@
     }
     .wrapper {
       padding-top: 150px;
-      padding-bottom: 50px;
+      padding-bottom: 30px;
     }
     .logo-desktop {
       display: none;
