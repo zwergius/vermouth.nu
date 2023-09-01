@@ -26,7 +26,6 @@
     text-align: right;
   }
   .container {
-    flex: 1;
     font-size: var(--25px);
     font-weight: 900;
     line-height: 1.5;
