@@ -57,13 +57,14 @@
   .carrousel {
     position: relative;
     width: 100%;
-    aspect-ratio: var(--aspect-ratio);
+    height: 100%;
   }
   .image-container {
-    aspect-ratio: var(--aspect-ratio);
     z-index: -1;
     position: absolute;
     width: 100%;
+    height: 100%;
+    display: flex;
   }
   img {
     object-fit: cover;
@@ -119,11 +120,7 @@
     transition: fill 0.1s linear;
   }
   @media only screen and (max-width: 1024px) {
-    .image-container {
-      aspect-ratio: var(--aspect-ratio-tablet);
-    }
     .carrousel {
-      aspect-ratio: var(--aspect-ratio-tablet);
       padding-bottom: 0;
       padding: 30px;
     }
@@ -133,15 +130,8 @@
     }
   }
   @media only screen and (max-width: 767px) {
-    .image-container {
-      aspect-ratio: var(--aspect-ratio-mobile);
-    }
-    img {
-      padding-bottom: 30px;
-    }
     .carrousel {
       padding: 0;
-      aspect-ratio: var(--aspect-ratio-mobile);
     }
   }
   @media (hover: hover) {

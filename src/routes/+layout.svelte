@@ -36,9 +36,9 @@
   }
   .wrapper {
     display: flex;
+    width: 100%;
     flex: 1;
-    padding-top: 280px;
-    padding-bottom: 5px;
+    padding-top: 240px;
   }
   .container {
     z-index: 100;
@@ -81,7 +81,8 @@
       top: 73svh;
     }
     .wrapper {
-      padding-top: 132px;
+      padding-top: 150px;
+      padding-bottom: 50px;
     }
     .logo-desktop {
       display: none;
