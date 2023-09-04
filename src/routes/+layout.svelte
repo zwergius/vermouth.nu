@@ -38,23 +38,20 @@
     display: flex;
     width: 100%;
     flex: 1;
-    padding-top: 240px;
+    padding-top: calc((233 / 1745) * 100% + var(--padding-logo));
   }
   .container {
     z-index: 100;
     width: 100%;
     position: fixed;
-    padding-bottom: 20px;
   }
   img {
-    z-index: 10;
     object-fit: cover;
     height: auto;
     width: 100%;
   }
   .logo-desktop {
     width: 100%;
-    z-index: 10;
   }
   .logo-mobile {
     display: none;
@@ -63,11 +60,12 @@
     .ringtext {
       bottom: 90px;
     }
-    .wrapper {
-      padding-top: 370px;
-    }
     .logo-desktop {
       display: none;
+    }
+    .wrapper {
+      padding-top: calc((336 / 1021) * 100%);
+      padding-bottom: 30px;
     }
     .logo-mobile {
       display: block;
@@ -79,10 +77,6 @@
     .ringtext {
       bottom: none;
       top: 73svh;
-    }
-    .wrapper {
-      padding-top: 150px;
-      padding-bottom: 30px;
     }
     .logo-desktop {
       display: none;

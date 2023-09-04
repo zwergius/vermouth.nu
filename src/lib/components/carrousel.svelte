@@ -65,12 +65,12 @@
     width: 100%;
     height: 100%;
     display: flex;
+    padding-bottom: 50px;
   }
   img {
     object-fit: cover;
     height: 100%;
     width: 100%;
-    padding-bottom: 50px;
   }
   button.left,
   button.right {
