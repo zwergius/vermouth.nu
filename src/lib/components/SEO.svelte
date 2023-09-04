@@ -19,7 +19,6 @@
   <!-- <meta name="twitter:card" content="summary_large_image" /> -->
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:URL" content={ogType} />
   <meta name="twitter:url" content="https://www.vermouth.nu" />
   <meta name="twitter:image:alt" content={imageAlt} />
 
@@ -31,6 +30,7 @@
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" itemprop="image" content={image} />
+  <meta itemprop="image" content={image} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="www.vermouth.nu" />
 </svelte:head>
