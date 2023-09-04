@@ -51,7 +51,7 @@
 
 <SEO
   description="Butikker og barer, hvor du kan finde vores udvalg af Vermouth"
-  image="$lib/assets/forzudo.webp"
+  image="https://vermouth.nu/cdn/shop/files/552A24A2-C31B-4C91-A8B3-5A3C5F5EA8D3_2048x.JPG?v=1615928417"
   imageAlt="Vermouth.NU"
   title="Forhandlere | Vermouth.NU"
 />
