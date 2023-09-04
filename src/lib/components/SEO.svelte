@@ -19,14 +19,14 @@
   <!-- <meta name="twitter:card" content="summary_large_image" /> -->
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:url" content={ogType} />
-  <meta name="twitter:image" content={image} />
+  <meta name="twitter:URL" content={ogType} />
+  <meta name="twitter:url" content="https://www.vermouth.nu" />
   <meta name="twitter:image:alt" content={imageAlt} />
 
   <!--  Essential META Tags -->
 
-  <meta property="”og:locale”" content="””" />
-  <meta property="”fb:app_id”" content="””" />
+  <meta property="”og:locale”" content="" />
+  <meta property="”fb:app_id”" content="" />
   <meta property="og:site_name" content="Vermouth.NU" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
