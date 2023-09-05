@@ -39,12 +39,11 @@
 
 <style>
   .main {
+    display: flex;
     flex: 1;
-    margin: auto 0;
     width: 100%;
     padding: 0 100px 30px;
   }
-
   @media only screen and (max-width: 1024px) {
     .main {
       padding: 0px 50px 100px;
@@ -52,8 +51,7 @@
   }
   @media only screen and (max-width: 767px) {
     .main {
-      margin: 0;
-      padding: 0px 10px 80px;
+      padding: 0px 10px 0px;
     }
   }
 </style>

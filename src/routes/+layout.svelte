@@ -35,9 +35,12 @@
     bottom: 67px;
   }
   .wrapper {
+    --padding-logo: 10px;
+    --logo-aspect-ratio: 233 / 1745;
     display: flex;
+    width: 100%;
     flex: 1;
-    padding-top: 280px;
+    padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
   }
   .container {
     z-index: 100;
@@ -45,16 +48,13 @@
     position: fixed;
   }
   img {
-    z-index: 10;
     object-fit: cover;
     height: auto;
     width: 100%;
   }
   .logo-desktop {
     width: 100%;
-    z-index: 10;
   }
-
   .logo-mobile {
     display: none;
   }
@@ -62,12 +62,12 @@
     .ringtext {
       bottom: 90px;
     }
-    .wrapper {
-      padding-top: 370px;
-    }
-
     .logo-desktop {
       display: none;
+    }
+    .wrapper {
+      --logo-aspect-ratio: 336 / 1021;
+      padding-bottom: 30px;
     }
     .logo-mobile {
       display: block;
@@ -77,15 +77,12 @@
   }
   @media only screen and (max-width: 767px) {
     .ringtext {
-      top: 66svh;
-    }
-    .wrapper {
-      padding-top: 200px;
+      bottom: none;
+      top: 73svh;
     }
     .logo-desktop {
       display: none;
     }
-
     .logo-mobile {
       margin-bottom: 20px;
     }

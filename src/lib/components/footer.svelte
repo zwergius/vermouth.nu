@@ -1,14 +1,17 @@
 <div class="container">
   <div>
-    <p>Ophavsret &#169; 2023</p>
-    <p>Vermouth NU.</p>
+    <p>&#169; Vermouth NU</p>
     <p>CVR - 40649395</p>
   </div>
   <div class="right">
     <div class="social-media">
       <p>F&oslash;lg os</p>
-      <a rel="noopener external" href="https://www.instagram.com">Ig</a>
-      <a rel="noopener external" href="https://es-es.facebook.com">Fb</a>
+      <a rel="noopener external" target="_blank" href="https://www.instagram.com/vermouth.nu">Ig</a>
+      <a
+        rel="noopener external"
+        target="_blank"
+        href="https://www.facebook.com/profile.php?id=100063790380353">Fb</a
+      >
     </div>
     <a href="mailto:info@vermouth.nu">info@vermouth.nu</a>
   </div>
@@ -45,7 +48,7 @@
   @media only screen and (max-width: 767px) {
     .container {
       font-size: var(--16px);
-      padding: 30px 10px;
+      padding: 10px 10px;
     }
   }
   @media (hover: hover) {
