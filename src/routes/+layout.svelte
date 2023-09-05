@@ -38,7 +38,7 @@
     display: flex;
     width: 100%;
     flex: 1;
-    padding-top: calc((233 / 1745) * 100% + var(--padding-logo));
+    padding-top: calc(var(--padding-logo-desktop) + 10px);
   }
   .container {
     z-index: 100;
@@ -64,7 +64,7 @@
       display: none;
     }
     .wrapper {
-      padding-top: calc((336 / 1021) * 100%);
+      padding-top: calc(var(--padding-logo-mobile) + 10px);
       padding-bottom: 30px;
     }
     .logo-mobile {
