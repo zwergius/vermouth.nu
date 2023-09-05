@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'
 import { vermouths } from '../data.js'
-export const prerender = true
+export const prerender = 'auto'
 
 /** @type {import('./$types').PageLoad} */
 export function load({ params }) {
