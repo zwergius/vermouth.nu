@@ -1,8 +1,16 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
   import Product from '$lib/components/product-card.svelte'
+  import SEO from '$lib/components/SEO.svelte'
   import { vermouths } from './data.js'
 </script>
+
+<SEO
+  description="Vores udvalg af Vermouth"
+  image="https://vermouth.nu/cdn/shop/files/552A24A2-C31B-4C91-A8B3-5A3C5F5EA8D3_2048x.JPG?v=1615928417"
+  imageAlt="Forzudo Rojo"
+  title="Produkter | Vermouth.NU"
+/>
 
 <section class="container">
   {#each vermouths as vermouth, index}
