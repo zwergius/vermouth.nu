@@ -1,7 +1,6 @@
 <div class="container">
   <div>
-    <p>Ophavsret &#169; 2023</p>
-    <p>Vermouth NU.</p>
+    <p>&#169; Vermouth NU</p>
     <p>CVR - 40649395</p>
   </div>
   <div class="right">
@@ -49,7 +48,7 @@
   @media only screen and (max-width: 767px) {
     .container {
       font-size: var(--16px);
-      padding: 30px 10px;
+      padding: 10px 10px;
     }
   }
   @media (hover: hover) {

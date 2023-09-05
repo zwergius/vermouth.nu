@@ -7,6 +7,7 @@
   }
   let index = 0
   let interval: number
+  let ms = 3500
   export let images: CarrouselImage[]
 
   const next = () => {
@@ -16,7 +17,6 @@
     index = (index + images.length - 1) % images.length
   }
 
-  let ms = 3500
   $: if (browser) {
     clearInterval(interval)
     interval = window.setInterval(next, ms)
@@ -25,11 +25,10 @@
 
 <div class="carrousel">
   {#each [images[index]] as { id, path } (index)}
-    <div class="image">
+    <div class="image-container">
       <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
     </div>
   {/each}
-
   <slot {index} />
   {#if images.length}
     <button class="left" on:click={previous}> <span>&#10170;</span> </button>
@@ -58,14 +57,15 @@
   .carrousel {
     position: relative;
     width: 100%;
-    aspect-ratio: 16/7;
+    height: 100%;
   }
-  .image {
+  .image-container {
     z-index: -1;
     position: absolute;
-    bottom: 50px;
-    aspect-ratio: 16/7;
     width: 100%;
+    height: 100%;
+    display: flex;
+    padding-bottom: 50px;
   }
   img {
     object-fit: cover;
@@ -88,7 +88,6 @@
     padding: 0;
     margin: 0;
   }
-
   button.right {
     right: -30px;
   }
@@ -100,7 +99,6 @@
     display: flex;
     gap: 15px;
   }
-
   .carousel-indicator[aria-controls] circle {
     fill: var(--interactive-button);
   }
@@ -117,40 +115,23 @@
     border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }
-
   circle {
     fill: transparent;
     transition: fill 0.1s linear;
   }
   @media only screen and (max-width: 1024px) {
-    .image {
-      aspect-ratio: 4/3;
-    }
-
     .carrousel {
-      display: flex;
-      justify-content: center;
-      aspect-ratio: 4/3;
+      padding-bottom: 0;
+      padding: 30px;
     }
-    ul {
-      bottom: 75px;
-    }
-
     button.left,
     button.right {
       display: none;
     }
   }
   @media only screen and (max-width: 767px) {
-    ul {
-      bottom: 30px;
-    }
-    .image {
-      bottom: 0;
-      aspect-ratio: 1/1;
-    }
     .carrousel {
-      aspect-ratio: 1/1;
+      padding: 0;
     }
   }
   @media (hover: hover) {
