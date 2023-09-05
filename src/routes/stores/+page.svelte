@@ -103,7 +103,7 @@
     justify-content: flex-start;
     align-items: flex-start;
     padding-left: 100px;
-    padding-top: 50px;
+    padding-top: 90px;
   }
   section {
     width: 100%;

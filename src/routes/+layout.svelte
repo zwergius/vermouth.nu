@@ -26,6 +26,7 @@
     <RingText />
   </div>
 </div>
+
 <Footer />
 
 <style>
@@ -35,7 +36,7 @@
     bottom: 67px;
   }
   .wrapper {
-    --padding-logo: 20px;
+    --padding-logo: 10px;
     --logo-aspect-ratio: 233 / 1745;
     display: flex;
     width: 100%;
@@ -53,7 +54,7 @@
     width: 100%;
   }
   .logo-desktop {
-    background-image: linear-gradient(#f0a9a8 90%, #9e9e9f00 100%);
+    background-image: linear-gradient(#f0a9a8 85%, #9e9e9f00 100%);
     width: 100%;
     z-index: 10;
     padding-bottom: 30px;
