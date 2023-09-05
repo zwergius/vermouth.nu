@@ -38,7 +38,7 @@
     display: flex;
     width: 100%;
     flex: 1;
-    padding-top: calc(var(--logo-aspect-ratio) * 100% + var(--padding-logo));
+    padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
     --padding-logo: 10px;
     --logo-aspect-ratio: 233 / 1745;
   }
@@ -66,7 +66,7 @@
       display: none;
     }
     .wrapper {
-      padding-top: calc(var(--logo-aspect-ratio) * 100% + var(--padding-logo));
+      padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
       padding-bottom: 30px;
       --logo-aspect-ratio: 336 / 1021;
     }
