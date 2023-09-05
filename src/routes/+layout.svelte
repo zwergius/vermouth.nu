@@ -1,22 +1,27 @@
 <script>
   import '../app.postcss'
+  import { page } from '$app/stores'
   import Footer from '$lib/components/footer.svelte'
   import Header from '$lib/components/header.svelte'
   import logoDesktop from '$lib/assets/logo-home.svg'
   import logoMobile from '$lib/assets/diagonal-logo.svg'
   import RingText from '$lib/components/ring-text.svelte'
+
+  const desiredUrl = '/'
+
+  $: hasgradient = $page.url.pathname === desiredUrl
 </script>
 
 <div class="container">
   <Header />
-  <div class="logo-mobile">
-    <a href="/">
-      <img src={logoMobile} alt="logo" />
-    </a>
-  </div>
-  <div class="logo-desktop">
+  <div class={hasgradient ? 'logo-desktop' : 'logo-desktop gradient'}>
     <a href="/">
       <img src={logoDesktop} alt="logo" />
+    </a>
+  </div>
+  <div class={hasgradient ? 'logo-mobile' : 'logo-mobile gradient'}>
+    <a href="/">
+      <img src={logoMobile} alt="logo" />
     </a>
   </div>
 </div>
@@ -53,8 +58,10 @@
     height: auto;
     width: 100%;
   }
+  .gradient {
+    background-image: linear-gradient(#f0a9a8 75%, #9e9e9f00 100%);
+  }
   .logo-desktop {
-    background-image: linear-gradient(#f0a9a8 85%, #9e9e9f00 100%);
     width: 100%;
     z-index: 10;
     padding-bottom: 30px;
@@ -74,7 +81,6 @@
       padding-bottom: 30px;
     }
     .logo-mobile {
-      background-image: linear-gradient(#f0a9a8 90%, #9e9e9f00 100%);
       display: block;
       z-index: 10;
       width: 100%;
