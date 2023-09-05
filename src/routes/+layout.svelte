@@ -38,10 +38,9 @@
     display: flex;
     width: 100%;
     flex: 1;
-    padding-top: calc(var(--logo-desktop-apect-ratio) * 100% + var(--padding-logo));
+    padding-top: calc(var(--logo-apect-ratio) * 100% + var(--padding-logo));
     --padding-logo: 10px;
-    --logo-desktop-apect-ratio: 233 / 1745;
-    --logo-mobile-apect-ratio: 336 / 1021;
+    --logo-aspect-ratio: 233 / 1745;
   }
   .container {
     z-index: 100;
@@ -67,8 +66,9 @@
       display: none;
     }
     .wrapper {
-      padding-top: calc(var(--logo-mobile-apect-ratio) * 100% + var(--padding-logo));
+      padding-top: calc(var(--logo-apect-ratio) * 100% + var(--padding-logo));
       padding-bottom: 30px;
+      --logo-aspect-ratio: 336 / 1021;
     }
     .logo-mobile {
       display: block;
