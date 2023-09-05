@@ -2,8 +2,6 @@
   export let description: string
   export let image: string
   export let imageAlt: string
-  export let ogType = 'website'
-  export let tags = ['vermouth', 'spansk', 'alkohol', 'premium']
   export let title: string
 </script>
 
@@ -11,15 +9,15 @@
   <title>{title}</title>
   <meta property="og:title" content={title} />
   <meta name="description" content={description} />
-  <meta name="keywords" content={tags.join(',')} />
-  <meta property="og:type" content={ogType} />
+  <meta name="keywords" content={['vermouth', 'spansk', 'alkohol', 'premium'].join(',')} />
+  <meta property="og:type" content="website" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- <meta name="twitter:card" content="summary_large_image" /> -->
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:url" content={ogType} />
+  <meta name="twitter:url" content="website" />
   <meta name="twitter:image" content={image} />
   <meta name="twitter:image:alt" content={imageAlt} />
 
