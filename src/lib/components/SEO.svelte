@@ -32,5 +32,5 @@
   <meta property="og:description" content={description} />
   <meta property="og:image" itemprop="image" content={image} />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="www.vermouth.nu" />
+  <meta property="og:url" content="https://vermouth.nu/" />
 </svelte:head>
