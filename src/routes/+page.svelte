@@ -34,7 +34,7 @@
     display: flex;
     flex: 1;
     width: 100%;
-    padding: 50px 100px 100px;
+    padding: 0px 100px 30px;
   }
   @media only screen and (max-width: 1024px) {
     .main {

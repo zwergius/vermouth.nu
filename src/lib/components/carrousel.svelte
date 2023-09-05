@@ -34,24 +34,24 @@
     <button class="left" on:click={previous}> <span>&#10170;</span> </button>
     <button class="right" on:click={next}> <span>&#10170;</span> </button>
   {/if}
+  <ul>
+    {#each [...Array(images.length).keys()] as i}
+      <button
+        aria-controls={index === i ? 'carousel' : undefined}
+        class="carousel-indicator"
+        on:click={() => {
+          index = i
+        }}
+      >
+        <div class="circle-border">
+          <svg width="13" height="13">
+            <circle cx="10" cy="10" r="15" />
+          </svg>
+        </div>
+      </button>
+    {/each}
+  </ul>
 </div>
-<ul>
-  {#each [...Array(images.length).keys()] as i}
-    <button
-      aria-controls={index === i ? 'carousel' : undefined}
-      class="carousel-indicator"
-      on:click={() => {
-        index = i
-      }}
-    >
-      <div class="circle-border">
-        <svg width="13" height="13">
-          <circle cx="10" cy="10" r="15" />
-        </svg>
-      </div>
-    </button>
-  {/each}
-</ul>
 
 <style>
   .carrousel {
@@ -92,7 +92,7 @@
     right: -30px;
   }
   ul {
-    padding-top: 20px;
+    bottom: 0;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);

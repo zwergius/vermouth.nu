@@ -35,7 +35,7 @@
     bottom: 67px;
   }
   .wrapper {
-    --padding-logo: 10px;
+    --padding-logo: 20px;
     --logo-aspect-ratio: 233 / 1745;
     display: flex;
     width: 100%;
