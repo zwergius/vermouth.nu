@@ -1,7 +1,8 @@
 <script lang="ts">
+  import banner from '$lib/assets/banner.webp'
   import Carrousel from '$lib/components/carrousel.svelte'
   import forzudo from '$lib/assets/forzudo.webp'
-  import banner from '$lib/assets/banner.webp'
+  import SEO from '$lib/components/SEO.svelte'
   import tabira from '$lib/assets/tabira.webp'
 
   const images = [
@@ -22,6 +23,13 @@
     },
   ]
 </script>
+
+<SEO
+  description="Vermouth Distributør"
+  image="https://vermouth.nu/cdn/shop/files/552A24A2-C31B-4C91-A8B3-5A3C5F5EA8D3_2048x.JPG?v=1615928417"
+  imageAlt="Vermouth.NU"
+  title="Vermouth.NU"
+/>
 
 <div class="main">
   <Carrousel {images} />

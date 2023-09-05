@@ -26,7 +26,7 @@
 <div class="carrousel">
   {#each [images[index]] as { id, path } (index)}
     <div class="image-container">
-      <img transition:fade|local sizes="80vw" srcset="{path}, 1200w" {id} src={path} alt={id} />
+      <img transition:fade|local sizes="80vw" srcset={path} {id} src={path} alt={id} />
     </div>
   {/each}
   <slot {index} />
