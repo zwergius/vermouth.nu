@@ -5,6 +5,8 @@
   import logoDesktop from '$lib/assets/logo-home.svg'
   import logoMobile from '$lib/assets/diagonal-logo.svg'
   import RingText from '$lib/components/ring-text.svelte'
+
+  export const prerender = true
 </script>
 
 <div class="container">
