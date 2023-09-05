@@ -40,7 +40,11 @@
     display: flex;
     width: 100%;
     flex: 1;
+<<<<<<< HEAD
+    padding-top: 260px;
+=======
     padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
+>>>>>>> main
   }
   .container {
     z-index: 100;
@@ -55,8 +59,11 @@
   .logo-desktop {
     background-image: linear-gradient(#f0a9a8 90%, #9e9e9f00 100%);
     width: 100%;
+<<<<<<< HEAD
     z-index: 10;
     padding-bottom: 30px;
+=======
+>>>>>>> main
   }
   .logo-mobile {
     display: none;
@@ -65,6 +72,12 @@
     .ringtext {
       bottom: 90px;
     }
+<<<<<<< HEAD
+    .wrapper {
+      padding-top: 370px;
+    }
+=======
+>>>>>>> main
     .logo-desktop {
       display: none;
     }
@@ -88,8 +101,11 @@
     .logo-desktop {
       display: none;
     }
+<<<<<<< HEAD
+=======
     .logo-mobile {
       margin-bottom: 20px;
     }
+>>>>>>> main
   }
 </style>
