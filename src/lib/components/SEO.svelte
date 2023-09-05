@@ -25,8 +25,8 @@
 
   <!--  Essential META Tags -->
 
-  <meta property="”og:locale”" content="””" />
-  <meta property="”fb:app_id”" content="””" />
+  <meta property="”og:locale”" content="" />
+  <meta property="”fb:app_id”" content="" />
   <meta property="og:site_name" content="Vermouth.NU" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
