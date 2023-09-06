@@ -126,7 +126,7 @@
       width: 100%;
     }
     .container {
-      padding: 45px 50px;
+      padding: 65px 50px 0px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -141,7 +141,7 @@
       padding-bottom: 30px;
     }
     .container {
-      padding: 40px 15px 50px 15px;
+      padding: 65px 15px 0px 15px;
     }
   }
 </style>

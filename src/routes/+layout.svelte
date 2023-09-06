@@ -9,17 +9,17 @@
 
   const desiredUrl = '/'
 
-  $: hasgradient = $page.url.pathname === desiredUrl
+  $: hasGradient = $page.url.pathname === desiredUrl
 </script>
 
 <div class="container">
   <Header />
-  <div class={hasgradient ? 'logo-desktop' : 'logo-desktop gradient'}>
+  <div class="logo-desktop {hasGradient ? '' : 'gradient'}">
     <a href="/">
       <img src={logoDesktop} alt="logo" />
     </a>
   </div>
-  <div class={hasgradient ? 'logo-mobile' : 'logo-mobile gradient'}>
+  <div class="logo-mobile {hasGradient ? '' : 'gradient'}">
     <a href="/">
       <img src={logoMobile} alt="logo" />
     </a>
@@ -31,7 +31,6 @@
     <RingText />
   </div>
 </div>
-
 <Footer />
 
 <style>

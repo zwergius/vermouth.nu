@@ -35,11 +35,12 @@
     .container {
       grid-gap: 40px;
       padding: 50px;
+      padding-top: 70px;
     }
   }
   @media only screen and (max-width: 767px) {
     .container {
-      padding: 50px 15px;
+      padding: 75px 15px 50px;
     }
   }
 </style>
