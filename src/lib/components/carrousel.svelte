@@ -123,7 +123,6 @@
   @media only screen and (max-width: 1024px) {
     .carrousel {
       padding-bottom: 0;
-      padding: 30px;
     }
     button.left,
     button.right {

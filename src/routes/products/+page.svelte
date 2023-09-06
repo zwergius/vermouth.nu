@@ -34,8 +34,7 @@
   @media only screen and (max-width: 1024px) {
     .container {
       grid-gap: 40px;
-      padding: 50px;
-      padding-top: 70px;
+      padding: 70px 40px 50px;
     }
   }
   @media only screen and (max-width: 767px) {
