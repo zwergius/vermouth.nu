@@ -20,7 +20,7 @@ module.exports = {
     },
   ],
   settings: {
-    'svelte3/typescript': () => require('typescript'),
+    'svelte/typescript': () => require('typescript'),
   },
   parserOptions: {
     sourceType: 'module',
