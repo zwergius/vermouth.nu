@@ -90,7 +90,7 @@
     .wrapper {
       flex-direction: column;
       justify-content: center;
-      padding: 30px 10px;
+      padding: 50px 10px 30px;
     }
   }
 </style>
