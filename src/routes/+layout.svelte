@@ -46,6 +46,7 @@
     padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
   }
   .container {
+    --fade-padding: 30px;
     z-index: 100;
     width: 100%;
     position: fixed;
@@ -61,7 +62,7 @@
   .logo {
     width: 100%;
     z-index: 10;
-    padding-bottom: 30px;
+    padding-bottom: var(--fade-padding);
   }
   .logo-mobile {
     display: none;
@@ -73,9 +74,11 @@
     .logo-desktop {
       display: none;
     }
-    .logo {
+    .container {
+      ----fade-padding: 20px;
+    }
+    .logo-mobile {
       display: block;
-      padding-bottom: 20px;
     }
     .wrapper {
       --logo-aspect-ratio: 336 / 1021;
