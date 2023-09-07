@@ -112,7 +112,6 @@
     border-radius: 50%;
   }
   svg {
-    bottom: 0;
     border: 2px solid var(--interactive-button);
     border-radius: 50%;
   }

@@ -7,19 +7,17 @@
   import { page } from '$app/stores'
   import RingText from '$lib/components/ring-text.svelte'
 
-  const desiredUrl = '/'
-
-  $: hasGradient = $page.url.pathname === desiredUrl
+  $: hasGradient = $page.url.pathname === '/'
 </script>
 
 <div class="container">
   <Header />
-  <div class="logo-desktop {hasGradient ? '' : 'gradient'}">
+  <div class="logo logo-desktop {hasGradient ? '' : 'gradient'}">
     <a href="/">
       <img src={logoDesktop} alt="logo" />
     </a>
   </div>
-  <div class="logo-mobile {hasGradient ? '' : 'gradient'}">
+  <div class="logo logo-mobile {hasGradient ? '' : 'gradient'}">
     <a href="/">
       <img src={logoMobile} alt="logo" />
     </a>
@@ -60,7 +58,7 @@
   .gradient {
     background-image: linear-gradient(#f0a9a8 75%, #9e9e9f00 100%);
   }
-  .logo-desktop {
+  .logo {
     width: 100%;
     z-index: 10;
     padding-bottom: 30px;
@@ -75,15 +73,13 @@
     .logo-desktop {
       display: none;
     }
+    .logo {
+      display: block;
+      padding-bottom: 20px;
+    }
     .wrapper {
       --logo-aspect-ratio: 336 / 1021;
       padding-bottom: 30px;
-    }
-    .logo-mobile {
-      display: block;
-      z-index: 10;
-      width: 100%;
-      padding-bottom: 20px;
     }
   }
   @media only screen and (max-width: 767px) {
@@ -93,9 +89,6 @@
     }
     .logo-desktop {
       display: none;
-    }
-    .logo-mobile {
-      margin-bottom: 20px;
     }
   }
 </style>
