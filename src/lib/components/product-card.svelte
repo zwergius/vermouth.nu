@@ -22,7 +22,6 @@
     position: relative;
     border: 2px solid var(--secondary);
     border-radius: 20px;
-    padding-bottom: 50px;
     padding: 50px;
   }
   .sizeAndDegrees {
