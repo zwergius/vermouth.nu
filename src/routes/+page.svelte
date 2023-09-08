@@ -42,11 +42,11 @@
     display: flex;
     flex: 1;
     width: 100%;
-    padding: 0 100px 30px;
+    padding: 0px 100px 30px;
   }
   @media only screen and (max-width: 1024px) {
     .main {
-      padding: 0px 50px 100px;
+      padding: 20px 50px 0px;
     }
   }
   @media only screen and (max-width: 767px) {
