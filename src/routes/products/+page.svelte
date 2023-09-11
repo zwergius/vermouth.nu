@@ -14,7 +14,7 @@
 
 <section class="container">
   {#each vermouths as vermouth, index}
-    <div in:fade={{ duration: 300, delay: index * 150 }}>
+    <div in:fade|global={{ duration: 300, delay: index * 150 }}>
       <a href="/products/{vermouth.name.toLowerCase().replace(' ', '-')}">
         <Product {vermouth} />
       </a>
