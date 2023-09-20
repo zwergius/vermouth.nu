@@ -9,7 +9,7 @@
 
 <div class="wrapper">
   <div class="image-container">
-    <img width="330" height="440" src={image} alt={name} />
+    <img width="580" height="580" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
@@ -48,9 +48,8 @@
     padding: 0 0 15px 15px;
   }
   img {
-    width: 100%;
+    width: 580px;
     object-fit: cover;
-    height: auto;
   }
   .image-container {
     position: sticky;
@@ -75,6 +74,10 @@
     width: 100%;
   }
   @media only screen and (max-width: 1024px) {
+    img {
+      width: 100%;
+      height: auto;
+    }
     .wrapper {
       align-items: center;
       padding: 50px;
