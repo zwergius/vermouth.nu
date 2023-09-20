@@ -1,11 +1,11 @@
 <script lang="ts">
   export let vermouth
 
-  const { name, region, cardImage, country, sizeAndDegrees } = vermouth
+  const { name, region, image, country, sizeAndDegrees } = vermouth
 </script>
 
 <div class="container">
-  <img width="300" height="350" src={cardImage} alt={name} />
+  <img width="300" height="350" src={image} alt={name} />
   <div class="content">
     <h2>{name}</h2>
     <p class="region">{region}</p>
