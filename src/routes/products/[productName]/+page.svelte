@@ -9,7 +9,7 @@
 
 <div class="wrapper">
   <div class="image-container">
-    <img width="330" height="440" src={image} alt={name} />
+    <img width="580" height="580" src={image} alt={name} />
   </div>
   <div class="content">
     <h1>{name}</h1>
@@ -48,13 +48,12 @@
     padding: 0 0 15px 15px;
   }
   img {
-    width: 100%;
+    width: 580px;
     object-fit: cover;
-    height: auto;
   }
   .image-container {
     position: sticky;
-    min-width: 430px;
+    min-width: 580px;
   }
   .region {
     padding: 0;
@@ -78,12 +77,20 @@
     .wrapper {
       align-items: center;
       padding: 50px;
+      padding-top: 100px;
+    }
+    img {
+      width: 400px;
     }
     .image-container {
-      min-width: 320px;
+      min-width: 350px;
     }
   }
   @media only screen and (max-width: 767px) {
+    img {
+      width: 100%;
+      height: auto;
+    }
     p {
       font-size: var(--16px);
     }
