@@ -53,7 +53,7 @@
   }
   .image-container {
     position: sticky;
-    min-width: 430px;
+    min-width: 580px;
   }
   .region {
     padding: 0;
@@ -74,19 +74,23 @@
     width: 100%;
   }
   @media only screen and (max-width: 1024px) {
+    .wrapper {
+      align-items: center;
+      padding: 50px;
+      padding-top: 100px;
+    }
+    img {
+      width: 400px;
+    }
+    .image-container {
+      min-width: 350px;
+    }
+  }
+  @media only screen and (max-width: 767px) {
     img {
       width: 100%;
       height: auto;
     }
-    .wrapper {
-      align-items: center;
-      padding: 50px;
-    }
-    .image-container {
-      min-width: 320px;
-    }
-  }
-  @media only screen and (max-width: 767px) {
     p {
       font-size: var(--16px);
     }
