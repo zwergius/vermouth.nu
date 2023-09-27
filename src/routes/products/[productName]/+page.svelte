@@ -83,7 +83,7 @@
       width: 400px;
     }
     .image-container {
-      min-width: 350px;
+      min-width: 400px;
     }
   }
   @media only screen and (max-width: 767px) {
