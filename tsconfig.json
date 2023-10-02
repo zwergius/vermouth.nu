@@ -8,7 +8,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true
+    "strict": true,
+    "preserveValueImports": true,
+    "isolatedModules": false
   },
   "paths": {
     "$lib": ["src/lib"],
