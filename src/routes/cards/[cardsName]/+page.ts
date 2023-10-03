@@ -21,7 +21,7 @@ const cardsData: Record<string, CardData> = {
   },
 }
 const baseURL =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://www.vermouth.nu'
+  process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : 'https://www.vermouth.nu'
 
 /** @type {import('./$types').PageLoad} */
 export function load({ params }) {
