@@ -1,10 +1,7 @@
 import { error } from '@sveltejs/kit'
 import { CardNames } from './types'
 import type { CardData } from './types'
-
-const { userAgent } = navigator
-const isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
-const isAndroid = /(Android)/.test(userAgent)
+const isBrowser = import.meta.env.MODE === 'client'
 
 const cardsData: Record<string, CardData> = {
   [CardNames.Christian]: {
@@ -27,6 +24,14 @@ const baseURL =
 export function load({ params }) {
   const cardNameParam = params.cardsName
   const cardData = cardsData[cardNameParam]
+  let isIOS = false
+  let isAndroid = false
+
+  if (isBrowser) {
+    const { userAgent } = navigator
+    isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
+    isAndroid = /(Android)/.test(userAgent)
+  }
 
   let pkpass
   if (process.env.NODE_ENV === 'development') {
@@ -42,7 +47,6 @@ export function load({ params }) {
       window.location.href = cardData.passGoogle
     }
   }
-
   if (!cardData) throw error(404)
 
   return {
