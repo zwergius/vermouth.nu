@@ -24,14 +24,8 @@ const baseURL =
 export function load({ params }) {
   const cardNameParam = params.cardsName
   const cardData = cardsData[cardNameParam]
-  let isIOS = false
-  let isAndroid = false
-
-  if (isBrowser) {
-    const { userAgent } = navigator
-    isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
-    isAndroid = /(Android)/.test(userAgent)
-  }
+  let isIOS
+  let isAndroid
 
   let pkpass
   if (process.env.NODE_ENV === 'development') {
@@ -39,12 +33,16 @@ export function load({ params }) {
   } else {
     pkpass = `${baseURL}/${cardNameParam}-vermouth-nu.pkpass`
   }
-
-  if (isIOS) {
-    window.location.href = pkpass
-  } else {
-    if (isAndroid) {
-      window.location.href = cardData.passGoogle
+  if (isBrowser) {
+    const { userAgent } = navigator
+    isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
+    isAndroid = /(Android)/.test(userAgent)
+    if (isIOS) {
+      window.location.href = pkpass
+    } else {
+      if (isAndroid) {
+        window.location.href = cardData.passGoogle
+      }
     }
   }
   if (!cardData) throw error(404)
