@@ -1,16 +1,14 @@
 <script lang="ts">
   import { browser } from '$app/environment'
   import { redirect } from '@sveltejs/kit'
-
   import downloadIos from '$lib/assets/apple-wallet.png'
   import downloadAndroid from '$lib/assets/google-wallet.png'
 
   export let data
   const { cardData, cardNameParam } = data
-  let isIOS: boolean
   let isSafari: boolean
+  let isIOS: boolean
   let isAndroid: boolean
-
   const oldUrl = `https://www.vermouth.nu/${cardNameParam}-vermouth-nu.pkpass`
 
   function downloadPass() {
@@ -26,7 +24,6 @@
       window.location.href = cardData.passGoogle
     }
   }
-
   if (browser) {
     const { userAgent } = navigator
     isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
@@ -40,7 +37,6 @@
   <button on:click={downloadPass}>
     <img src={downloadIos} alt="download" />
   </button>
-
   <button on:click={downloadPass}>
     <img src={downloadAndroid} alt="download" />
   </button>
