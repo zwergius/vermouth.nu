@@ -1,17 +1,22 @@
 <script lang="ts">
   import { browser } from '$app/environment'
+  import downloadIosBig from '$lib/assets/ios-wallet-b.svg'
   import downloadIos from '$lib/assets/ios-wallet.svg'
-  import downloadAndroid from '$lib/assets/google-wallet.png'
+  import downloadIosMediun from '$lib/assets/ios-wallet-m.svg'
+  import downloadAndroid from '$lib/assets/google-wallet.svg'
+  import downloadAndroidBig from '$lib/assets/google-wallet-b.svg'
+  import downloadAndroidMediun from '$lib/assets/google-wallet-m.svg'
+  import LinkWallet from '$lib/components/link-wallet.svelte'
 
   export let data
-  const { cardData, cardNameParam } = data
+  const { cardData, pkpass } = data
   let isIOS: boolean
   let isAndroid: boolean
   let isMac: boolean
 
   function downloadPass() {
     if (isIOS || isMac) {
-      window.location.href = `${window.location.origin}/${cardNameParam}.pkpass`
+      window.location.href = pkpass
     } else if (isAndroid || isMac) {
       window.location.href = cardData.passGoogle
     }
@@ -26,16 +31,17 @@
   }
 </script>
 
-<div class="add-wallet">
-  {#if typeof window !== 'undefined'}
-    <a href="{window.location.origin}/{cardNameParam}.pkpass">
-      <img src={downloadIos} alt="download" />
-    </a>
-  {/if}
-
-  <a href={cardData.passGoogle}>
-    <img src={downloadAndroid} alt="download" />
-  </a>
+<div class="add-wallet mobile">
+  <LinkWallet href={pkpass} src={downloadIos} />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroid} />
+</div>
+<div class="add-wallet tablet">
+  <LinkWallet href={pkpass} src={downloadIosMediun} />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroidMediun} />
+</div>
+<div class="add-wallet desktoc">
+  <LinkWallet href={pkpass} src={downloadIosBig} />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroidBig} />
 </div>
 
 <style>
@@ -46,5 +52,33 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .tablet {
+    display: none;
+  }
+  .mobile {
+    display: none;
+  }
+  @media only screen and (max-width: 1024px) {
+    .desktoc {
+      display: none;
+    }
+    .tablet {
+      display: flex;
+    }
+    .mobile {
+      display: none;
+    }
+  }
+  @media only screen and (max-width: 767px) {
+    .mobile {
+      display: flex;
+    }
+    .desktoc {
+      display: none;
+    }
+    .tablet {
+      display: none;
+    }
   }
 </style>

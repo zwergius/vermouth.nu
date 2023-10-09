@@ -18,15 +18,15 @@ const cardsData: Record<string, CardData> = {
 }
 
 /** @type {import('./$types').PageLoad} */
-export function load({ params }) {
+export function load({ params, url }) {
   const cardNameParam = params.cardsName
   const cardData = cardsData[cardNameParam]
-
+  const pkpass = `${url.origin}/${cardNameParam}.pkpass`
   if (!cardData) {
     throw error(404)
   }
   return {
+    pkpass,
     cardData,
-    cardNameParam,
   }
 }
