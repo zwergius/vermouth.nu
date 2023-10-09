@@ -10,9 +10,9 @@
   let isMac: boolean
 
   function downloadPass() {
-    if (isIOS && isMac) {
+    if (isIOS || isMac) {
       window.location.href = `${window.location.origin}/${cardNameParam}.pkpass`
-    } else if (isAndroid) {
+    } else if (isAndroid || isMac) {
       window.location.href = cardData.passGoogle
     }
   }
