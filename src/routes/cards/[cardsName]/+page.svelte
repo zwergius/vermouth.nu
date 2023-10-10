@@ -29,16 +29,16 @@
 </script>
 
 <div class="add-wallet mobile">
-  <LinkWallet href={pkpass} src={downloadIos} />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroid} />
+  <LinkWallet href={pkpass} src={downloadIos} alt="ios" />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroid} alt="android" />
 </div>
 <div class="add-wallet tablet">
-  <LinkWallet href={pkpass} src={downloadIosMediun} />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroidMediun} />
+  <LinkWallet href={pkpass} src={downloadIosMediun} alt="ios" />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroidMediun} alt="android" />
 </div>
 <div class="add-wallet desktop">
-  <LinkWallet href={pkpass} src={downloadIosBig} />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroidBig} />
+  <LinkWallet href={pkpass} src={downloadIosBig} alt="ios" />
+  <LinkWallet href={cardData.passGoogle} src={downloadAndroidBig} alt="android" />
 </div>
 
 <style>
