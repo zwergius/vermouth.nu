@@ -22,7 +22,7 @@
 
     if (isIOS || isMac) {
       window.location.href = pkpass
-    } else if (isAndroid || isMac) {
+    } else if (isAndroid) {
       window.location.href = cardData.passGoogle
     }
   }
