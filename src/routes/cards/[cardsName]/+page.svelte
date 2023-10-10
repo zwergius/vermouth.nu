@@ -36,7 +36,7 @@
   <LinkWallet href={pkpass} src={downloadIosMediun} />
   <LinkWallet href={cardData.passGoogle} src={downloadAndroidMediun} />
 </div>
-<div class="add-wallet desktoc">
+<div class="add-wallet desktop">
   <LinkWallet href={pkpass} src={downloadIosBig} />
   <LinkWallet href={cardData.passGoogle} src={downloadAndroidBig} />
 </div>
@@ -57,7 +57,7 @@
     display: none;
   }
   @media only screen and (max-width: 1024px) {
-    .desktoc {
+    .desktop {
       display: none;
     }
     .tablet {
@@ -71,7 +71,7 @@
     .mobile {
       display: flex;
     }
-    .desktoc {
+    .desktop {
       display: none;
     }
     .tablet {
