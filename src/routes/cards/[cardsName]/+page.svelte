@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment'
-  import downloadIosBig from '$lib/assets/ios-wallet-b.svg'
   import downloadIos from '$lib/assets/ios-wallet.svg'
+  import downloadIosBig from '$lib/assets/ios-wallet-b.svg'
   import downloadIosMediun from '$lib/assets/ios-wallet-m.svg'
   import downloadAndroid from '$lib/assets/google-wallet.svg'
   import downloadAndroidBig from '$lib/assets/google-wallet-b.svg'
@@ -19,15 +19,13 @@
     isIOS = /(iPhone|iPad|iPod|)/.test(userAgent)
     isAndroid = /(Android)/.test(userAgent)
     isMac = /(Macintosh)/.test(userAgent)
-  }
-  function downloadPass() {
+
     if (isIOS || isMac) {
       window.location.href = pkpass
     } else if (isAndroid || isMac) {
       window.location.href = cardData.passGoogle
     }
   }
-  downloadPass()
 </script>
 
 <div class="add-wallet mobile">
