@@ -24,18 +24,13 @@
 </script>
 
 <div class="add-wallet mobile">
-  <div class="ios">
-    <a href={pkpass}><img src={iosWallet} alt="button" /></a>
-  </div>
-  <div class="android">
-    <a href={cardData.passGoogle}><img src={googleWallet} alt="button" /></a>
-  </div>
+  <a href={pkpass}><img class="ios" src={iosWallet} alt="button" /></a>
+  <a href={cardData.passGoogle}><img class="android" src={googleWallet} alt="button" /></a>
 </div>
 
 <style>
   .add-wallet {
     padding-top: 50px;
-    flex-direction: column;
     gap: 50px;
     width: 100%;
     display: flex;
@@ -51,6 +46,9 @@
     height: 127px;
   }
   @media only screen and (max-width: 1024px) {
+    .add-wallet {
+      flex-direction: column;
+    }
     .android {
       width: 300px;
       height: 83px;
