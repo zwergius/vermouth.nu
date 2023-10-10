@@ -16,7 +16,7 @@
 
   if (browser) {
     const { userAgent } = navigator
-    isIOS = /(iPhone|iPad|iPod|)/.test(userAgent)
+    isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
     isAndroid = /(Android)/.test(userAgent)
     isMac = /(Macintosh)/.test(userAgent)
 
