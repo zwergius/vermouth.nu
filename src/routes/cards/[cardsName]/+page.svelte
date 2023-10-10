@@ -1,12 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment'
-  import downloadIos from '$lib/assets/ios-wallet.svg'
-  import downloadIosBig from '$lib/assets/ios-wallet-b.svg'
-  import downloadIosMediun from '$lib/assets/ios-wallet-m.svg'
-  import downloadAndroid from '$lib/assets/google-wallet.svg'
-  import downloadAndroidBig from '$lib/assets/google-wallet-b.svg'
-  import downloadAndroidMediun from '$lib/assets/google-wallet-m.svg'
-  import LinkWallet from '$lib/components/link-wallet.svelte'
+  import googleWallet from '$lib/assets/google-wallet.svg'
+  import iosWallet from '$lib/assets/ios-wallet.svg'
 
   export let data
   const { cardData, pkpass } = data
@@ -29,20 +24,17 @@
 </script>
 
 <div class="add-wallet mobile">
-  <LinkWallet href={pkpass} src={downloadIos} alt="ios" />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroid} alt="android" />
-</div>
-<div class="add-wallet tablet">
-  <LinkWallet href={pkpass} src={downloadIosMediun} alt="ios" />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroidMediun} alt="android" />
-</div>
-<div class="add-wallet desktop">
-  <LinkWallet href={pkpass} src={downloadIosBig} alt="ios" />
-  <LinkWallet href={cardData.passGoogle} src={downloadAndroidBig} alt="android" />
+  <div class="ios">
+    <a href={pkpass}><img src={iosWallet} alt="button" /></a>
+  </div>
+  <div class="android">
+    <a href={cardData.passGoogle}><img src={googleWallet} alt="button" /></a>
+  </div>
 </div>
 
 <style>
   .add-wallet {
+    padding-top: 50px;
     flex-direction: column;
     gap: 50px;
     width: 100%;
@@ -50,32 +42,32 @@
     justify-content: center;
     align-items: center;
   }
-  .tablet {
-    display: none;
+  .android {
+    width: 400px;
+    height: 111px;
   }
-  .mobile {
-    display: none;
+  .ios {
+    width: 400px;
+    height: 127px;
   }
   @media only screen and (max-width: 1024px) {
-    .desktop {
-      display: none;
+    .android {
+      width: 300px;
+      height: 83px;
     }
-    .tablet {
-      display: flex;
-    }
-    .mobile {
-      display: none;
+    .ios {
+      width: 300px;
+      height: 95px;
     }
   }
   @media only screen and (max-width: 767px) {
-    .mobile {
-      display: flex;
+    .android {
+      width: 200px;
+      height: 55px;
     }
-    .desktop {
-      display: none;
-    }
-    .tablet {
-      display: none;
+    .ios {
+      width: 200px;
+      height: 63px;
     }
   }
 </style>
