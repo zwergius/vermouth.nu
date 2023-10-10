@@ -14,6 +14,12 @@
   let isAndroid: boolean
   let isMac: boolean
 
+  if (browser) {
+    const { userAgent } = navigator
+    isIOS = /(iPhone|iPad|iPod|)/.test(userAgent)
+    isAndroid = /(Android)/.test(userAgent)
+    isMac = /(Macintosh)/.test(userAgent)
+  }
   function downloadPass() {
     if (isIOS || isMac) {
       window.location.href = pkpass
@@ -21,14 +27,7 @@
       window.location.href = cardData.passGoogle
     }
   }
-  if (browser) {
-    const { userAgent } = navigator
-    isIOS = /(iPhone|iPad|iPod|)/.test(userAgent)
-    isAndroid = /(Android)/.test(userAgent)
-    isMac = /(Macintosh)/.test(userAgent)
-
-    downloadPass()
-  }
+  downloadPass()
 </script>
 
 <div class="add-wallet mobile">

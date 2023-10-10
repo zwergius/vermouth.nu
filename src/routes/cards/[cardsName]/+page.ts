@@ -22,6 +22,7 @@ export function load({ params, url }) {
   const cardNameParam = params.cardsName
   const cardData = cardsData[cardNameParam]
   const pkpass = `${url.origin}/${cardNameParam}.pkpass`
+
   if (!cardData) {
     throw error(404)
   }
