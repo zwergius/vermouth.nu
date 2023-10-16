@@ -23,17 +23,17 @@
   }
 </script>
 
-<div class="container-links">
+<div class="container">
   <a rel="external" href={pkpass}
-    ><img class="logo-wallet" src={iosWallet} alt="add the card to your wallet for ios" /></a
+    ><img class="wallet-logo" src={iosWallet} alt="add the card to your wallet for ios" /></a
   >
   <a rel="external" target="_blank" href={cardData.passGoogle}
-    ><img class="logo-wallet" src={googleWallet} alt="add the card to your wallet for android" /></a
+    ><img class="wallet-logo" src={googleWallet} alt="add the card to your wallet for android" /></a
   >
 </div>
 
 <style>
-  .container-links {
+  .container {
     padding-top: 50px;
     gap: 50px;
     width: 100%;
@@ -41,21 +41,21 @@
     justify-content: center;
     align-items: center;
   }
-  .logo-wallet {
+  .wallet-logo {
     width: 320px;
     height: auto;
   }
 
   @media only screen and (max-width: 1024px) {
-    .container-links {
+    .container {
       flex-direction: column;
     }
-    .logo-wallet {
+    .wallet-logo {
       width: 280px;
     }
   }
   @media only screen and (max-width: 767px) {
-    .logo-wallet {
+    .wallet-logo {
       width: 200px;
     }
   }

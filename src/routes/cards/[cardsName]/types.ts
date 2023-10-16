@@ -4,7 +4,4 @@ export enum CardNames {
   Thomas = 'thomas',
 }
 
-export interface CardData {
-  passGoogle: string
-}
 export default CardNames
