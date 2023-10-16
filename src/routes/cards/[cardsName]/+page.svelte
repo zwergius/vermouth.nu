@@ -27,7 +27,7 @@
   <a rel="external" href={pkpass}
     ><img class="logo-wallet" src={iosWallet} alt="add the card to your wallet for ios" /></a
   >
-  <a rel="external" href={cardData.passGoogle}
+  <a rel="external" target="_blank" href={cardData.passGoogle}
     ><img class="logo-wallet" src={googleWallet} alt="add the card to your wallet for android" /></a
   >
 </div>
