@@ -18,16 +18,16 @@
     if (isIOS || isMac) {
       window.location.href = pkpass
     } else if (isAndroid) {
-      window.location.href = cardData.passGoogle
+      window.location.href = cardData
     }
   }
 </script>
 
 <div class="container">
-  <a rel="external" href={pkpass}
-    ><img class="wallet-logo" src={iosWallet} alt="add the card to your wallet for ios" /></a
-  >
-  <a rel="external" target="_blank" href={cardData.passGoogle}
+  <a rel="external" href={pkpass}>
+    <img class="wallet-logo" src={iosWallet} alt="add the card to your wallet for ios" />
+  </a>
+  <a rel="external" target="_blank" href={cardData}
     ><img class="wallet-logo" src={googleWallet} alt="add the card to your wallet for android" /></a
   >
 </div>
