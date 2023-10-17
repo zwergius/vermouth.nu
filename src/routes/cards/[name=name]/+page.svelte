@@ -8,9 +8,9 @@
 
   if (browser) {
     const { userAgent } = navigator
-    let isIOS: boolean = /(iPhone|iPad|iPod)/.test(userAgent)
-    let isAndroid: boolean = /(Android)/.test(userAgent)
-    let isMac: boolean = /(Macintosh)/.test(userAgent)
+    const isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
+    const isAndroid = /(Android)/.test(userAgent)
+    const isMac = /(Macintosh)/.test(userAgent)
 
     if (isIOS || isMac) {
       window.location.href = pkpass
