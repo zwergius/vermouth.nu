@@ -5,15 +5,12 @@
 
   export let data
   const { cardData, pkpass } = data
-  let isIOS: boolean
-  let isAndroid: boolean
-  let isMac: boolean
 
   if (browser) {
     const { userAgent } = navigator
-    isIOS = /(iPhone|iPad|iPod)/.test(userAgent)
-    isAndroid = /(Android)/.test(userAgent)
-    isMac = /(Macintosh)/.test(userAgent)
+    let isIOS: boolean = /(iPhone|iPad|iPod)/.test(userAgent)
+    let isAndroid: boolean = /(Android)/.test(userAgent)
+    let isMac: boolean = /(Macintosh)/.test(userAgent)
 
     if (isIOS || isMac) {
       window.location.href = pkpass
