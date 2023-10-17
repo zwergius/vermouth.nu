@@ -26,6 +26,14 @@ const config = {
     }),
     prerender: {
       crawl: true,
+      entries: [
+        '/cards/christian',
+        '/cards/thomas',
+        '/cards/christoffer',
+        '/christian-vermouth-nu.pkpass',
+        '/christoffer-vermouth-nu.pkpass',
+        '/thomas-vermouth-nu.pkpass',
+      ],
     },
   },
 }

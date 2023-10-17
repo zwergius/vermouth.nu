@@ -48,6 +48,7 @@ module.exports = {
     'object-shorthand': 'error',
     'no-unneeded-ternary': 'error',
     'quote-props': ['error', 'as-needed'],
+    'prefer-const': 'error',
     // "no-console": ["warn", { allow: ["warn", "error"] }],
     '@typescript-eslint/no-unused-vars': [
       'error',
