@@ -10,10 +10,10 @@ const cardsData: Record<string, string> = {
 }
 
 /** @type {import('./$types').PageLoad} */
-export function load({ params }) {
+export function load({ params, url }) {
   const { name } = params
   const cardData = cardsData[name]
-  const pkpass = `${import.meta.env.VITE_BASE_URL}${name}.pkpass`
+  const pkpass = `${url.origin}/${name}.pkpass`
 
   return {
     pkpass,
