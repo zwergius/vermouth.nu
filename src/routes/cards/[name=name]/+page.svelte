@@ -39,21 +39,12 @@
     align-items: center;
   }
   .wallet-logo {
-    width: 320px;
-    height: auto;
+    width: auto;
+    height: 60px;
   }
-
   @media only screen and (max-width: 1024px) {
     .container {
       flex-direction: column;
-    }
-    .wallet-logo {
-      width: 280px;
-    }
-  }
-  @media only screen and (max-width: 767px) {
-    .wallet-logo {
-      width: 200px;
     }
   }
 </style>
