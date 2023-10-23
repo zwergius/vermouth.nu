@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('test', async ({ page }) => {
+test('test old url', async ({ page }) => {
   await page.goto('http://localhost:5173/christian-vermouth-nu.pkpass')
   await page.waitForTimeout(2000)
   const userAgent = await page.evaluate(() => navigator.userAgent)

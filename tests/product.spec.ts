@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('test', async ({ page }) => {
+test('check img and texts', async ({ page }) => {
   await page.goto('http://localhost:5173/products/sardino-rojo')
   await page.getByRole('heading', { name: 'Sardino Rojo' }).click()
 

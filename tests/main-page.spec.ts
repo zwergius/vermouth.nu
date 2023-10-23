@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('test', async ({ page }) => {
+test('check images and logo text', async ({ page }) => {
   await page.goto('http://localhost:5173/')
   await page.getByText('© Vermouth NU CVR - 40649395 Følg os Ig Fb info@vermouth.nu').click()
 

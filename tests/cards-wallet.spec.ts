@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('test', async ({ page }) => {
+test('check that the buttons redirect each one to its link', async ({ page }) => {
   await page.goto('http://localhost:5173/cards/christian')
 
   const userAgent = await page.evaluate(() => navigator.userAgent)
