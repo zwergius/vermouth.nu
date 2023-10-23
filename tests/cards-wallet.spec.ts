@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('check that the buttons redirect each one to its link', async ({ page }) => {
-  await page.goto('http://localhost:5173/cards/christian')
+  await page.goto(`./cards/christian`)
 
   const userAgent = await page.evaluate(() => navigator.userAgent)
 
@@ -28,11 +28,11 @@ test('check that the buttons redirect each one to its link', async ({ page }) =>
     )
   }
   if (userAgent.includes('safari')) {
-    await page.goto('http://localhost:5173/christian.pkpass')
+    await page.goto(`${window.location.href}/christian.pkpass`)
 
     await page.waitForLoadState('domcontentloaded')
 
-    expect(page.url()).toBe('http://localhost:5173/christian.pkpass')
+    expect(page.url()).toBe(`http://wwww.vermouth.nu/christian.pkpass`)
 
     const linkSelector = `a:has-text("add the card to your wallet for Android")`
 
