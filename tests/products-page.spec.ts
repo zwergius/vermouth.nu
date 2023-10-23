@@ -7,6 +7,5 @@ test('check if they contain the image', async ({ page }) => {
     name: 'Forzudo Blanco Forzudo Blanco Bierzo, Leon, Nordvest Spanien 100 cl. / 15%',
   })
   const image = await link.locator('img').first()
-
   expect(image).toBeTruthy()
 })

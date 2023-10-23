@@ -5,6 +5,7 @@ test('test old url', async ({ page }) => {
   await page.waitForTimeout(2000)
   const userAgent = await page.evaluate(() => navigator.userAgent)
   const currentURL = page.url()
+
   if (userAgent.includes('Chrome') || userAgent.includes('Firefox')) {
     expect(currentURL).toBe('https://www.vermouth.nu/cards/christian')
   }

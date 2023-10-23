@@ -5,7 +5,6 @@ test('check images and logo text', async ({ page }) => {
   await page.getByText('© Vermouth NU CVR - 40649395 Følg os Ig Fb info@vermouth.nu').click()
 
   const pageTitle = await page.title()
-
   expect(pageTitle).toContain('Vermouth.NU')
 
   await page.locator('div').filter({ hasText: 'Hjem Forhandlere Produkter' }).nth(2).click()
@@ -16,9 +15,7 @@ test('check images and logo text', async ({ page }) => {
     .nth(2)
 
   const divText = await thirdDiv.textContent()
-
   expect(divText).toContain('Hjem Forhandlere Produkter')
-
   const logoImage = await page.locator('a[title="logo"] img[alt="logo"]').first()
   expect(logoImage).toBeTruthy()
 
