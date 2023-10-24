@@ -7,7 +7,7 @@
   }
   let index = 0
   let interval: number
-  let ms = 3500
+  const ms = 3500
   export let images: CarrouselImage[]
 
   const next = () => {
@@ -23,7 +23,7 @@
   }
 </script>
 
-<div class="carrousel">
+<div class="carrousel" data-pw="carrousel">
   {#each [images[index]] as { id, path } (index)}
     <div class="image-container">
       <img transition:fade sizes="80vw" srcset={path} {id} src={path} alt={id} />

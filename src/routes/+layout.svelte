@@ -23,7 +23,7 @@
     </a>
   </div>
 </div>
-<div class="wrapper">
+<div class="wrapper" data-pw="title">
   <slot />
   <div class="ringtext">
     <RingText />
