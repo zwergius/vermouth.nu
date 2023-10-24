@@ -14,8 +14,8 @@ test('check that the buttons redirect each one to its link', async ({ page }) =>
     expect(download1.url()).toContain('/christian.pkpass')
 
     await page.getByRole('link', { name: 'add the card to your wallet for android' }).click()
-    await page.waitForLoadState('domcontentloaded')
     const page1Promise = page.waitForEvent('popup')
+    await page.waitForLoadState('domcontentloaded')
     expect(page1Promise).not.toBeNull()
   }
   if (userAgent.includes('safari')) {
