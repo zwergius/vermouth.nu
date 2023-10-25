@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 
 test('check img and texts', async ({ page }) => {
-  await page.goto('./products/sardino-rojo')
+  await page.goto('/products/sardino-rojo')
   await page.waitForLoadState('networkidle')
   await page.getByRole('heading', { name: 'Sardino Rojo' }).click()
 

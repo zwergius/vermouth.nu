@@ -3,8 +3,13 @@ import { test, expect } from '@playwright/test'
 test('check that the buttons redirect each one to its link', async ({ page }) => {
   const userAgent = await page.evaluate(() => navigator.userAgent)
 
-  if (userAgent.includes('Chrome') || userAgent.includes('Firefox')) {
-    await page.goto('./cards/christian')
+  if (
+    userAgent.includes('Chrome') ||
+    userAgent.includes('Firefox') ||
+    userAgent.includes('Mobile Chrome')
+  ) {
+    await page.goto('/cards/christian')
+    await page.waitForLoadState('load')
     await page.waitForLoadState('domcontentloaded')
     const download1Promise = page.waitForEvent('download')
     await page.getByRole('link', { name: 'add the card to your wallet for ios' }).click()
@@ -19,7 +24,7 @@ test('check that the buttons redirect each one to its link', async ({ page }) =>
     expect(page1).not.toBeNull()
   }
   if (userAgent.includes('safari')) {
-    await page.goto('./cards/christian')
+    await page.goto('/cards/christian')
     await page.getByRole('link', { name: 'add the card to your wallet for ios' }).click()
 
     const popupIos = await page.waitForEvent('popup')
