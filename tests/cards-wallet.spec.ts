@@ -19,7 +19,7 @@ test('check that the buttons redirect each one to its link', async ({ page }) =>
     expect(page1).not.toBeNull()
   }
   if (userAgent.includes('safari')) {
-    await page.goto('https://www.vermouth.nu/cards/christian')
+    await page.goto('./cards/christian')
     await page.getByRole('link', { name: 'add the card to your wallet for ios' }).click()
 
     const popupIos = await page.waitForEvent('popup')

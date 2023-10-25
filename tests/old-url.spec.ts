@@ -7,10 +7,10 @@ test('test old url', async ({ page }) => {
   const currentURL = page.url()
 
   if (userAgent.includes('Chrome') || userAgent.includes('Firefox')) {
-    expect(currentURL).toBe('https://www.vermouth.nu/cards/christian')
+    expect(currentURL).toContain('/cards/christian')
   }
 
   if (userAgent.includes('safari')) {
-    expect(currentURL).toBe('https://wwww.vermouth.nu/christian.pkpass')
+    expect(currentURL).toBe('/christian.pkpass')
   }
 })
