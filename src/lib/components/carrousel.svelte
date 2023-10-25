@@ -23,7 +23,7 @@
   }
 </script>
 
-<div class="carrousel" data-pw="carrousel">
+<div class="carrousel">
   {#each [images[index]] as { id, path } (index)}
     <div class="image-container">
       <img transition:fade sizes="80vw" srcset={path} {id} src={path} alt={id} />

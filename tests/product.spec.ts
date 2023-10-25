@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test('check img and texts', async ({ page }) => {
   await page.goto('http://localhost:5173/products/sardino-rojo')
+  await page.waitForLoadState('networkidle')
   await page.getByRole('heading', { name: 'Sardino Rojo' }).click()
 
   const titleElement = await page.$('h1')
@@ -11,9 +12,10 @@ test('check img and texts', async ({ page }) => {
 
   const imgElement = await page.$('img[alt="Sardino Rojo"]')
   expect(imgElement).toBeTruthy()
+  await page.click('[data-testid="introText"]')
+  await page.waitForSelector('p')
 
-  await page.getByTestId('product').click()
+  const paragraphExists = await page.$('p')
 
-  const pageText = await page.textContent('body')
-  expect(pageText).not.toBeNull()
+  expect(paragraphExists).toBeTruthy()
 })

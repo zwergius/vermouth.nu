@@ -16,9 +16,9 @@
     <p class="region">
       {origin}
     </p>
-    <div class="paragraphs" data-pw="product">
+    <div class="paragraphs">
       <h3>{titleName}</h3>
-      <p>
+      <p data-testid="introText">
         {intro}
       </p>
     </div>

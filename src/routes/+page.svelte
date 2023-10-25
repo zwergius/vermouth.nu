@@ -31,7 +31,7 @@
   title="Vermouth.NU"
 />
 
-<div class="main">
+<div class="main" data-testid="carrousel">
   <Carrousel {images} />
 </div>
 
