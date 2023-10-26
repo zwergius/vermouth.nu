@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('check if they contain the image', async ({ page }) => {
+test('products page should contain an image in the link', async ({ page }) => {
   await page.goto(`/products`)
 
   const link = await page.getByRole('link', {
