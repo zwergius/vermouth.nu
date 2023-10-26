@@ -7,7 +7,7 @@
   }
   let index = 0
   let interval: number
-  let ms = 3500
+  const ms = 3500
   export let images: CarrouselImage[]
 
   const next = () => {
