@@ -1,7 +1,7 @@
 <script lang="ts">
   import { browser } from '$app/environment'
-  import googleWallet from '$lib/assets/google-wallet.svg'
-  import iosWallet from '$lib/assets/ios-wallet.svg'
+  import GoogleWalletIcon from '$lib/components/google-wallet.svelte'
+  import IosWalletIcon from '$lib/components/ios-wallet-icon.svelte'
 
   export let data
   const { cardData, pkpass } = data
@@ -22,10 +22,10 @@
 
 <div class="container">
   <a rel="external" href={pkpass}>
-    <img class="wallet-logo" src={iosWallet} alt="add the card to your wallet for ios" />
+    <IosWalletIcon />
   </a>
   <a rel="external" target="_blank" href={cardData}>
-    <img class="wallet-logo" src={googleWallet} alt="add the card to your wallet for android" />
+    <GoogleWalletIcon />
   </a>
 </div>
 
@@ -38,7 +38,8 @@
     justify-content: center;
     align-items: center;
   }
-  .wallet-logo {
+
+  a :global(svg) {
     width: 320px;
     height: auto;
   }
@@ -47,12 +48,12 @@
     .container {
       flex-direction: column;
     }
-    .wallet-logo {
+    a :global(svg) {
       width: 280px;
     }
   }
   @media only screen and (max-width: 767px) {
-    .wallet-logo {
+    a :global(svg) {
       width: 200px;
     }
   }
