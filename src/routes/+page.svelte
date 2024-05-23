@@ -1,57 +1,59 @@
-<script lang="ts">
-  import banner from '$lib/assets/banner.webp'
-  import Carrousel from '$lib/components/carrousel.svelte'
-  import forzudo from '$lib/assets/forzudo.webp'
-  import SEO from '$lib/components/SEO.svelte'
-  import tabira from '$lib/assets/tabira.webp'
-
-  const images = [
-    {
-      path: forzudo,
-      id: 'image1',
-      alt: '',
-    },
-    {
-      path: banner,
-      id: 'image2',
-      alt: '',
-    },
-    {
-      path: tabira,
-      id: 'image3',
-      alt: '',
-    },
-  ]
+<script>
+	import Counter from './Counter.svelte';
+	import welcome from '$lib/images/svelte-welcome.webp';
+	import welcome_fallback from '$lib/images/svelte-welcome.png';
 </script>
 
-<SEO
-  description="Vermouth Distributør"
-  image="https://vermouth.nu/cdn/shop/files/552A24A2-C31B-4C91-A8B3-5A3C5F5EA8D3_2048x.JPG?v=1615928417"
-  imageAlt="Vermouth.NU"
-  title="Vermouth.NU"
-/>
+<svelte:head>
+	<title>Home</title>
+	<meta name="description" content="Svelte demo app" />
+</svelte:head>
 
-<div class="main" data-testid="carrousel">
-  <Carrousel {images} />
-</div>
+<section>
+	<h1>
+		<span class="welcome">
+			<picture>
+				<source srcset={welcome} type="image/webp" />
+				<img src={welcome_fallback} alt="Welcome" />
+			</picture>
+		</span>
 
-<slot />
+		to your new<br />SvelteKit app
+	</h1>
+
+	<h2>
+		try editing <strong>src/routes/+page.svelte</strong>
+	</h2>
+
+	<Counter />
+</section>
 
 <style>
-  .main {
-    display: flex;
-    flex: 1;
-    width: 100%;
-    padding: 0px 100px 30px;
-  }
-  @media only screen and (max-width: 1024px) {
-    .main {
-      padding: 20px 50px 0px;
-    }
-  }
-  @media only screen and (max-width: 767px) {
-    .main {
-      padding: 0px 10px 0px;
-    }
-  }
+	section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		flex: 0.6;
+	}
+
+	h1 {
+		width: 100%;
+	}
+
+	.welcome {
+		display: block;
+		position: relative;
+		width: 100%;
+		height: 0;
+		padding: 0 0 calc(100% * 495 / 2048) 0;
+	}
+
+	.welcome img {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		display: block;
+	}
 </style>
