@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: "aktiv-grotesk-extended", system-ui, sans-serif;
+  }
+}
+
+:root {
+  @apply text-black;
+  --header-height: 126px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+body {
+  @apply bg-brand-pink min-h-screen m-0 flex flex-col text-base lg:text-2xl;
+}
+
+input,
+button {
+  font-size: inherit;
+  font-family: inherit;
+}
+
+@layer components {
+  .h1 {
+    @apply text-xl lg:text-3xl text-white font-bold uppercase;
+  }
+
+  .btn {
+    @apply inline-flex bg-brand-blue border border-black rounded-full py-[15px] px-[30px] gap-1 text-[1.125rem]/[1rem] text-white;
+  }
+}
