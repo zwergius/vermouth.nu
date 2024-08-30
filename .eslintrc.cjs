@@ -3,30 +3,31 @@ module.exports = {
   root: true,
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:svelte/recommended',
-    'prettier'
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2020,
-    extraFileExtensions: ['.svelte']
+    extraFileExtensions: ['.svelte'],
   },
   env: {
     browser: true,
     es2017: true,
-    node: true
+    node: true,
   },
   overrides: [
     {
       files: ['*.svelte'],
       parser: 'svelte-eslint-parser',
       parserOptions: {
-        parser: '@typescript-eslint/parser'
-      }
-    }
+        parser: '@typescript-eslint/parser',
+      },
+    },
   ],
   rules: {
     'no-console': 'error',
@@ -38,7 +39,7 @@ module.exports = {
     'no-var': 'error',
     'prefer-template': 'error',
     'no-else-return': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'template-curly-spacing': 'error',
     'one-var': ['error', 'never'],
     eqeqeq: 'error',
@@ -49,16 +50,16 @@ module.exports = {
     // "no-console": ["warn", { allow: ["warn", "error"] }],
     '@typescript-eslint/no-unused-vars': [
       'error',
-      { argsIgnorePattern: '^_', ignoreRestSiblings: true }
+      { argsIgnorePattern: '^_', ignoreRestSiblings: true },
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-types': [
       'error',
       {
         types: {
-          Function: false
-        }
-      }
-    ]
-  }
-};
+          Function: false,
+        },
+      },
+    ],
+  },
+}

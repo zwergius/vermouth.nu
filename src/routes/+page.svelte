@@ -158,19 +158,21 @@
 
   <Marquee>HVEM ER VERMOUTH VENNERNE // HVEM ER VERMOUTH VENNERNE //</Marquee>
 
-  <div class="border-b border-black px-11 py-16 text-center lg:w-7/12 lg:text-left">
-    <h2>OM OS</h2>
-    <p class="mb-6 md:mb-8">
-      Vermouth.nu er skabt af tre passionerede danske venner, Thomas, Christoffer og Christian, der
-      alle blev betaget af Spaniens uforlignelige vermouth-kultur. Inspireret af denne spanske
-      livsstil, men frustrerede over det begrænsede udvalg i Danmark, besluttede vi at tage sagen i
-      egen hånd.
-    </p>
-    <p class="mb-6 md:mb-8">
-      Med kærlighed til urterne og en drøm om at bringe ægte spansk vermouth til danske hjem,
-      importerer vi nu de mest udsøgte flasker, der emmer af spansk charme og passion. ¡Salud!
-    </p>
-    <a class="btn" href="/">LÆS MERE</a>
+  <div class="border-b border-black px-11 py-16 text-center lg:text-left">
+    <div class="lg:w-7/12">
+      <h2>OM OS</h2>
+      <p class="mb-6 md:mb-8">
+        Vermouth.nu er skabt af tre passionerede danske venner, Thomas, Christoffer og Christian,
+        der alle blev betaget af Spaniens uforlignelige vermouth-kultur. Inspireret af denne spanske
+        livsstil, men frustrerede over det begrænsede udvalg i Danmark, besluttede vi at tage sagen
+        i egen hånd.
+      </p>
+      <p class="mb-6 md:mb-8">
+        Med kærlighed til urterne og en drøm om at bringe ægte spansk vermouth til danske hjem,
+        importerer vi nu de mest udsøgte flasker, der emmer af spansk charme og passion. ¡Salud!
+      </p>
+      <a class="btn" href="/">LÆS MERE</a>
+    </div>
   </div>
 
   <ul class="founding-fathers md:grid md:grid-cols-3">
@@ -206,7 +208,7 @@
     @apply px-11 py-16 text-center;
   }
   @media (hover: hover) {
-    .founding-fathers > li > img:hover {
+    .founding-fathers > li:hover > img {
       @apply opacity-100;
     }
   }
