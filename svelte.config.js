@@ -1,5 +1,5 @@
 // import adapter from '@sveltejs/adapter-auto';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 //
 // /** @type {import('@sveltejs/kit').Config} */
 // const config = {
@@ -17,7 +17,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 //
 // export default config;
 
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-static'
 // import { vitePreprocess } from '@sveltejs/kit/vite';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -35,30 +35,31 @@ const config = {
       assets: 'build',
       fallback: undefined,
       precompress: false,
-      strict: false
+      strict: true,
     }),
     prerender: {
       crawl: true,
-      handleHttpError: ({ path, referrer, message }) => {
+      handleHttpError: ({ path, message }) => {
         // ignore deliberate link to shiny 404 page
         if (path === '/not-found') {
-          return;
+          return
         }
 
         // otherwise fail the build
-        throw new Error(message);
+        throw new Error(message)
       },
       entries: [
+        '/',
         '/cards/christian',
         '/cards/thomas',
         '/cards/christoffer',
         '/christian-vermouth-nu.pkpass',
         '/christoffer-vermouth-nu.pkpass',
         '/thomas-vermouth-nu.pkpass',
-        '/not-found' // Generate 404
-      ]
-    }
-  }
-};
+        '/not-found', // Generate 404
+      ],
+    },
+  },
+}
 
-export default config;
+export default config
