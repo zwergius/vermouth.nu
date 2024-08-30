@@ -1,0 +1,61 @@
+/* Write your global styles here, in PostCSS syntax */
+@import './reset.css';
+
+@font-face {
+  font-family: 'GTAlpina';
+  src: 
+    url('/fonts/gtalpina-regular-webfont.woff2') format('woff2'),
+    url('/fonts/gtalpina-regular-webfont.woff') format('woff'); /* Modern Browsers */
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  /* fallback colors */
+  --white: hsl(0, 0%, 100%);
+  --white50: hsl(0, 0%, 100%, 0.5);
+  --black: hsl(0, 0%, 0%);
+  --pink: hsl(1, 70%, 80%);
+  --blue: hsl(220, 66%, 21%);
+  --blue90: hsl(220, 66%, 21%, 0.9);
+  --red: hsl(4.02, 100%, 46.87%);
+  --red30: hsl(4.02, 100%, 46.87%, 0.3);
+  --primary: var(--pink);
+  --secondary: var(--blue);
+  --primary-text-color: var(--black);
+  --secondary-text-color: var(--white);
+  --highlight: var(--red30);
+  --interactive-button: var(--red);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 18px;
+  /* 20px 22px */
+  --space-4: 38px;
+  --space-5: 64px;
+  --space-6: 76px;
+  --space-7: 114px;
+  --space-8: 152px;
+
+  --12px: 0.75rem;
+  --16px: 1rem;
+  --20px: 1.25rem;
+  --23px: 1.438rem;
+  --25px: 1.563rem;
+  --30px: 1.875rem;
+  --32px: 2rem;
+  --35px: 2.188rem;
+  --40px: 2.5rem;
+  --50px: 3.125rem;
+  --55px: 3.438rem;
+}
+body {
+  width: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-family: GTAlpina;
+}
+html {
+  background-color: var(--primary);
+}
