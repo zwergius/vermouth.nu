@@ -86,9 +86,7 @@
     <a class="btn" href="/">SE HVOR</a>
   </div>
 
-  <Marquee theme="red"
-    >VERMOUTH ER FOR ALLE // VERMOUTH ER FOR ALLE // VERMOUTH ER FOR ALLE //</Marquee
-  >
+  <Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 
   <div class="content">
     <h2>HVILKEN FARVE ER DIN FAVORIT?</h2>
@@ -99,7 +97,7 @@
     <a class="btn" href="/">SE HELE UDVALGET</a>
   </div>
 
-  <Marquee theme="yellow">FAVORITTER // FAVORITTER // FAVORITTER // FAVORITTER //</Marquee>
+  <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
   <ul class="border-black md:grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
     {#each products as product}
@@ -156,7 +154,7 @@
     </div>
   </div>
 
-  <Marquee>HVEM ER VERMOUTH VENNERNE // HVEM ER VERMOUTH VENNERNE //</Marquee>
+  <Marquee text="HVEM ER VERMOUTH VENNERNE //"></Marquee>
 
   <div class="border-b border-black px-11 py-16 text-center lg:text-left">
     <div class="lg:w-7/12">
