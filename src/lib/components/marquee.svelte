@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  export let theme: 'blue' | 'red' | 'yellow' = 'blue'
+  export let theme: 'blue' | 'red' | 'yellow' | 'white' = 'blue'
   export let text: string
 
   const pixelsPerSecond = 100
@@ -41,7 +41,7 @@
     const string = `${text.trim()}\u00A0`
     textWidth = calculateTextWidth(string, font)
     repetitions = calculateRepetitions(textWidth, container.offsetWidth)
-    animationDuration = (textWidth * repetitions) / pixelsPerSecond
+    animationDuration = Math.ceil((textWidth * repetitions) / pixelsPerSecond)
     marqueeText = string.repeat(repetitions)
   }
 
@@ -61,16 +61,17 @@
   bind:this={container}
   class="marquee"
   class:text-brand-pink={theme === 'blue' || theme === 'red'}
-  class:text-brand-red={theme === 'yellow'}
+  class:text-brand-red={theme === 'yellow' || theme === 'white'}
   class:bg-brand-blue={theme === 'blue'}
   class:bg-brand-red={theme === 'red'}
   class:bg-brand-yellow={theme === 'yellow'}
+  class:bg-white={theme === 'white'}
   style="--animation-duration: {animationDuration}s"
 >
-  <div class="content">
+  <div class="marquee-content">
     {marqueeText}
   </div>
-  <div class="content">
+  <div class="marquee-content">
     {marqueeText}
   </div>
 </div>
@@ -80,7 +81,7 @@
     @apply flex h-[6.25rem] w-full select-none items-center overflow-hidden border-y border-y-black text-xl font-bold lg:h-[19.375rem] lg:text-[7.5rem];
   }
 
-  .content {
+  .marquee-content {
     @apply min-w-full flex-shrink-0 whitespace-nowrap;
   }
 
@@ -95,13 +96,13 @@
 
   /* Pause animation when reduced-motion is set */
   @media (prefers-reduced-motion: reduce) {
-    .content {
+    .marquee-content {
       animation-play-state: paused;
     }
   }
 
   /* Enable animation */
-  .content {
+  .marquee-content {
     animation-name: scroll;
     animation-duration: var(--animation-duration);
     animation-timing-function: linear;

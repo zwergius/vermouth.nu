@@ -1,5 +1,6 @@
 export const vermouths = {
   'forzudo-rojo': {
+    color: 'RED',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d9b17e95-18c8-4ded-a15b-182fb859c800',
     intro:
@@ -11,9 +12,10 @@ export const vermouths = {
     sizeAndDegrees: '100 cl. / 15%',
     taste:
       'Smagen er levende og koncentreret, hvor især kardemommen og de tørrede frugter er stærke, derudover er der nuancer af lakrids og vanilje. Duften er intens af søde krydderier blandet med tørret frugt som afsluttes med noter af kaffe. Dette gør sig gældende i en lang og vedvarende sødme med et perfekt bitter touch.',
-    titleName: 'Klassens frække dreng'
+    titleName: 'Klassens frække dreng',
   },
   'forzudo-blanco': {
+    color: 'WHITE',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e5eb8eb6-444c-4217-6143-e652c2a9a100',
     intro: 'Forzudo Blanco er yderste populær, og et perfekt følgeskab til en dag i solen.',
@@ -24,9 +26,10 @@ export const vermouths = {
     sizeAndDegrees: '100 cl. / 15%',
     taste:
       'Forzudo Blanco giver en cremet fornemmelse med smagsnuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter. Her fås en meget balanceret Vermouth med lige dele sødme og bitter.',
-    titleName: 'Forfriskende og stærkt vanedanende'
+    titleName: 'Forfriskende og stærkt vanedanende',
   },
   'sardino-rojo': {
+    color: 'RED',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/89f026f1-f193-45b4-bf8a-a9f9d89c3e00',
     intro:
@@ -39,9 +42,10 @@ export const vermouths = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'En rigtig god allround rød Vermouth som hverken er for sød, tør eller bitter - perfekt til enhver lejlighed. Noter af karamel, camille & kanel.',
-    titleName: 'Sømandens foretrukne'
+    titleName: 'Sømandens foretrukne',
   },
   'sardino-blanco': {
+    color: 'WHITE',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/910a8496-b9ad-4685-f102-dea0a0e60d00',
     intro:
@@ -54,9 +58,10 @@ export const vermouths = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',
-    titleName: 'Maritim Vermouth fra den Spanske vestkyst'
+    titleName: 'Maritim Vermouth fra den Spanske vestkyst',
   },
   'carmeleta-orange': {
+    color: 'ORANGE',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/682acd17-1447-46b6-af38-73a4e9864600',
     intro:
@@ -68,9 +73,10 @@ export const vermouths = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Noter af citrusfrugter, kager, vanille karamel. Intens smag, afbalanceret med syrlighed. Let bitter citrus og krydret eftersmag. Carmeleta Orange har en frisk duft, balanceret med syrlighed samt søde og bitre undertoner.',
-    titleName: 'Orange og Trendy'
+    titleName: 'Orange og Trendy',
   },
   'carmeleta-blanco': {
+    color: 'WHITE',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/684162e5-028c-4ccd-0057-4f9c9a0f4900',
     intro:
@@ -83,9 +89,10 @@ export const vermouths = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian. Næsen er forfriskende og har klare noter af timian og fennikel.',
-    titleName: 'Hvid og Autentisk'
+    titleName: 'Hvid og Autentisk',
   },
   tabira: {
+    color: 'RED',
     country: 'Spanien',
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/214da185-c1c9-4a72-f012-62d5bf8f0600',
     intro:
@@ -97,6 +104,6 @@ export const vermouths = {
     sizeAndDegrees: '100 cl. / 15%',
     taste:
       'Sødlig og blød i sin smag, dens friskhed og duft af appelsin gør den nem at drikke. Eftersmagen ligger langt tilbage i munden og arbejder sig ind, igennem sine mange aromaer og krydderier. Perfekt balance mellem det søde og det friske, som gør denne vermouth meget komplet. Bør nydes kold med is og appelsinskive, og med oliven som snack.',
-    titleName: 'Elegant Vermouth med dragende næse og smag - en absolut favorit'
-  }
-};
+    titleName: 'Elegant Vermouth med dragende næse og smag',
+  },
+}

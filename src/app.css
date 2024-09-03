@@ -35,4 +35,39 @@ button {
   .btn {
     @apply inline-flex bg-brand-blue border border-black rounded-full py-[15px] px-[30px] gap-1 text-[1.125rem]/[1rem] text-white;
   }
+
+  /* The .content class covers sections with a header, paragraph and link button */
+  .content {
+    @apply px-11 py-16 text-center;
+  }
+
+  .content>h2,
+  .content>h1 {
+    @apply mb-6 text-xs;
+  }
+
+  .content p {
+    @apply mb-6 md:mb-8 lg:max-w-[1068px] mx-auto;
+  }
+
+  .product-grid {
+    @apply border-black md:grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4;
+  }
+
+  /* The .split-content class covers the section where 2 equal columns, portrait image and content */
+  .split-content {
+    @apply flex flex-col-reverse lg:flex-row;
+  }
+
+  .split-content>.copy {
+    @apply my-auto px-11 py-11 2xl:px-32 xl:basis-1/2;
+  }
+
+  .split-content>.copy p {
+    @apply lg:max-w-[584px];
+  }
+
+  .split-content>.image-wrapper {
+    @apply aspect-square xl:basis-1/2 lg:aspect-[3/4];
+  }
 }
