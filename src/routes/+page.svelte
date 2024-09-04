@@ -174,7 +174,7 @@
   </ul>
 </section>
 
-<style>
+<style lang="postcss">
   h2 {
     @apply mb-6 text-xs;
   }

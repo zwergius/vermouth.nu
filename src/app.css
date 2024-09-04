@@ -67,7 +67,7 @@ button {
     @apply lg:max-w-[584px];
   }
 
-  .split-content>.image-wrapper {
+  .split-content>.portrait-image-wrapper {
     @apply aspect-square xl:basis-1/2 lg:aspect-[3/4];
   }
 }

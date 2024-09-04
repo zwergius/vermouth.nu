@@ -84,7 +84,7 @@
       :-)
     </p>
   </div>
-  <div class="image-wrapper">
+  <div class="portrait-image-wrapper">
     <picture class="object-fill">
       <source
         media="(min-width: 1280px)"
