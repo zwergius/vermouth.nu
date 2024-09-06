@@ -60,7 +60,7 @@
   </p>
 </section>
 
-<section class="split-content">
+<section class="split-content border-b border-black">
   <div class="copy">
     <p class="text-xs mb-6">Book en</p>
     <h2 class="text-2xl mb-6">Vermouth Smagning</h2>

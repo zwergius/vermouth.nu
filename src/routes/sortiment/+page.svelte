@@ -20,7 +20,7 @@
 
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
-<ul class="product-grid">
+<ul class="grid-layout border-b border-black">
   {#each redVermouths as product}
     <ProductGridItem {product} />
   {/each}
@@ -28,7 +28,7 @@
 
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
-<ul class="product-grid">
+<ul class="grid-layout border-b border-black">
   {#each whiteVermouths as product}
     <ProductGridItem {product} />
   {/each}
@@ -36,7 +36,7 @@
 
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
-<ul class="product-grid">
+<ul class="grid-layout border-b border-black">
   {#each otherVermouths as product}
     <ProductGridItem {product} />
   {/each}

@@ -9,7 +9,6 @@
 }
 
 :root {
-  @apply text-black;
   --header-height: 126px;
 }
 
@@ -18,7 +17,7 @@
 }
 
 body {
-  @apply bg-brand-pink min-h-screen m-0 flex flex-col text-base lg:text-2xl;
+  @apply text-black bg-brand-pink min-h-screen m-0 flex flex-col text-base lg:text-2xl;
 }
 
 input,
@@ -70,4 +69,32 @@ button {
   .split-content>.portrait-image-wrapper {
     @apply aspect-square xl:basis-1/2 lg:aspect-[3/4];
   }
+
+  /* Grid layout  */
+  .grid-layout {
+    @apply text-center md:grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 overflow-hidden;
+  }
+
+  .grid-item {
+    @apply aspect-square relative border-r border-black;
+  }
+
+  .grid-item::before,
+  .grid-item::after {
+    content: '';
+    z-index: 1;
+    @apply absolute bg-black;
+  }
+
+  .grid-item::after {
+    height: 1px;
+    top: -1px;
+    @apply w-screen left-0;
+  }
+
+  /* .grid-item::before { */
+  /*   width: 0.9px; */
+  /*   right: 0px; */
+  /*   @apply h-screen top-0; */
+  /* } */
 }

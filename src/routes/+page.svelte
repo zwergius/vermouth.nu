@@ -47,7 +47,7 @@
 
 <section class="flex flex-col justify-center">
   <h1
-    class="h1 relative flex aspect-[0.95/1] w-full flex-col justify-center px-7 md:aspect-[2.47/1] lg:px-36"
+    class="h1 border-b border-black relative flex aspect-[0.95/1] w-full flex-col justify-center px-7 md:aspect-[2.47/1] lg:px-36"
   >
     <picture class="absolute inset-0 -z-10 object-fill">
       <source
@@ -77,7 +77,7 @@
     </span>
   </h1>
 
-  <div class="content">
+  <div class="content border-b border-black">
     <h2>ENDNU IKKE FAN AF VERMOUTH?</h2>
     <p class="mb-6">
       .. Måske har du bare ikke mødt den helt rigtige<br />
@@ -89,7 +89,7 @@
 
   <Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 
-  <div class="content">
+  <div class="content border-b border-black">
     <h2>HVILKEN FARVE ER DIN FAVORIT?</h2>
     <p class="mb-6">
       Rojo, Blanco, Orange eller Rosa?<br />
@@ -100,14 +100,14 @@
 
   <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
-  <ul class="product-grid">
+  <ul class="grid-layout border-b border-black">
     {#each products as product}
       <ProductGridItem {product} />
     {/each}
   </ul>
 
-  <div class="md:flex md:[&>*]:basis-1/2">
-    <div class="px-11 py-16 text-center md:flex md:py-0">
+  <div class="split-content border-b border-black">
+    <div class="copy">
       <div class="my-auto flex-1">
         <h2>INSPIRATION</h2>
         <p class="mb-6 md:mb-8">
@@ -149,7 +149,7 @@
     </div>
   </div>
 
-  <ul class="founding-fathers md:grid md:grid-cols-3">
+  <ul class="founding-fathers md:grid md:grid-cols-3 border-b border-black">
     {#each founders as { name, imgUrl }}
       <li class="relative aspect-square border-b border-black">
         <img

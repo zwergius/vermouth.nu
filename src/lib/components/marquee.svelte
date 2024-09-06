@@ -78,7 +78,7 @@
 
 <style>
   .marquee {
-    @apply flex h-[6.25rem] w-full select-none items-center overflow-hidden border-y border-y-black text-xl font-bold lg:h-[19.375rem] lg:text-[7.5rem];
+    @apply flex h-[6.25rem] w-full select-none items-center overflow-hidden border-b border-black text-xl font-bold lg:h-[19.375rem] lg:text-[7.5rem];
   }
 
   .marquee-content {

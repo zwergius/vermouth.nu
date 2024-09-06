@@ -15,7 +15,7 @@
   }
 </script>
 
-<section class="split-content">
+<section class="split-content border-b border-black">
   <div class="copy">
     <div class="my-auto flex-1">
       <h1 class="text-xs mb-6">INSPIRATION</h1>
@@ -41,10 +41,10 @@
 
 <Marquee text="DRINKS OPSKRIFTER //" theme="red"></Marquee>
 
-<ul class="drink-recipes md:grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+<ul class="drink-recipes grid-layout 2xl:grid-cols-3 border-b border-black">
   {#each drinkRecipes as { name, imageUrl, ingredients } (imageUrl)}
     <li
-      class="relative aspect-square border-b border-black"
+      class="grid-item"
       use:viewport={{ hiddenClassName: 'recipeHidden' }}
       on:enterViewport={onEnter}
       on:exitViewport={onExit}
