@@ -40,7 +40,6 @@
       srcset={heroSrcSet(
         'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500',
       )}
-      type="image/webp"
       sizes="100vw"
     />
     <img
@@ -140,17 +139,16 @@
       <source
         media="(min-width: 1280px)"
         srcset={portraitSrcSet(
-          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/a011e094-1cc1-4de5-5536-ece1324db100',
+          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3d60012-4235-4e75-db02-9fd01421f100',
         )}
-        type="image/webp"
         sizes="50vw"
       />
       <img
         alt="Pouring Carmeleta Orange"
         class="h-full w-auto object-cover"
-        src="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/a011e094-1cc1-4de5-5536-ece1324db100/w=400,h=400,fit=cover"
+        src="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3d60012-4235-4e75-db02-9fd01421f100/w=400,h=400,fit=cover"
         srcset={squareSrcSet(
-          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/a011e094-1cc1-4de5-5536-ece1324db100',
+          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3d60012-4235-4e75-db02-9fd01421f100',
         )}
         sizes="100vw"
         width="400"

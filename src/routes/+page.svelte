@@ -1,9 +1,10 @@
 <script lang="ts">
-  import Marquee from '$lib/components/marquee.svelte'
-  import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import { vermouths } from '$lib/data/products'
   import viewport from '$lib/actions/use-viewport-action'
   import { heroHandheldSrcSet, heroSrcSet, squareSrcSet } from '$lib/helpers/images'
+  import Marquee from '$lib/components/marquee.svelte'
+  import ProductGridItem from '$lib/components/product-grid-item.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 
   const products = [
     vermouths['sardino-rojo'],
@@ -40,10 +41,12 @@
   }
 </script>
 
-<svelte:head>
-  <title>Home</title>
-  <meta name="description" content="Svelte demo app" />
-</svelte:head>
+<Seo
+  title="Hjem"
+  description="Vermouth // Fra Kikset til Cool"
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3d60012-4235-4e75-db02-9fd01421f100/public"
+  imageAlt="Vermouth.Nu Founders"
+/>
 
 <section class="flex flex-col justify-center">
   <h1
@@ -55,7 +58,6 @@
         srcset={heroSrcSet(
           'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/5de0aefc-364c-4bba-dcd4-0c45ed0c2f00',
         )}
-        type="image/webp"
         sizes="100vw"
       />
       <img

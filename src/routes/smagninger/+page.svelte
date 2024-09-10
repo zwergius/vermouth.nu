@@ -90,7 +90,6 @@
         srcset={portraitSrcSet(
           'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d4fd467e-9b62-4b9f-e65d-91d17ce46e00',
         )}
-        type="image/webp"
         sizes="50vw"
       />
       <img
