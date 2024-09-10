@@ -10,7 +10,7 @@
 
 <Marquee text="{data.vermouth.name} //" theme="red"></Marquee>
 
-<section class="split-content border-b border-black flex-row-reverse">
+<section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
     <p class="text-xs mb-6">{data.vermouth.titleName}</p>
     <h1 class="text-2xl mb-6">{data.vermouth.name}</h1>
@@ -23,11 +23,11 @@
     <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
     <p class="text-sm">{data.vermouth.recommendation}</p>
   </div>
-  <div class="py-20 flex justify-center">
-    <div class="max-w-4xl mx-auto">
+  <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center">
+    <div class="max-w-screem lg:max-w-4xl lg:mx-auto">
       <img
         alt={data.vermouth.name}
-        class="h-full w-auto object-cover"
+        class="h-full w-auto object-cover max-w-full"
         src="{data.vermouth.image}/w=400,h=400,fit=cover"
         srcset={squareSrcSet(data.vermouth.image)}
         sizes="(max-width: 500px) 100vw, (max-width: 1800px) 50vw, 896px"
@@ -38,7 +38,7 @@
   </div>
 </section>
 
-<ul class="md:grid md:grid-cols-3 border-b border-black">
+<ul class="lg:grid lg:grid-cols-3 border-b border-black overflow-visible">
   <li class="relative aspect-square">
     <img
       alt={data.vermouth.extraImages[0].altText}
@@ -68,6 +68,12 @@
   </li>
 </ul>
 
+<section class="content md:hidden border-b border-black">
+  <h2>VIL DU SMAGE FØR DU KØBER SÅ FRYGT EJ!</h2>
+  <p>Du kan smage vores lækre dråber på et udvalg af barer & restauranter i København</p>
+  <a class="btn" href="/inspiration">SE HVOR</a>
+</section>
+
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
@@ -92,7 +98,16 @@
   {/each}
 </ul>
 
-<section class="content border-b border-black">
+<section class="content md:hidden border-b border-black">
+  <h2>VIDSTE DU AT VI TILBYDER</h2>
+  <p>
+    Vermouth smagninger til både private og firmaer. Den helt rigtige måde at komme igang med
+    vermouth på.
+  </p>
+  <a class="btn" href="mailto:info@vermouth.nu">BOOK EN SMAGNING</a>
+</section>
+
+<section class="content hidden md:block border-b border-black">
   <h2>Inspiration</h2>
   <p>Op dit cocktails-game med Vermouth</p>
   <a class="btn" href="/inspiration">DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>

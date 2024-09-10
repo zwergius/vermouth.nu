@@ -84,7 +84,7 @@
       endnu. Fortvivl ikke! Lad os hjælpe dig med at<br />
       opdage og nyde vermouth.
     </p>
-    <a class="btn" href="/">SE HVOR</a>
+    <a class="btn" href="/forhandlere">SE HVOR</a>
   </div>
 
   <Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
@@ -95,7 +95,7 @@
       Rojo, Blanco, Orange eller Rosa?<br />
       Vi har det&nbsp;<span class="underline">hele</span>.
     </p>
-    <a class="btn" href="/">SE HELE UDVALGET</a>
+    <a class="btn" href="/sortiment">SE HELE UDVALGET</a>
   </div>
 
   <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
@@ -113,7 +113,7 @@
         <p class="mb-6 md:mb-8">
           Skift ginen ud:<br />Sådan laver du den perfekte vermouth & tonic og meget mere..
         </p>
-        <a class="btn" href="/">DRINKSOPSKRIFTER</a>
+        <a class="btn" href="/inspiration">DRINKSOPSKRIFTER</a>
       </div>
     </div>
 
@@ -145,7 +145,7 @@
         Med kærlighed til urterne og en drøm om at bringe ægte spansk vermouth til danske hjem,
         importerer vi nu de mest udsøgte flasker, der emmer af spansk charme og passion. ¡Salud!
       </p>
-      <a class="btn" href="/">LÆS MERE</a>
+      <a class="btn" href="/om-os">LÆS MERE</a>
     </div>
   </div>
 

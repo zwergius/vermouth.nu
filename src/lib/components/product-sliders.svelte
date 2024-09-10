@@ -85,17 +85,17 @@
 
 <style lang="postcss">
   .wrapper {
-    --slider-width: 250px;
-    @apply flex justify-center items-center gap-3;
+    @apply flex justify-center items-center gap-3 [--slider-width:190px] md:[--slider-width:288px];
   }
   .slider-track {
-    @apply bg-black/10 rounded-full h-4 w-72 border border-black;
+    @apply bg-black/10 rounded-full h-4 w-[--slider-width] border-2 border-black;
   }
 
   .slider-thumb {
+    --size: 40px;
     --score: 1;
-    --transform-x: calc(var(--slider-width) / 4 * (var(--score) - 1));
-    @apply bg-brand-blue rounded-full h-10 w-10 absolute top-1/2 border border-black transition-transform duration-1000;
+    --transform-x: calc((var(--slider-width) - var(--size)) / 4 * (var(--score) - 1));
+    @apply bg-brand-blue rounded-full h-[--size] w-[--size] absolute top-1/2 border border-black transition-transform duration-1000;
     transform: translate(var(--transform-x), -50%);
   }
 

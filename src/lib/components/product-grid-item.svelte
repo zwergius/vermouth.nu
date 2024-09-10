@@ -10,7 +10,7 @@
       {product.name}
     </h3>
     <p class="whitespace-nowrap text-xs">{product.origin}</p>
-    <div class="flex flex-1 flex-col">
+    <div class="flex flex-1 flex-col relative">
       <img
         alt={product.name}
         class="my-auto w-auto md:max-h-44 lg:max-h-fit"
@@ -21,7 +21,44 @@
         width="145"
         height="290"
       />
+      <div class="overlay">
+        <p class="btn whitespace-nowrap">LÆS MERE</p>
+      </div>
     </div>
     <p class="text-xs">{product.titleName}</p>
   </a>
 </li>
+
+<style lang="postcss">
+  li.grid-item {
+    --rotation-duration: 500ms;
+    --filter-delay: 200ms;
+    --filter-duration: 300ms;
+  }
+  img {
+    filter: blur(0);
+    transition:
+      transform var(--rotation-duration) ease-in-out,
+      filter var(--filter-duration) ease-in-out;
+  }
+
+  .overlay {
+    @apply absolute inset-y-0 flex flex-col justify-center left-1/2 -translate-x-1/2;
+    opacity: 0;
+    transition: opacity var(--filter-duration) ease-in-out;
+  }
+
+  @media (hover: hover) {
+    li.grid-item:hover img {
+      transform: rotate(360deg);
+      filter: blur(20px);
+      transition:
+        transform var(--rotation-duration) ease-in-out,
+        filter var(--filter-duration) ease-in-out var(--filter-delay);
+    }
+    li.grid-item:hover .overlay {
+      opacity: 100;
+      transition: opacity var(--filter-duration) ease-in-out var(--filter-delay);
+    }
+  }
+</style>

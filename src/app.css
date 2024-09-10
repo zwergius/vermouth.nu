@@ -32,7 +32,7 @@ button {
   }
 
   .btn {
-    @apply inline-flex bg-brand-blue border border-black rounded-full py-[15px] px-[30px] gap-1 text-[1.125rem]/[1rem] text-white;
+    @apply inline-flex bg-brand-blue border border-black rounded-full py-[15px] px-[30px] gap-1 text-[1.125rem]/[1rem] text-white whitespace-nowrap;
   }
 
   /* The .content class covers sections with a header, paragraph and link button */
