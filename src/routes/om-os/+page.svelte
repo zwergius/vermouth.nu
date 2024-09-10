@@ -75,7 +75,6 @@
       Med kærlighed til urterne og en drøm om at bringe ægte spansk vermouth til danske hjem,
       importerer vi nu de mest udsøgte flasker, der emmer af spansk charme og passion. ¡Salud!
     </p>
-    <a class="btn" href="/">LÆS MERE</a>
   </div>
 </section>
 
