@@ -20,7 +20,7 @@
     {
       name: 'Christian',
       imgUrl:
-        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b0ec288d-b87e-4313-1067-c094cf3dd700',
+        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/833e24b8-8f2b-448b-c1c4-b9c8cdf6a300',
     },
     {
       name: 'Thomas',

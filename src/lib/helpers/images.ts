@@ -40,6 +40,6 @@ export function productSrcSet(url: string) {
   return `
     ${url}/w=145,h=290,fit=cover 1x,
     ${url}/w=290,h=580,fit=cover 2x,
-    ${url}/w=435,h=870,fit=cover 3x,
+    ${url}/w=435,h=870,fit=cover 3x
   `
 }

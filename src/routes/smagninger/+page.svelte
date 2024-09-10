@@ -30,7 +30,6 @@
       srcset={heroSrcSet(
         'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00',
       )}
-      type="image/webp"
       sizes="100vw"
     />
     <img

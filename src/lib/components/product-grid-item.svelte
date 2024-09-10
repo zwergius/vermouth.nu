@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { slugify } from '$lib/helpers'
   import { productSrcSet } from '$lib/helpers/images'
   export let product: { name: string; image: string; origin: string; titleName: string }
 </script>
 
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
-  <a class="flex h-full flex-col items-center" href="/">
+  <a class="flex h-full flex-col items-center" href="/sortiment/{slugify(product.name)}">
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">
       {product.name}
     </h3>

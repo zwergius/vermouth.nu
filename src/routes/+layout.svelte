@@ -64,8 +64,12 @@
     <figure class="border-b border-black py-5 pl-16 md:border-y">
       <figcaption class="font-bold">FØLG OS</figcaption>
       <ul>
-        <li><a href="/sortiment">Sortiment</a></li>
-        <li><a href="/smagninger">Smagninger</a></li>
+        <li>
+          <a rel="external" href="https://www.facebook.com/profile.php?id=100063790380353"
+            >Facebook</a
+          >
+        </li>
+        <li><a rel="external" href="https://www.instagram.com/vermouth.nu">Instagram</a></li>
       </ul>
     </figure>
   </div>

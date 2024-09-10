@@ -14,6 +14,7 @@
   let animationDuration = 20 // Adjust to control the speed
   let resizeObserver: ResizeObserver
 
+  $: if (container && text) setMarqueeText()
   // Function to calculate the width of the text in pixels
   function calculateTextWidth(text: string, font: string) {
     const tempElement = document.createElement('span')
