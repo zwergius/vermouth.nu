@@ -45,7 +45,7 @@
       <br />
       <a href="mailto:info@vermouth.nu">info@vermouth.nu</a>
       <br />
-      Nørre Farimagsgade 6, 1364 Kbh K
+      Overgaden Neden Vandet 49b, 1414 Kbh K
     </p>
   </div>
   <div

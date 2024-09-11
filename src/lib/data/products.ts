@@ -126,7 +126,7 @@ export const vermouths = {
     recommendation:
       'Serveres ved 6-8 grader i glas med oliven og en skive appelsin. Nydes til forretter eller som aperitif med en lille snack ved hånden f.eks oliven, chips eller “fisk på dåse”.',
     region: 'Galicien, Nordvestkysten',
-    scores: { sweetness: 5, fruityness: 3, body: 3, spiciness: 2 },
+    scores: { sweetness: 5, fruityness: 3, body: 4, spiciness: 2 },
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',

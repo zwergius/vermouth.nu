@@ -79,7 +79,7 @@
 
 <ul class="founding-fathers md:grid md:grid-cols-3 border-b border-black">
   {#each founders as { name, imgUrl }}
-    <li class="relative aspect-square border-b border-black">
+    <li class="relative aspect-square">
       <img
         alt={name}
         class="h-full w-full object-cover opacity-0 transition-opacity"
