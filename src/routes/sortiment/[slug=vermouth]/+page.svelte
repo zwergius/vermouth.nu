@@ -15,7 +15,7 @@
     <p class="text-xs mb-6">{data.vermouth.titleName}</p>
     <h1 class="text-2xl mb-6">{data.vermouth.name}</h1>
     <p class="text-xs mb-6">{data.vermouth.origin}</p>
-    <a class="btn mb-12 2xl:mb-24" href="mailto:info@vermouth.nu">KØB ELLER SMAG HER</a>
+    <a class="btn mb-12 2xl:mb-24" href="/forhandlere">KØB ELLER SMAG HER</a>
     <h3 class="text-sm font-bold mb-4">{data.vermouth.titleName}</h3>
     <p class="text-sm mb-6">{data.vermouth.intro}</p>
     <h3 class="text-sm font-bold mb-4">Smag & Duft</h3>
