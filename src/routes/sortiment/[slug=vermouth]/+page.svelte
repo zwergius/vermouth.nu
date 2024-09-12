@@ -24,15 +24,15 @@
     <p class="text-sm">{data.vermouth.recommendation}</p>
   </div>
   <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center">
-    <div class="max-w-screem lg:max-w-4xl lg:mx-auto">
+    <div class="max-w-screen lg:max-w-4xl lg:mx-auto">
       <img
         alt={data.vermouth.name}
-        class="h-full w-auto object-cover max-w-full"
+        class="h-full max-h-[896px] w-auto object-cover max-w-full"
         src="{data.vermouth.image}/w=400,h=400,fit=cover"
         srcset={squareSrcSet(data.vermouth.image)}
-        sizes="(max-width: 500px) 100vw, (max-width: 1800px) 50vw, 896px"
-        width="580"
-        height="580"
+        sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+        width="450"
+        height="450"
       />
     </div>
   </div>
