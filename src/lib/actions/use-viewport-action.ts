@@ -1,6 +1,6 @@
 import type { ActionReturn } from 'svelte/action'
 import { browser } from '$app/environment'
-let intersectionObserver: IntersectionObserver
+let intersectionObserver: IntersectionObserver | undefined
 
 function ensureIntersectionObserver(hiddenClassName: string) {
   if (intersectionObserver) return
@@ -37,11 +37,12 @@ export default function viewport(
 
     ensureIntersectionObserver(hiddenClassName)
 
-    intersectionObserver.observe(element)
+    intersectionObserver?.observe(element)
 
     return {
       destroy() {
-        intersectionObserver.unobserve(element)
+        intersectionObserver?.unobserve(element)
+        intersectionObserver = undefined
       },
     }
   }

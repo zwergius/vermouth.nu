@@ -6,12 +6,12 @@
 <Marquee text="FYSISKE FORHANDLERE //" theme="red"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each locations.physicalShops as { name, location }}
+  {#each locations.physicalShops as { name, location, url }}
     <li class="grid-item flex">
-      <div class="m-auto">
+      <a rel="external" href={url} class="m-auto">
         <h2 class="">{name}</h2>
         <p>{location}</p>
-      </div>
+      </a>
     </li>
   {/each}
 </ul>
@@ -19,12 +19,12 @@
 <Marquee text="WEBSHOPS //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each locations.onlineShops as { name, location }}
+  {#each locations.onlineShops as { name, location, url }}
     <li class="grid-item flex">
-      <div class="m-auto">
+      <a rel="external" href={url} class="m-auto">
         <h2>{name}</h2>
         <p>{location}</p>
-      </div>
+      </a>
     </li>
   {/each}
 </ul>
@@ -32,12 +32,12 @@
 <Marquee text="SMAG HER //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each locations.barsRestaurants as { name, location }}
+  {#each locations.barsRestaurants as { name, location, url }}
     <li class="grid-item flex">
-      <div class="m-auto">
+      <a rel="external" href={url} class="m-auto">
         <h2>{name}</h2>
         <p>{location}</p>
-      </div>
+      </a>
     </li>
   {/each}
 </ul>
@@ -48,12 +48,12 @@
     Vermouth smagninger til både private og firmaer. Den helt rigtige måde at komme igang med
     vermouth på.
   </p>
-  <a class="btn" href="mailto:info@vermouth.nu">BOOK EN SMAGNING</a>
+  <a class="btn" href="/smagninger">BOOK EN SMAGNING</a>
 </section>
 
-<style>
+<style lang="postcss">
   .grid-item h2 {
-    @apply text-lg text-brand-blue text-center mb-11;
+    @apply text-lg text-brand-blue text-center mb-11 font-bold;
   }
   .grid-item p {
     @apply text-sm;

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { heroSrcSet, heroHandheldSrcSet, portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
+  import { portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
   import Marquee from '$lib/components/marquee.svelte'
+  import Hero from '$lib/components/hero.svelte'
 
   const images = [
     {
@@ -21,35 +22,13 @@
   ]
 </script>
 
-<h1
-  class="h1 relative flex aspect-[0.95/1] w-full flex-col justify-center px-7 md:aspect-[2.47/1] lg:px-36"
+<Hero
+  imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00"
 >
-  <picture class="absolute inset-0 -z-10 object-fill">
-    <source
-      media="(min-width: 480px)"
-      srcset={heroSrcSet(
-        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00',
-      )}
-      sizes="100vw"
-    />
-    <img
-      alt="Welcome"
-      class="h-full w-auto object-cover"
-      src="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00/w=400,h=421,fit=cover"
-      srcset={heroHandheldSrcSet(
-        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00',
-      )}
-      sizes="100vw"
-      width="390"
-      height="410"
-    />
-  </picture>
-  <span>
-    Smag Vermouth<br />
-    // I Totalt Godt<br />
-    Selskab
-  </span>
-</h1>
+  Smag Vermouth<br />
+  // I Totalt Godt<br />
+  Selskab
+</Hero>
 
 <section class="content border-y border-black">
   <h2>ENDNU IKKE FAN AF VERMOUTH?</h2>

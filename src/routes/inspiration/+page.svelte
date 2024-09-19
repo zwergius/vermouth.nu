@@ -81,7 +81,7 @@
     Vermouth smagninger til både private og firmaer. Den helt rigtige måde at komme igang med
     vermouth på.
   </p>
-  <a class="btn" href="mailto:info@vermouth.nu">BOOK EN SMAGNING</a>
+  <a class="btn" href="/smagninger">BOOK EN SMAGNING</a>
 </section>
 
 <style lang="postcss">

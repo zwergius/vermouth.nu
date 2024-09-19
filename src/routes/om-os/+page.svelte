@@ -1,7 +1,8 @@
 <script lang="ts">
   import viewport from '$lib/actions/use-viewport-action'
+  import Hero from '$lib/components/hero.svelte'
   import Marquee from '$lib/components/marquee.svelte'
-  import { heroHandheldSrcSet, heroSrcSet, portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
+  import { portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
 
   const founders = [
     {
@@ -31,35 +32,13 @@
   }
 </script>
 
-<h1
-  class="h1 border-b border-black relative flex aspect-[0.95/1] w-full flex-col justify-center px-7 md:aspect-[2.47/1] lg:px-36"
+<Hero
+  imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500"
 >
-  <picture class="absolute inset-0 -z-10 object-fill">
-    <source
-      media="(min-width: 480px)"
-      srcset={heroSrcSet(
-        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500',
-      )}
-      sizes="100vw"
-    />
-    <img
-      alt="Welcome"
-      class="h-full w-auto object-cover"
-      src="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500/w=400,h=421,fit=cover"
-      srcset={heroHandheldSrcSet(
-        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500',
-      )}
-      sizes="100vw"
-      width="390"
-      height="410"
-    />
-  </picture>
-  <span>
-    VENNERNE SOM<br />
-    ELSKER SMAGEN AF<br />
-    // VERMOUTH
-  </span>
-</h1>
+  VENNERNE SOM<br />
+  ELSKER SMAGEN AF<br />
+  // VERMOUTH
+</Hero>
 
 <section class="border-b border-black px-11 py-16 text-center lg:text-left">
   <div class="lg:w-7/12">
