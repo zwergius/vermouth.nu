@@ -27,7 +27,7 @@
     <div class="max-w-screen lg:max-w-4xl lg:mx-auto">
       <img
         alt={data.vermouth.name}
-        class="h-full max-h-[896px] w-auto object-cover max-w-full"
+        class="h-full max-h-[896px] w-auto max-w-full"
         srcset={squareSrcSet(data.vermouth.image)}
         src="{data.vermouth.image}/w=400,h=400,fit=cover"
         sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
