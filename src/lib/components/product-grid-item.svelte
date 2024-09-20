@@ -15,8 +15,8 @@
         alt={product.name}
         class="my-auto w-auto md:max-h-44 lg:max-h-fit"
         loading="lazy"
-        src="{product.image}/w=145,h=290,fit=cover"
         srcset={productSrcSet(product.image)}
+        src="{product.image}/w=145,h=290,fit=cover"
         sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
         width="145"
         height="290"
