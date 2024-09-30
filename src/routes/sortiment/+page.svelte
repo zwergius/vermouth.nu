@@ -2,6 +2,7 @@
   import { vermouths } from '$lib/data/products'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 
   const redVermouths = Object.values(vermouths).filter(({ color }) => color === 'RED')
   const whiteVermouths = Object.values(vermouths).filter(({ color }) => color === 'WHITE')
@@ -9,6 +10,13 @@
     ({ color }) => color !== 'WHITE' && color !== 'RED',
   )
 </script>
+
+<Seo
+  title="Sortiment"
+  description="Se vores store udvalg af Vermouth"
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7e25baa1-0230-42b8-e5e3-1de47fe1f300/public"
+  imageAlt="Statue kigger på en spand fyldt med Vermouth flasker"
+/>
 
 <Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 

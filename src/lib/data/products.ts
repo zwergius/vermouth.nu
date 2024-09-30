@@ -8,6 +8,10 @@ export const vermouths = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b48bedf5-af9d-4072-85fe-40b225ed8e00',
       },
       {
+        altText: 'Statue kigger ned på et glas og en flaske Forzudo Rojo',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/9e05a52c-c26c-41e6-fdc2-29df90153800',
+      },
+      {
         altText: 'Negroni cocktail lavet med Forzudo Rojo',
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e320c5f1-3b7c-4b6f-b76c-61273e76fc00',
       },

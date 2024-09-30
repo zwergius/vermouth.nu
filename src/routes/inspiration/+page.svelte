@@ -3,6 +3,7 @@
   import drinkRecipes from '$lib/data/drinkRecipes'
   import { squareSrcSet } from '$lib/helpers/images'
   import Marquee from '$lib/components/marquee.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 
   function onExit(e: CustomEvent) {
     const element = e.currentTarget as HTMLElement
@@ -14,6 +15,13 @@
     element.classList.remove('recipeHidden')
   }
 </script>
+
+<Seo
+  title="Gå på opdagelse i et smagsunivers, hvor Vermouth er hovedrollen"
+  description="Se vores fantastiske opskrifter med Vermouth"
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e320c5f1-3b7c-4b6f-b76c-61273e76fc00/public"
+  imageAlt="Negroni Cocktail"
+/>
 
 <section class="split-content border-b border-black">
   <div class="copy">

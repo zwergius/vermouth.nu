@@ -1,7 +1,15 @@
 <script lang="ts">
-  import Marquee from '$lib/components/marquee.svelte'
   import locations from '$lib/data/locations'
+  import Marquee from '$lib/components/marquee.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 </script>
+
+<Seo
+  title="Her kan du finde Vermouth.Nu's produkter"
+  description="Se butikker, webshops og barer som har vores produkter"
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ea8c7c08-b9b5-4b73-89f1-47546bdd7800/public"
+  imageAlt="Vermouth flasker som står på stævnen af en båd"
+/>
 
 <Marquee text="FYSISKE FORHANDLERE //" theme="red"></Marquee>
 

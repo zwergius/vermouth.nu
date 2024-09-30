@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
   import viewport from '$lib/actions/use-viewport-action'
   import Hero from '$lib/components/hero.svelte'
   import Marquee from '$lib/components/marquee.svelte'
-  import { portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
+  import Seo from '$lib/components/SEO.svelte'
 
   const founders = [
     {
@@ -21,6 +22,7 @@
         'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/cf316167-9d07-4a5f-b35f-367b41af4700',
     },
   ]
+
   function onExit(e: CustomEvent) {
     const img = e.currentTarget as HTMLElement
     img.classList.add('opacity-0')
@@ -31,6 +33,16 @@
     img.classList.remove('opacity-0')
   }
 </script>
+
+<Seo
+  title="Vennerne som elsker smagen af Vermouth"
+  description="Vermouth.nu er skabt af tre passionerede danske venner, Thomas, Christoffer og Christian, der
+      alle blev betaget af Spaniens uforlignelige vermouth-kultur. Inspireret af denne spanske
+      livsstil, men frustrerede over det begrænsede udvalg i Danmark, besluttede vi at tage sagen i
+      egen hånd"
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3d60012-4235-4e75-db02-9fd01421f100/public"
+  imageAlt="Vermouth.nu Founders"
+/>
 
 <Hero
   imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500"

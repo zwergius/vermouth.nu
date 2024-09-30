@@ -2,6 +2,7 @@
   import { portraitSrcSet, squareSrcSet } from '$lib/helpers/images'
   import Marquee from '$lib/components/marquee.svelte'
   import Hero from '$lib/components/hero.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 
   const images = [
     {
@@ -21,6 +22,16 @@
     },
   ]
 </script>
+
+<Seo
+  title="Vermouth Smagninger"
+  description="Vi gør en dyd ud af at skabe en unik og fleksibel oplevelse til vores vermouth-smagninger. Uanset
+      om I vil afholde smagningen på jeres kontor, en restaurant, eller i vores intime koldkrigsbunker,
+      tilpasser vi os jeres ønsker. Vi tager med glæde vores flasker med til jer og sørger for at skabe
+      den perfekte ramme for en uforglemmelig aften - eller står for hele setuppet selv."
+  image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/c52d3379-d8aa-4a23-1bec-e682e15cff00/w=800,h=800,fit=cover"
+  imageAlt="Vermouth smagning i bunker526"
+/>
 
 <Hero
   imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00"

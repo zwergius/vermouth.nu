@@ -4,9 +4,17 @@
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
+  import Seo from '$lib/components/SEO.svelte'
 
   export let data: PageData
 </script>
+
+<Seo
+  title={data.vermouth.name}
+  description={data.vermouth.intro}
+  image="{data.vermouth.image}/w=800,h=800,fit=cover"
+  imageAlt={data.vermouth.name}
+/>
 
 <Marquee text="{data.vermouth.name} //" theme="red"></Marquee>
 
