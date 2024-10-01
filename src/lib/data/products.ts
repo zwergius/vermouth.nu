@@ -181,7 +181,7 @@ export const vermouths = {
     ],
     image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/684162e5-028c-4ccd-0057-4f9c9a0f4900',
     intro:
-      'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
+      'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilket gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
     name: 'Carmeleta Blanco',
     origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
     recommendation:
@@ -193,6 +193,33 @@ export const vermouths = {
       'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian. Næsen er forfriskende og har klare noter af timian og fennikel.',
     titleName: 'Hvid og Autentisk',
   },
+  //'carmeleta-rosso': {
+  //  color: 'RED',
+  //  country: 'Spanien',
+  //  extraImages: [
+  //    {
+  //      altText: 'Carmeleta Blanco cocktail',
+  //      url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7d277bd1-e2c6-4c74-0b97-2a3bab563a00',
+  //    },
+  //    {
+  //      altText: 'Carmeleta Blanco med oliven i skål',
+  //      url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ed6a141-b110-4101-7a8a-2ae86f9bc100',
+  //    },
+  //  ],
+  //  image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/684162e5-028c-4ccd-0057-4f9c9a0f4900',
+  //  intro:
+  //    'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
+  //  name: 'Carmeleta Blanco',
+  //  origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
+  //  recommendation:
+  //    'Serveres kold med is, alternativt i drinks med gin som en forfriskende supplement.',
+  //  region: 'L’Alquería de la Comtessa, Valencia',
+  //  scores: { sweetness: 2, fruityness: 3, body: 2, spiciness: 3 },
+  //  sizeAndDegrees: '75 cl. / 15%',
+  //  taste:
+  //    'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian. Næsen er forfriskende og har klare noter af timian og fennikel.',
+  //  titleName: 'Hvid og Autentisk',
+  //},
   tabira: {
     color: 'RED',
     country: 'Spanien',
