@@ -1,97 +1,121 @@
 <script>
-  import '../app.postcss'
-  import Footer from '$lib/components/footer.svelte'
-  import Header from '$lib/components/header.svelte'
-  import logoDesktop from '$lib/assets/logo-home.svg'
-  import logoMobile from '$lib/assets/diagonal-logo.svg'
   import { page } from '$app/stores'
-  import RingText from '$lib/components/ring-text.svelte'
+  import '../app.css'
+  import logo from '$lib/images/vermouth-nu-logo.svg'
+  import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
 
-  $: hasGradient = $page.url.pathname === '/'
+  const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
 </script>
 
-<div class="container">
-  <Header />
-  <div class="logo logo-desktop {hasGradient ? '' : 'gradient'}">
-    <a href="/">
-      <img src={logoDesktop} alt="logo" />
-    </a>
-  </div>
-  <div class="logo logo-mobile {hasGradient ? '' : 'gradient'}">
-    <a href="/">
-      <img src={logoMobile} alt="logo" />
-    </a>
-  </div>
-</div>
-<div class="wrapper">
-  <slot />
-  <div class="ringtext">
-    <RingText />
-  </div>
-</div>
-<Footer />
+<header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
+  <a class="block bg-brand-yellow py-1.5 text-center text-xs" href="/smagninger"
+    >BOOK EN SMAGNING&nbsp;<span class="underline">NU</span></a
+  >
+  <nav class="flex-1 border-b border-t border-black text-sm">
+    <ul class="nav-list h-full">
+      <li class="col-span-2 lg:col-span-1">
+        <a href="/"><img width="137" height="57" src={logo} alt="Vermouth.nu" /></a>
+      </li>
+      {#each routes as route}
+        <li class="hidden lg:block">
+          <a
+            class="hover:font-bold aria-[current=page]:font-bold"
+            href="/{route}"
+            aria-current={$page.url.pathname.includes(route) ? 'page' : false}
+            >{route.replace('-', ' ')}</a
+          >
+        </li>
+      {/each}
+      <li class="lg:hidden">
+        <HamburgerMenu>
+          <ul class="hamburger-nav-list">
+            <li><a href="/sortiment">Sortiment</a></li>
+            <li><a href="/smagninger">Smagninger</a></li>
+            <li><a href="/inspiration">Inspiration</a></li>
+            <li><a href="/forhandlere">Forhandlere</a></li>
+            <li><a href="/om-os">Om Os</a></li>
+          </ul>
+        </HamburgerMenu>
+      </li>
+    </ul>
+  </nav>
+</header>
 
-<style>
-  .ringtext {
-    position: fixed;
-    right: 5px;
-    bottom: 67px;
+<main class="flex flex-1 flex-col">
+  <slot></slot>
+</main>
+
+<footer>
+  <div class="px-11 py-16 text-center lg:text-left">
+    <h3 class="mb-6 text-xs">FANG OS PÅ</h3>
+    <p class="mb-6 md:mb-8">
+      <a href="tel:+4526353606">26 35 36 06</a>
+      <br />
+      <a href="mailto:info@vermouth.nu">info@vermouth.nu</a>
+      <br />
+      Overgaden Neden Vandet 49b, 1414 Kbh K
+    </p>
+  </div>
+  <div
+    class="grid grid-flow-row grid-rows-2 text-sm md:grid-flow-col md:grid-cols-2 md:grid-rows-1"
+  >
+    <figure class="border-y border-black py-5 pl-16 md:border-r">
+      <figcaption class="font-bold">LINKS</figcaption>
+      <ul>
+        {#each routes as route}
+          <li>
+            <a
+              class="hover:font-bold aria-[current=page]:font-bold capitalize"
+              href="/{route}"
+              aria-current={$page.url.pathname.includes(route) ? 'page' : false}
+              >{route.replace('-', ' ')}</a
+            >
+          </li>
+        {/each}
+      </ul>
+    </figure>
+    <figure class="border-b border-black py-5 pl-16 md:border-y">
+      <figcaption class="font-bold">FØLG OS</figcaption>
+      <ul>
+        <li>
+          <a
+            class="hover:font-bold"
+            rel="external"
+            href="https://www.facebook.com/profile.php?id=100063790380353">Facebook</a
+          >
+        </li>
+        <li>
+          <a class="hover:font-bold" rel="external" href="https://www.instagram.com/vermouth.nu"
+            >Instagram</a
+          >
+        </li>
+      </ul>
+    </figure>
+  </div>
+  <div class="bg-brand-yellow px-16 py-1.5 text-xs md:text-center">
+    <p>© Copyright - Vermouth.nu</p>
+  </div>
+</footer>
+
+<style lang="postcss">
+  .nav-list {
+    @apply grid grid-cols-3 items-center lg:grid-cols-6;
   }
-  .wrapper {
-    --padding-logo: 10px;
-    --logo-aspect-ratio: 233 / 1745;
-    display: flex;
-    width: 100%;
-    flex: 1;
-    padding-top: calc(var(--logo-aspect-ratio) * 100vw + var(--padding-logo));
+
+  .nav-list > li {
+    @apply h-full border-r border-black  uppercase last-of-type:border-none;
   }
-  .container {
-    --fade-padding: 30px;
-    z-index: 100;
-    width: 100%;
-    position: fixed;
+
+  .nav-list > li > a {
+    @apply flex h-full flex-col items-center justify-center py-4;
   }
-  img {
-    object-fit: cover;
-    height: auto;
-    width: 100%;
+
+  .hamburger-nav-list > li {
+    @apply border-b border-black py-8 pl-16 leading-6;
   }
-  .gradient {
-    background-image: linear-gradient(#f0a9a8 75%, #9e9e9f00 100%);
-  }
-  .logo {
-    width: 100%;
-    z-index: 10;
-    padding-bottom: var(--fade-padding);
-  }
-  .logo-mobile {
-    display: none;
-  }
-  @media only screen and (max-width: 1024px) {
-    .ringtext {
-      bottom: 90px;
-    }
-    .logo-desktop {
-      display: none;
-    }
-    .container {
-      ----fade-padding: 20px;
-    }
-    .logo-mobile {
-      display: block;
-    }
-    .wrapper {
-      --logo-aspect-ratio: 336 / 1021;
-      padding-bottom: 30px;
-    }
-  }
-  @media only screen and (max-width: 767px) {
-    .ringtext {
-      bottom: none;
-      top: 73svh;
-    }
-    .logo-desktop {
-      display: none;
+
+  @media (min-width: 480px) {
+    footer {
     }
   }
 </style>

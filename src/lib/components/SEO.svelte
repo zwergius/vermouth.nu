@@ -23,12 +23,12 @@
 
   <!--  Essential META Tags -->
 
-  <meta property="”og:locale”" content="" />
-  <meta property="”fb:app_id”" content="" />
+  <meta property="og:locale" content="da" />
+  <meta property="fb:app_id" content="" />
   <meta property="og:site_name" content="Vermouth.NU" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" itemprop="image" content={image} />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://vermouth.nu/" />
+  <meta property="og:url" content="https://www.vermouth.nu" />
 </svelte:head>

@@ -1,15 +1,25 @@
+/** @type { import("eslint").Linter.Config } */
 module.exports = {
   root: true,
-
   extends: [
     'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier',
     'plugin:svelte/recommended',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint'],
-  ignorePatterns: ['*.cjs'],
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 2020,
+    extraFileExtensions: ['.svelte'],
+  },
+  env: {
+    browser: true,
+    es2017: true,
+    node: true,
+  },
   overrides: [
     {
       files: ['*.svelte'],
@@ -19,18 +29,6 @@ module.exports = {
       },
     },
   ],
-  settings: {
-    'svelte/typescript': () => require('typescript'),
-  },
-  parserOptions: {
-    sourceType: 'module',
-    ecmaVersion: 2020,
-  },
-  env: {
-    browser: true,
-    es2017: true,
-    node: true,
-  },
   rules: {
     'no-console': 'error',
     'array-callback-return': 'error',
@@ -41,7 +39,7 @@ module.exports = {
     'no-var': 'error',
     'prefer-template': 'error',
     'no-else-return': 'error',
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'template-curly-spacing': 'error',
     'one-var': ['error', 'never'],
     eqeqeq: 'error',
