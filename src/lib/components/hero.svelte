@@ -5,11 +5,11 @@
 </script>
 
 <section class="relative aspect-[0.95/1] md:aspect-[2.47/1] border-b border-black">
-  <picture class="object-fill brightness-90">
+  <picture class="object-fill">
     <source media="(min-width: 480px)" srcset={heroSrcSet(imageUrl)} sizes="100vw" />
     <img
       alt="Welcome"
-      class="h-auto w-full object-cover"
+      class="h-auto w-full object-cover brightness-90"
       src="{imageUrl}/w=400,h=421,fit=cover"
       srcset={heroHandheldSrcSet(imageUrl)}
       sizes="100vw"
