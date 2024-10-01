@@ -1,11 +1,6 @@
 export default {
   physicalShops: [
     {
-      name: 'Flindt & Ørsted',
-      location: 'Nørre Farimagsgade 6, 1364 Kbh',
-      url: 'https://maps.app.goo.gl/WArMs8GnjR5vdSMe9',
-    },
-    {
       name: 'Ubbes Vinhandel',
       location: 'Ny Østergade 1, 1471 Kbh K',
       url: 'https://maps.app.goo.gl/RcHSyzVrvTXhj5it5',
@@ -15,17 +10,22 @@ export default {
       location: 'Linnésgade 17, 1361 Kbh K',
       url: 'https://maps.app.goo.gl/MBqxLJM6uAp2a2MX9',
     },
+    {
+      name: 'Flindt & Ørsted',
+      location: 'Nørre Farimagsgade 6, 1364 Kbh',
+      url: 'https://maps.app.goo.gl/WArMs8GnjR5vdSMe9',
+    },
   ],
   onlineShops: [
-    {
-      name: 'Just Eat',
-      location: 'Gå til shop',
-      url: 'https://www.just-eat.dk/butik/vermouth',
-    },
+    //{
+    //  name: 'Just Eat',
+    //  location: 'Gå til shop',
+    //  url: 'https://www.just-eat.dk/butik/vermouth',
+    //},
     {
       name: 'Vivino',
       location: 'vivino.com',
-      url: 'https://www.vivino.com',
+      url: 'https://www.vivino.com/explore?e=eJwNyUsOQDAUBdDd3HF9w-DOzCxBROopaSjSNj67Z3Imx3kqOLszgdMP00IpyMumhfy0OP9YZl7aWxP1hsNPnEwQHOPL0YQ4nFbWACfMVFXWuGPXM80_1hwcUw%3D%3D',
     },
     {
       name: 'Vinkastellet',
@@ -60,6 +60,11 @@ export default {
       url: 'https://maps.app.goo.gl/h55Bvp5tKXbwBste8',
     },
     {
+      name: 'Flindt & Ørsted',
+      location: 'Nørre Farimagsgade 6, 1364 Kbh',
+      url: 'https://maps.app.goo.gl/WArMs8GnjR5vdSMe9',
+    },
+    {
       name: 'Gaia Cocktails',
       location: 'Sankt Peders Stræde 54, 1453 København',
       url: 'https://maps.app.goo.gl/cMtLFoFtQuBz6V8d9',
@@ -73,6 +78,11 @@ export default {
       name: 'Omegn & Venner',
       location: 'Rømersgade 18, København',
       url: 'https://maps.app.goo.gl/8KSKpvSkPYjEfRU18',
+    },
+    {
+      name: 'Petit Percy',
+      location: 'Øster Farimagsgade 69, 2100 København',
+      url: 'https://maps.app.goo.gl/BjBygDrTVrb5FpPd6',
     },
     {
       name: 'Torsten',
