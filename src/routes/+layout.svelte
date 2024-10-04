@@ -19,10 +19,9 @@
       {#each routes as route}
         <li class="hidden lg:block">
           <a
-            class="hover:font-bold aria-[current=page]:font-bold"
-            href="/{route}"
             aria-current={$page.url.pathname.includes(route) ? 'page' : false}
-            >{route.replace('-', ' ')}</a
+            class="hover:font-bold aria-[current=page]:font-bold"
+            href="/{route}">{route.replace('-', ' ')}</a
           >
         </li>
       {/each}
