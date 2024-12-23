@@ -53,8 +53,13 @@
   <div class="copy">
     <p class="text-xs mb-6">Book en</p>
     <h2 class="text-2xl mb-6">Vermouth Smagning</h2>
-    <p class="text-xs mb-6">Priser fra 450 DKK pr. person</p>
-    <a class="btn mb-12 2xl:mb-24" href="mailto:info@vermouth.nu">SEND FORESPØRGSEL</a>
+    <p class="text-xs">Priser fra 450 DKK pr. person</p>
+    <p class="text-xs mb-6">Kommende smagninger: <b>6/2</b> &amp; <b>3/4</b></p>
+    <a
+      class="btn mb-12 2xl:mb-24"
+      href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
+      rel="external">BOOK NU</a
+    >
     <h3 class="text-sm font-bold mb-4">En typisk smagning</h3>
     <p class="text-sm">
       Hos Vermouth.nu inviterer vi til en smagsoplevelse, der forfører dine smagsløg med spansk
@@ -69,7 +74,12 @@
       Vores smagninger er skræddersyet til jeres niveau og interesse, altid med fokus på afslappet hygge
       og den gode historie bag hver flaske. Vi lover, at det bliver en oplevelse fyldt med viden, grin
       og masser af spansk charme.<br /><br />
-      Send os en forespørgsel <a class="underline" href="mailto:info@vermouth.nu">her</a>
+      Send os en forespørgsel
+      <a
+        class="underline"
+        href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
+        rel="external">her</a
+      >
       :-)
     </p>
   </div>
