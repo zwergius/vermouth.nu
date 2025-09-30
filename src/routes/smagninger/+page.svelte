@@ -54,7 +54,7 @@
     <p class="text-xs mb-6">Book en</p>
     <h2 class="text-2xl mb-6">Vermouth Smagning</h2>
     <p class="text-xs">Priser fra 450 DKK pr. person</p>
-    <p class="text-xs mb-6">Kommende smagning:&nbsp;<b>12/6</b></p>
+    <p class="text-xs mb-6">Kommende smagninger:&nbsp;<b>22/10</b>&nbsp;&amp;&nbsp;<b>3/12</b></p>
     <a
       class="btn mb-12 2xl:mb-24"
       href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
