@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { afterNavigate } from '$app/navigation'
   import { slide } from 'svelte/transition'
   let open = false
@@ -6,12 +6,18 @@
   afterNavigate(() => {
     open = false
   })
+
+  function handleClick() {
+    open = !open
+  }
 </script>
 
 <button
-  class="flex h-full w-full items-center justify-center stroke-brand-blue stroke-2"
+  aria-label="Navigations menu"
+  class="flex h-full flex-1 items-center justify-center stroke-brand-blue stroke-2"
   class:open
-  on:click={() => (open = !open)}
+  onclick={handleClick}
+  type="button"
 >
   <svg width="32" height="32" viewBox="0 0 32 32">
     <line id="top" x1="2" y1="9" x2="30" y2="9" />

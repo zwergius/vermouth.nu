@@ -1,11 +1,34 @@
-<script>
+<script lang="ts">
   import { page } from '$app/stores'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
+  const { children } = $props()
 </script>
+
+{#snippet anchor(route: string, hasCartIcon?: true)}
+  <a
+    aria-current={$page.url.pathname.includes(route) ? 'page' : false}
+    class="hover:font-bold aria-[current=page]:font-bold flex-1 flex h-full flex items-center justify-center gap-4 py-4"
+    href="/{route}"
+  >
+    {route.replace('-', ' ')}
+    {#if hasCartIcon}
+      {@render cartIcon()}
+    {/if}
+  </a>
+{/snippet}
+
+{#snippet cartIcon()}
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 16 20" fill="none">
+    <rect x="1" y="5" width="14" height="14" stroke="currentColor" stroke-width="2" />
+    <rect x="4" width="2" height="9" fill="currentColor" />
+    <rect x="10" width="2" height="9" fill="currentColor" />
+    <rect x="4" width="8" height="2" fill="currentColor" />
+  </svg>
+{/snippet}
 
 <header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
   <a class="block bg-brand-yellow py-1.5 text-center text-xs" href="/smagninger"
@@ -14,18 +37,23 @@
   <nav class="flex-1 border-b border-t border-black text-sm">
     <ul class="nav-list h-full">
       <li class="col-span-2 lg:col-span-1">
-        <a href="/"><img width="137" height="57" src={logo} alt="Vermouth.nu" /></a>
+        <a class="flex h-full flex-col lg:items-center justify-center p-4" href="/"
+          ><img width="137" height="57" src={logo} alt="Vermouth.nu" /></a
+        >
       </li>
-      {#each routes as route}
-        <li class="hidden lg:block">
-          <a
-            aria-current={$page.url.pathname.includes(route) ? 'page' : false}
-            class="hover:font-bold aria-[current=page]:font-bold"
-            href="/{route}">{route.replace('-', ' ')}</a
-          >
-        </li>
-      {/each}
-      <li class="lg:hidden">
+      <li class="hidden lg:block">{@render anchor('sortiment')}</li>
+      <li class="hidden lg:block">{@render anchor('smagninger')}</li>
+      <li class="hidden lg:block">{@render anchor('inspiration')}</li>
+      <li class="hidden lg:block">{@render anchor('forhandlere')}</li>
+      <li class="hidden lg:flex">
+        <div class="h-full flex-1 border-r border-black">
+          {@render anchor('om-os')}
+        </div>
+        <div class="h-full flex-1">
+          {@render anchor('kurv', true)}
+        </div>
+      </li>
+      <li class="lg:hidden flex">
         <HamburgerMenu>
           <ul class="hamburger-nav-list">
             <li><a href="/sortiment">Sortiment</a></li>
@@ -35,13 +63,19 @@
             <li><a href="/om-os">Om Os</a></li>
           </ul>
         </HamburgerMenu>
+        <a
+          class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue"
+          href="/kurv"
+        >
+          {@render cartIcon()}
+        </a>
       </li>
     </ul>
   </nav>
 </header>
 
 <main class="flex flex-1 flex-col">
-  <slot></slot>
+  {@render children()}
 </main>
 
 <footer>
@@ -103,10 +137,6 @@
 
   .nav-list > li {
     @apply h-full border-r border-black  uppercase last-of-type:border-none;
-  }
-
-  .nav-list > li > a {
-    @apply flex h-full flex-col items-center justify-center py-4;
   }
 
   .hamburger-nav-list > li {
