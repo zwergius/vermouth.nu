@@ -1,17 +1,25 @@
 import type { LayoutServerLoad } from './$types'
-import { sdk } from '$lib/medusa/index'
+import { sdk } from '$lib/medusa'
+import { HttpTypes } from '@medusajs/types'
 
-export const load: LayoutServerLoad = async ({ params }) => {
-  const data = await sdk.store.product.list({
-    limit: 3,
-    offset: 0,
-    collection_id: 'pcol_01K9M5TBX8RNQFARPASPH3ASKM',
+type CategoryHandle = 'red' | 'white' | 'other'
+
+export const load: LayoutServerLoad = async ({ locals }) => {
+  const { product_categories } = await sdk.store.category.list({
+    fields: '*products',
   })
-  return {
-    products: data.products,
-    post: {
-      title: `Title for ${params.slug} goes here`,
-      content: `Content for ${params.slug} goes here`,
+  const categories = product_categories.reduce(
+    (dict, category) => {
+      dict[category.handle as CategoryHandle] = category.products ?? []
+      return dict
     },
+    {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
+  )
+
+  const { regions } = await sdk.store.region.list()
+  return {
+    categories,
+    region: regions[0],
+    locale: locals.locale,
   }
 }

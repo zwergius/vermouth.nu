@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { vermouths } from '$lib/data/products'
+  import type { PageProps } from './$types'
   import viewport from '$lib/actions/use-viewport-action'
   import { squareSrcSet } from '$lib/helpers/images'
   import Marquee from '$lib/components/marquee.svelte'
@@ -7,11 +7,7 @@
   import Seo from '$lib/components/SEO.svelte'
   import Hero from '$lib/components/hero.svelte'
 
-  const products = [
-    vermouths['sardino-rojo'],
-    vermouths['forzudo-blanco'],
-    vermouths['carmeleta-orange'],
-  ]
+  const { data }: PageProps = $props()
 
   const founders = [
     {
@@ -81,7 +77,7 @@
 <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each products as product}
+  {#each data.products as product}
     <ProductGridItem {product} />
   {/each}
 </ul>

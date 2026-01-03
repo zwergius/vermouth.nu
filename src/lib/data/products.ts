@@ -1,4 +1,30 @@
-export const vermouths = {
+export type Handle =
+  | 'forzudo-rojo'
+  | 'forzudo-blanco'
+  | 'sardino-rojo'
+  | 'sardino-blanco'
+  | 'carmeleta-orange'
+  | 'carmeleta-blanco'
+  // | 'carmeleta-rojo'
+  | 'tabira'
+
+interface Vermouth {
+  color: 'RED' | 'WHITE' | 'ORANGE' // deprecated
+  country: string
+  extraImages: Array<{ altText: string; url: string }>
+  image: string
+  intro: string // deprecated
+  name: string // deprecated
+  origin: string
+  recommendation: string
+  region: string
+  scores: { body: number; fruityness: number; spiciness: number; sweetness: number }
+  sizeAndDegrees: string
+  taste: string
+  titleName: string //deprecated
+}
+
+export const vermouths: Record<Handle, Vermouth> = {
   'forzudo-rojo': {
     color: 'RED',
     country: 'Spanien',

@@ -1,43 +1,96 @@
 <script lang="ts">
-  import type { PageData } from './$types'
+  import { getContext } from 'svelte'
+  import type { PageProps } from './$types'
+  import { vermouths, type Handle } from '$lib/data/products'
   import { squareSrcSet } from '$lib/helpers/images'
+  import { formatPrice } from '$lib/helpers/numbers'
+  import { Form, QuantitySelector } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
+  import type { Checkout } from '$lib/stores/checkout.svelte'
 
-  export let data: PageData
+  const { data }: PageProps = $props()
+  const { red, white, other } = data.categories
+  const { locale, product, region } = $derived(data)
+  const { extraImages, image, intro, origin, recommendation, scores, taste } = $derived(
+    vermouths[product.handle as Handle],
+  )
+  const variant = $derived(product.variants?.[0])
+  const formattedPrice = $derived(
+    formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
+  )
+  const checkout = getContext<Checkout>('checkout')
+  const { addToCart, cart, updateItemQuantity } = $derived(checkout)
+  const cartItemVariant = $derived(
+    cart?.items?.find(({ variant_id }) => variant_id === variant?.id),
+  )
+
+  async function handleSubmit(e: SubmitEvent) {
+    try {
+      const form = e.currentTarget as HTMLFormElement
+      const formData = new FormData(form)
+      const quantity = Number(formData.get('quantity'))
+
+      if (cartItemVariant) {
+        updateItemQuantity(cartItemVariant.id, quantity)
+      } else if (variant) {
+        addToCart(variant.id, quantity)
+      }
+      // TODO: Pruduct added confirmation
+    } catch (e) {
+      // TODO: Add/update cart item failed
+      console.error(e)
+    }
+  }
 </script>
 
 <Seo
-  title={data.vermouth.name}
-  description={data.vermouth.intro}
-  image="{data.vermouth.image}/w=800,h=800,fit=cover"
-  imageAlt={data.vermouth.name}
+  title={product.title}
+  description={intro}
+  image="{image}/w=800,h=800,fit=cover"
+  imageAlt={product.title}
 />
 
-<Marquee text="{data.vermouth.name} //" theme="red"></Marquee>
+<Marquee text="{product.title} //" theme="red"></Marquee>
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
-    <p class="text-xs mb-6">{data.vermouth.titleName}</p>
-    <h1 class="text-2xl mb-6">{data.vermouth.name}</h1>
-    <p class="text-xs mb-6">{data.vermouth.origin}</p>
-    <a class="btn mb-12 2xl:mb-24" href="/forhandlere">KØB ELLER SMAG HER</a>
-    <h3 class="text-sm font-bold mb-4">{data.vermouth.titleName}</h3>
-    <p class="text-sm mb-6">{data.vermouth.intro}</p>
+    <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
+    <h1 class="text-2xl mb-2">{product.title}</h1>
+    <p class="font-bold text-xs mb-4">{origin}</p>
+    <p class="font-bold text-base mb-6">
+      {formattedPrice}
+    </p>
+    <div class="mb-4">
+      <Form onSubmit={handleSubmit}>
+        <div class="flex gap-4 items-center">
+          <button class="btn" type="submit">LÆG I KURV</button>
+          <QuantitySelector name="quantity" value={cartItemVariant?.quantity} />
+        </div>
+      </Form>
+    </div>
+    <a
+      class="block text-xs italic
+      mb-10
+      hover:font-bold"
+      href="/forhandlere">KØB ELLER SMAG HER &#8594;</a
+    >
+    <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
+    <p class="text-sm mb-6">{intro}</p>
     <h3 class="text-sm font-bold mb-4">Smag & Duft</h3>
-    <p class="text-sm mb-6">{data.vermouth.taste}</p>
+    <p class="text-sm mb-6">{taste}</p>
     <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
-    <p class="text-sm">{data.vermouth.recommendation}</p>
+    <p class="text-sm">{recommendation}</p>
   </div>
   <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center">
     <div class="max-w-screen lg:max-w-4xl lg:mx-auto">
       <img
-        alt={data.vermouth.name}
+        alt={product.title}
         class="h-full max-h-[896px] w-auto max-w-full"
-        srcset={squareSrcSet(data.vermouth.image)}
-        src="{data.vermouth.image}/w=400,h=400,fit=cover"
+        srcset={squareSrcSet(image)}
+        src="{image}/w=400,h=400,fit=cover"
         sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
         width="450"
         height="450"
@@ -49,28 +102,28 @@
 <ul class="lg:grid lg:grid-cols-3 border-b border-black overflow-visible">
   <li class="relative aspect-square">
     <img
-      alt={data.vermouth.extraImages[0].altText}
+      alt={extraImages[0].altText}
       class="h-full w-full object-cover"
       width="400"
       height="400"
       loading="lazy"
-      src="{data.vermouth.extraImages[0].url}/w=800,h=800,fit=cover"
-      srcset={squareSrcSet(data.vermouth.extraImages[0].url)}
+      src="{extraImages[0].url}/w=800,h=800,fit=cover"
+      srcset={squareSrcSet(extraImages[0].url)}
       sizes="(max-width: 400px) 100vw, (max-width: 800px) 50vw, 33vw"
     />
   </li>
   <li class="relative aspect-square flex flex-col justify-center border-x border-black">
-    <ProductSliders scores={data.vermouth.scores} />
+    <ProductSliders {scores} />
   </li>
   <li class="relative aspect-square">
     <img
-      alt={data.vermouth.extraImages[1].altText}
+      alt={extraImages[1].altText}
       class="h-full w-full object-cover"
       width="400"
       height="400"
       loading="lazy"
-      src="{data.vermouth.extraImages[1].url}/w=800,h=800,fit=cover"
-      srcset={squareSrcSet(data.vermouth.extraImages[1].url)}
+      src="{extraImages[1].url}/w=800,h=800,fit=cover"
+      srcset={squareSrcSet(extraImages[1].url)}
       sizes="(max-width: 400px) 100vw, (max-width: 800px) 50vw, 33vw"
     />
   </li>
@@ -85,7 +138,7 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each data.redVermouths as product}
+  {#each red as product}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -93,7 +146,7 @@
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each data.whiteVermouths as product}
+  {#each white as product}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -101,7 +154,7 @@
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each data.otherVermouths as product}
+  {#each other as product}
     <ProductGridItem {product} />
   {/each}
 </ul>

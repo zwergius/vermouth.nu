@@ -1,11 +1,17 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { setContext } from 'svelte'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
+  // import { sdk } from '$lib/medusa'
+  import type { LayoutProps } from './$types'
+  import { Checkout } from '$lib/stores/checkout.svelte'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
-  const { children } = $props()
+  const { children, data }: LayoutProps = $props()
+  const checkout = new Checkout(data.region)
+  setContext('checkout', checkout)
 </script>
 
 {#snippet anchor(route: string, hasCartIcon?: true)}

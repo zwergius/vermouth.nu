@@ -1,14 +1,11 @@
 <script lang="ts">
-  import { vermouths } from '$lib/data/products'
+  import type { PageProps } from './$types'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
 
-  const redVermouths = Object.values(vermouths).filter(({ color }) => color === 'RED')
-  const whiteVermouths = Object.values(vermouths).filter(({ color }) => color === 'WHITE')
-  const otherVermouths = Object.values(vermouths).filter(
-    ({ color }) => color !== 'WHITE' && color !== 'RED',
-  )
+  const { data }: PageProps = $props()
+  const { red, white, other } = data.categories
 </script>
 
 <Seo
@@ -29,7 +26,7 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each redVermouths as product}
+  {#each red as product}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -37,7 +34,7 @@
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each whiteVermouths as product}
+  {#each white as product}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -45,7 +42,7 @@
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each otherVermouths as product}
+  {#each other as product}
     <ProductGridItem {product} />
   {/each}
 </ul>
