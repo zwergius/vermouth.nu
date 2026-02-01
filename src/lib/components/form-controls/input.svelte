@@ -114,7 +114,9 @@
     aria-invalid={touched && Boolean(errorMessage) ? true : undefined}
     bind:this={inputElement}
     class:touched
-    class="peer p-6 text-sm placeholder:text-transparent w-full bg-light-pink focus:bg-white data-[touched=true]:invalid:bg-white"
+    class="peer p-6 text-sm placeholder:text-transparent w-full bg-white/40
+    focus:bg-white
+    data-[touched=true]:invalid:bg-white"
     data-touched={touched}
     id={inputId}
     {max}

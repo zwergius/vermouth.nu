@@ -9,6 +9,7 @@
 }
 
 :root {
+  interpolate-size: allow-keywords;
   --header-height: 126px;
 }
 
@@ -59,7 +60,7 @@ button {
   }
 
   .split-content>.copy {
-    @apply my-auto px-11 py-11 2xl:px-32 xl:basis-1/2;
+    @apply my-auto px-11 py-11 2xl:px-32 xl:basis-1/2 lg:flex-1;
   }
 
   .split-content>.copy p {

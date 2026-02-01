@@ -6,7 +6,8 @@
   interface RadioGroupProps extends HTMLInputAttributes {
     groupLabel: string
     name: string
-    options: Array<{ description?: string; label: string; value: string }>
+    onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
+    options: Array<{ description?: string; label: string; price?: string; value: string }>
     selected?: string
   }
 
@@ -14,18 +15,11 @@
     disabled,
     groupLabel,
     name,
+    onChange,
     options,
     selected = $bindable(),
     ...restProps
   }: RadioGroupProps = $props()
-
-  // export let disabled = false
-  // export let groupTitle: string
-  // export let name: string
-  // export let options: Array<{ label: string; value: string }>
-  // export let required = false
-  // export let selected: string | null | undefined = undefined
-  // export let tooltip = ''
 
   let touched = $state(false)
   let errorMessage = $state('')
@@ -53,6 +47,7 @@
       e.currentTarget.checkValidity()
       handleErrorMessage(e)
     }
+    onChange?.(e)
   }
 </script>
 
@@ -61,15 +56,15 @@
     <span class="">{groupLabel}</span>
   </legend>
   <ul class="border border-dark-blue">
-    {#each options as { description, label, value }}
+    {#each options as { description, label, price, value }}
       <li class="border-b last-of-type:border-none border-dark-blue">
         <label
-          class="relative pl-4 py-5 pr-24 flex items-center gap-4 bg-light-pink has-[:checked]:bg-dark-pink"
+          class="relative pl-4 py-5 pr-24 flex items-center gap-4 bg-white/40 has-[:checked]:bg-black/20"
           for={value}
         >
           <input
             bind:group={selected}
-            class="appearance-none border border-dark-blue size-8 checked:bg-white p-1 bg-light-pink
+            class="appearance-none border border-dark-blue size-8 shrink-0 checked:bg-white p-1 bg-white/40
             data-[touched=true]:invalid:border-brand-red data-[touched=true]:invalid:outline-2 data-[touched=true]:invalid:outline data-[touched=true]:invalid:outline-brand-red"
             data-touched={touched}
             {disabled}
@@ -81,10 +76,14 @@
             {value}
             {...restProps}
           />
-          <div class="text-xs leading-normal">
-            <p class="font-semibold">{label}</p>
+          <div class="text-xs leading-normal flex-1">
+            <div class="flex justify-between font-semibold">
+              <p>{label}</p>
+              <p>{price}</p>
+            </div>
             <p>{description}</p>
           </div>
+
           {#if selected === value}
             <div
               class="absolute left-4 top-1/2 -translate-y-1/2 size-8 pointer-events-none"

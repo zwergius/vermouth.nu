@@ -19,8 +19,9 @@ export default {
         'brand-red': '#F20505',
         'brand-yellow': '#FFC000',
         'dark-blue': '#091853',
-        'dark-pink': '#CB9EA6',
-        'light-pink': '#FADBE0',
+        // 'dark-pink': '#E5ADB6', // black/10
+        // 'darkest-pink': '#CB9EA6', // black/20
+        // 'light-pink': '#FADBE0', // white/40
       },
     },
   },

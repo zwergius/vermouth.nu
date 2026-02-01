@@ -1,34 +1,12 @@
 import { sdk } from '$lib/medusa'
-import type { HttpTypes, StoreRegion } from '@medusajs/types'
-import { browser } from '$app/environment'
+import type { HttpTypes, StoreAddAddress } from '@medusajs/types'
 
 export class Checkout {
-  private localStorageKey = 'cart_id'
   cart = $state<HttpTypes.StoreCart>()
-  region = $state<StoreRegion>()
   cartId = $derived(this.cart?.id)
 
-  constructor(region: StoreRegion) {
-    this.region = region
-
-    if (browser) {
-      this.createOrRetrieveCart()
-    }
-  }
-
-  private createOrRetrieveCart = async () => {
-    const cartId = localStorage.getItem(this.localStorageKey)
-
-    if (cartId) {
-      const { cart } = await sdk.store.cart.retrieve(cartId)
-      this.cart = cart
-    } else {
-      const { cart } = await sdk.store.cart.create({
-        region_id: this.region?.id,
-      })
-      this.cart = cart
-      localStorage.setItem(this.localStorageKey, cart.id)
-    }
+  constructor(cart: HttpTypes.StoreCart) {
+    this.cart = cart
   }
 
   addToCart = async (variant_id: string, quantity: number) => {
@@ -39,6 +17,20 @@ export class Checkout {
       this.cart = cart
     } catch (e) {
       console.error(`addToCart failed with error: ${e}`)
+    }
+  }
+
+  updateCartAddress = async (address: StoreAddAddress, billingAddress?: StoreAddAddress) => {
+    try {
+      if (!this.cartId) throw Error('No cartId!!')
+
+      const { cart } = await sdk.store.cart.update(this.cartId, {
+        shipping_address: address,
+        billing_address: billingAddress ?? address,
+      })
+      this.cart = cart
+    } catch (e) {
+      console.error(`updateCart failed with error: ${e}`)
     }
   }
 
@@ -63,6 +55,24 @@ export class Checkout {
       this.cart = cart
     } catch (e) {
       console.error(`deleteItem failed with error: ${e}`)
+    }
+  }
+
+  setShippingMethod = async (shippingOptionId: string) => {
+    try {
+      if (!this.cartId) throw Error('No cartId!!')
+
+      const { cart } = await sdk.store.cart.addShippingMethod(this.cartId, {
+        option_id: shippingOptionId,
+        data: {
+          // TODO add any data necessary for
+          // fulfillment provider
+        },
+      })
+
+      this.cart = cart
+    } catch (e) {
+      console.error(`setShippingMethod failed with error: ${e}`)
     }
   }
 }

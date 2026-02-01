@@ -4,7 +4,10 @@ import { HttpTypes } from '@medusajs/types'
 
 type CategoryHandle = 'red' | 'white' | 'other'
 
-export const load: LayoutServerLoad = async ({ locals }) => {
+const cookieCartKey = 'cart_id'
+
+export const load: LayoutServerLoad = async ({ cookies, locals }) => {
+  const cartId = cookies.get(cookieCartKey)
   const { product_categories } = await sdk.store.category.list({
     fields: '*products',
   })
@@ -17,9 +20,29 @@ export const load: LayoutServerLoad = async ({ locals }) => {
   )
 
   const { regions } = await sdk.store.region.list()
+  const [{ id: regionId }] = regions
+  let cart: HttpTypes.StoreCart
+
+  if (cartId) {
+    const res = await sdk.store.cart.retrieve(cartId)
+    ;({ cart } = res)
+  } else {
+    const res = await sdk.store.cart.create({
+      region_id: regionId,
+    })
+    ;({ cart } = res)
+    const today = new Date()
+    cookies.set(cookieCartKey, cart.id, {
+      httpOnly: false,
+      expires: new Date(today.setMonth(today.getMonth() + 1)),
+      path: '/',
+    })
+  }
+
   return {
+    cart,
     categories,
-    region: regions[0],
     locale: locals.locale,
+    region: regions[0],
   }
 }

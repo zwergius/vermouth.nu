@@ -65,9 +65,9 @@
     </p>
     <div class="mb-4">
       <Form onSubmit={handleSubmit}>
-        <div class="flex gap-4 items-center">
+        <div class="flex items-center justify-between md:gap-4">
           <button class="btn" type="submit">LÆG I KURV</button>
-          <QuantitySelector name="quantity" value={cartItemVariant?.quantity} />
+          <QuantitySelector min={1} name="quantity" value={cartItemVariant?.quantity} />
         </div>
       </Form>
     </div>

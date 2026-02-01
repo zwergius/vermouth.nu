@@ -1,23 +1,22 @@
 <script lang="ts">
-  import { page } from '$app/stores'
+  import { page } from '$app/state'
   import { setContext } from 'svelte'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
-  // import { sdk } from '$lib/medusa'
   import type { LayoutProps } from './$types'
   import { Checkout } from '$lib/stores/checkout.svelte'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
   const { children, data }: LayoutProps = $props()
-  const checkout = new Checkout(data.region)
+  const checkout = new Checkout(data.cart)
   setContext('checkout', checkout)
 </script>
 
 {#snippet anchor(route: string, hasCartIcon?: true)}
   <a
-    aria-current={$page.url.pathname.includes(route) ? 'page' : false}
-    class="hover:font-bold aria-[current=page]:font-bold flex-1 flex h-full flex items-center justify-center gap-4 py-4"
+    aria-current={page.url.pathname.includes(route) ? 'page' : false}
+    class="hover:font-bold aria-[current=page]:font-bold flex-1 h-full flex items-center justify-center gap-4 py-4"
     href="/{route}"
   >
     {route.replace('-', ' ')}
@@ -106,7 +105,7 @@
             <a
               class="hover:font-bold aria-[current=page]:font-bold capitalize"
               href="/{route}"
-              aria-current={$page.url.pathname.includes(route) ? 'page' : false}
+              aria-current={page.url.pathname.includes(route) ? 'page' : false}
               >{route.replace('-', ' ')}</a
             >
           </li>
@@ -142,7 +141,7 @@
   }
 
   .nav-list > li {
-    @apply h-full border-r border-black  uppercase last-of-type:border-none;
+    @apply h-full border-l border-black  uppercase first-of-type:border-none;
   }
 
   .hamburger-nav-list > li {

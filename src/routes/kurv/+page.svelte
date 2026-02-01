@@ -1,14 +1,180 @@
 <script lang="ts">
+  import { getContext, onMount } from 'svelte'
+  import type { PageProps } from './$types'
+  import type { Checkout } from '$lib/stores/checkout.svelte'
+  import { vermouths, type Handle } from '$lib/data/products'
+  import { thumbnailSrcSet } from '$lib/helpers/images'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
   import Input from '$lib/components/form-controls/input.svelte'
   import RadioGroup from '$lib/components/form-controls/radio-group.svelte'
+  import { formatPrice } from '$lib/helpers/numbers'
+  import QuantitySelector from '$lib/components/form-controls/quantity-selector.svelte'
+  import { sdk } from '$lib/medusa'
+  import type { HttpTypes } from '@medusajs/types'
+
+  const { data }: PageProps = $props()
+  const { locale, region, shippingOptions } = $derived(data)
+  const checkout = getContext<Checkout>('checkout')
+  const { cart, setShippingMethod, updateItemQuantity } = $derived(checkout)
+  const shippingPrices: Record<string, number> = $state({})
+  const hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
+
+  // $inspect(cart)
+  // $inspect(shippingOptions)
 
   async function handleSubmit() {}
+  async function handleUpdateQuantity(e: SubmitEvent) {
+    try {
+      const form = e.currentTarget as HTMLFormElement
+      const formData = new FormData(form)
+      const quantity = Number(formData.get('quantity'))
+      const variantId = String(formData.get('itemId'))
+      updateItemQuantity(variantId, quantity)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  function formattedPrice(price: number) {
+    if (price === 0) return 'Gratis'
+    return formatPrice(price, region.currency_code, locale)
+  }
+
+  async function calculateShippingPrices() {
+    try {
+      if (!cart?.id) throw Error('No cart.id !?')
+
+      const promises: Promise<HttpTypes.StoreShippingOptionResponse>[] = []
+      shippingOptions.forEach(({ amount, id, price_type }) => {
+        if (price_type === 'flat') {
+          shippingPrices[id] = amount
+          return
+        }
+        promises.push(sdk.store.fulfillment.calculate(id, { cart_id: cart?.id, data: {} }))
+      })
+
+      if (promises.length) {
+        const results = await Promise.allSettled(promises)
+
+        results.forEach((result) => {
+          if (result.status === 'fulfilled' && result.value) {
+            const { amount, id } = result.value.shipping_option
+            shippingPrices[id] = amount
+          }
+        })
+      }
+    } catch (e) {
+      console.error(`Could not calculate shipping prices ${e}`)
+    }
+  }
+
+  function handleChangeQuantity(e: Event & { currentTarget: HTMLInputElement }) {
+    const { form } = e.currentTarget
+    form?.requestSubmit()
+  }
+
+  function handleChangeShippingMethod(e: Event & { currentTarget: HTMLInputElement }) {
+    const { value } = e.currentTarget
+    setShippingMethod(value)
+  }
+
+  // TODO recalculate shipping prices on cart item changes.
+  onMount(() => {
+    calculateShippingPrices()
+  })
 </script>
 
+{#snippet cartSnippet()}
+  <ul>
+    {#each cart?.items as { product_handle, product_title, quantity, unit_price, id }}
+      {@const { image } = vermouths[product_handle as Handle]}
+      <li
+        class="px-4 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
+      >
+        <img
+          alt={product_title}
+          class="size-20 lg:size-16 object-cover"
+          width="66"
+          height="66"
+          loading="lazy"
+          srcset={thumbnailSrcSet(image)}
+          src="{image}/w=186,h=186,fit=cover"
+        />
+        <div class="flex flex-col flex-1 gap-2 justify-between lg:flex-row lg:gap-0">
+          <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
+            <p class="text-sm font-bold">{product_title}</p>
+            <dl class="text-xs flex justify-between">
+              <dt>1 stk.</dt>
+              <dd>{formattedPrice(unit_price)}</dd>
+            </dl>
+          </div>
+          <div class="flex justify-between items-center">
+            <Form onSubmit={handleUpdateQuantity}>
+              <input name="itemId" type="hidden" value={id} />
+              <QuantitySelector
+                min={1}
+                name="quantity"
+                onchange={handleChangeQuantity}
+                value={quantity}
+              />
+            </Form>
+            <button aria-label="Fjern {product_title} fra kurv." class="p-5" type="button">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path
+                  d="M7 21C6.45 21 5.97917 20.8042 5.5875 20.4125C5.19583 20.0208 5 19.55 5 19V6H4V4H9V3H15V4H20V6H19V19C19 19.55 18.8042 20.0208 18.4125 20.4125C18.0208 20.8042 17.55 21 17 21H7ZM17 6H7V19H17V6ZM9 17H11V8H9V17ZM13 17H15V8H13V17Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </li>
+    {/each}
+  </ul>
+  {#if cart}
+    <div class="p-5">
+      <dl class="flex flex-col gap-5 text-sm font-bold mb-2 lg:mb-0">
+        <div class="flex justify-between">
+          <dt>Subtotal</dt>
+          <dd>{formattedPrice(cart?.item_total)}</dd>
+        </div>
+        <div class="flex justify-between">
+          <dt>Levering</dt>
+          <dd>{formattedPrice(cart?.shipping_total)}</dd>
+        </div>
+        <div class="flex justify-between">
+          <dt>I alt</dt>
+          <dd>{formattedPrice(cart?.total)}</dd>
+        </div>
+      </dl>
+      <p class="text-xs mb-2">Inklusiv {formattedPrice(cart?.tax_total)} i afgifter</p>
+      <div class="flex flex-col gap-2 lg:flex-row lg:gap-5">
+        <img
+          src="SST_Alkohol.png"
+          srcset="SST_Alkohol.png 1x, SST_Alkohol@2x.png 2x, SST_Alkohol@3x.png 3x"
+          class="size-32"
+          alt=""
+        />
+        <div class="mt-auto text-xs">
+          <p>
+            <strong>Du skal være 18 år for at handle</strong><br />
+            - Opstår der tvivl om din alder efter bestilling spørger vi om billede-id
+          </p>
+        </div>
+      </div>
+    </div>
+  {/if}
+{/snippet}
+
 <section class="split-content">
-  <div class="copy">
+  <div class="px-4 py-8 lg:copy">
     <h1 class="text-sm font-bold mb-4">Kontaktinformation</h1>
     <Form onSubmit={handleSubmit}>
       <div class="flex flex-col gap-4 mb-12">
@@ -52,7 +218,7 @@
           required
           type="tel"
         />
-        <Checkbox label="Brug en anden faktureringsadresse" name="hasDifferentBillingAddress" />
+        <!-- <Checkbox label="Brug en anden faktureringsadresse" name="hasDifferentBillingAddress" /> -->
         <!-- <Checkbox -->
         <!--   label="Gem mine informationer for hurtigere udtjekning næste gang" -->
         <!--   name="acceptsStoreInfo" -->
@@ -64,25 +230,28 @@
       </div>
       <div class="mb-12">
         <RadioGroup
-          groupLabel="Leveringsmetode"
+          groupLabel="Faktureringsadresse"
           name="deliveryMethod"
+          onChange={handleChangeShippingMethod}
           options={[
-            {
-              description: '- Du får besked via e-mail og sms',
-              label: 'Hjemmelevering (leveringsadresse)',
-              value: 'HOME',
-            },
-            {
-              description: '- Du kan afhente med det samme',
-              label: 'Café Flindt & Ørsted',
-              value: 'PICK_UP',
-            },
-            {
-              description: '- Du får besked via e-mail og sms',
-              label: 'Til pakkeshop (nærmest leveringsadresse)',
-              value: 'SHOP',
-            },
+            { label: 'Samme addresse som leveringsadresse', value: 'yes' },
+            { label: 'Brug en anden faktureringsadresse', value: 'yes' },
           ]}
+          selected={hasDifferentBillingAddress}
+          required
+        />
+      </div>
+      <div class="mb-12">
+        <RadioGroup
+          groupLabel="Leveringsmetode"
+          name="billingAddress"
+          onChange={handleChangeShippingMethod}
+          options={shippingOptions.map((option) => ({
+            description: option.type.description,
+            label: option.name,
+            price: formattedPrice(shippingPrices[option.id]),
+            value: option.id,
+          }))}
           required
         />
       </div>
@@ -92,9 +261,67 @@
           label="Jeg accepterer handelsbetingelserne samt bekræfter, at jeg er over 18 år."
           name="acceptsTerms"
           required
+          requiredErrorMessage="Du skal bekræfte handelsbetingelser for at fortsætte."
         />
       </div>
       <button class="btn" type="submit">Gå til betaling</button>
     </Form>
   </div>
+  <div
+    class="basis-1/2 border-black border-b mb-auto lg:border-l lg:sticky lg:top-[var(--header-height)]"
+  >
+    <div class="hidden lg:block">
+      {@render cartSnippet()}
+    </div>
+    {#if cart}
+      <details class="lg:hidden" open>
+        <summary class="bg-black/5 text-sm font-bold list-none px-4 py-8">
+          <dl>
+            <div class="flex justify-between">
+              <dt class="flex gap-4 items-center">
+                <span>Ordreoversigt</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon"
+                  width="12"
+                  height="8"
+                  viewBox="0 0 12 8"
+                  fill="none"
+                >
+                  <path d="M6 7.4L0 1.4L1.4 0L6 4.6L10.6 0L12 1.4L6 7.4Z" fill="currentColor" />
+                </svg>
+              </dt>
+              <dd>{formattedPrice(cart?.total)}</dd>
+            </div>
+          </dl>
+        </summary>
+        {@render cartSnippet()}
+      </details>
+    {/if}
+  </div>
 </section>
+
+<style>
+  details {
+    overflow: hidden;
+
+    &::details-content {
+      block-size: 0;
+      transition: block-size 300ms ease;
+    }
+
+    & .icon {
+      transform: rotate(-90deg);
+      transition: transform 200ms ease;
+    }
+
+    &[open] {
+      &::details-content {
+        block-size: auto;
+      }
+      .icon {
+        transform: rotate(0);
+      }
+    }
+  }
+</style>

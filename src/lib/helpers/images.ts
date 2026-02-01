@@ -43,3 +43,11 @@ export function productSrcSet(url: string) {
     ${url}/w=435,h=870,fit=cover 3x
   `
 }
+
+export function thumbnailSrcSet(url: string) {
+  return `
+    ${url}/w=64,h=64,fit=cover 1x,
+    ${url}/w=124,h=124,fit=cover 2x,
+    ${url}/w=186,h=186,fit=cover 3x
+  `
+}

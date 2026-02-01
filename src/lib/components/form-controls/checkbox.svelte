@@ -6,9 +6,17 @@
   interface Props extends HTMLInputAttributes {
     label: string
     name: string
+    requiredErrorMessage?: string
   }
 
-  let { checked = $bindable(), id, label, name, ...restProps }: Props = $props()
+  let {
+    checked = $bindable(),
+    id,
+    label,
+    name,
+    requiredErrorMessage,
+    ...restProps
+  }: Props = $props()
   const inputId = id ? id : name
 
   let touched = $state(false)
@@ -22,7 +30,7 @@
     } else if (customError) {
       errorMessage = e.currentTarget.validationMessage
     } else if (valueMissing) {
-      errorMessage = e.currentTarget.validationMessage
+      errorMessage = requiredErrorMessage ?? e.currentTarget.validationMessage
     }
   }
 
@@ -47,7 +55,7 @@
     aria-invalid={touched && Boolean(errorMessage) ? true : undefined}
     aria-describedby={touched && Boolean(errorMessage) ? `${name}-error` : undefined}
     class:touched
-    class="appearance-none border border-dark-blue size-8 checked:bg-white p-1 bg-light-pink
+    class="appearance-none border border-dark-blue size-8 shrink-0 checked:bg-white p-1 bg-white/40
       data-[touched=true]:invalid:border-brand-red data-[touched=true]:invalid:outline-2 data-[touched=true]:invalid:outline data-[touched=true]:invalid:outline-brand-red"
     bind:checked
     data-touched={touched}
@@ -63,7 +71,7 @@
   </label>
   {#if checked}
     <div
-      class="absolute left-0 top-0 size-8 pointer-events-none"
+      class="absolute left-0 top-1/2 -translate-y-1/2 size-8 pointer-events-none"
       transition:fade={{ duration: 100 }}
     >
       <CheckedIcon />
