@@ -1,16 +1,14 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { setContext } from 'svelte'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
   import type { LayoutProps } from './$types'
-  import { Checkout } from '$lib/stores/checkout.svelte'
+  import { scale } from 'svelte/transition'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
   const { children, data }: LayoutProps = $props()
-  const checkout = new Checkout(data.cart)
-  setContext('checkout', checkout)
+  const { cart } = $derived(data)
 </script>
 
 {#snippet anchor(route: string, hasCartIcon?: true)}
@@ -54,8 +52,14 @@
         <div class="h-full flex-1 border-r border-black">
           {@render anchor('om-os')}
         </div>
-        <div class="h-full flex-1">
+        <div class="h-full flex-1 relative">
           {@render anchor('kurv', true)}
+          {#if cart.items?.length}
+            <span
+              class="bg-brand-red rounded-full size-4 flex justify-center items-center text-xs absolute top-1/2 right-7"
+              transition:scale>{cart.items?.length}</span
+            >
+          {/if}
         </div>
       </li>
       <li class="lg:hidden flex">
@@ -69,10 +73,16 @@
           </ul>
         </HamburgerMenu>
         <a
-          class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue"
+          class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue relative"
           href="/kurv"
         >
           {@render cartIcon()}
+          {#if cart.items?.length}
+            <span
+              class="bg-brand-red rounded-full size-4 flex justify-center items-center text-xs absolute top-1/2 right-9"
+              transition:scale>{cart.items?.length}</span
+            >
+          {/if}
         </a>
       </li>
     </ul>

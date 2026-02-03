@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { getContext, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import type { PageProps } from './$types'
-  import type { Checkout } from '$lib/stores/checkout.svelte'
   import { vermouths, type Handle } from '$lib/data/products'
   import { thumbnailSrcSet } from '$lib/helpers/images'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
@@ -14,27 +13,9 @@
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
-  const { locale, region, shippingOptions } = $derived(data)
-  const checkout = getContext<Checkout>('checkout')
-  const { cart, setShippingMethod, updateItemQuantity } = $derived(checkout)
+  const { cart, locale, region, shippingOptions } = $derived(data)
   const shippingPrices: Record<string, number> = $state({})
-  const hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
-
-  // $inspect(cart)
-  // $inspect(shippingOptions)
-
-  async function handleSubmit() {}
-  async function handleUpdateQuantity(e: SubmitEvent) {
-    try {
-      const form = e.currentTarget as HTMLFormElement
-      const formData = new FormData(form)
-      const quantity = Number(formData.get('quantity'))
-      const variantId = String(formData.get('itemId'))
-      updateItemQuantity(variantId, quantity)
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
 
   function formattedPrice(price: number) {
     if (price === 0) return 'Gratis'
@@ -74,12 +55,7 @@
     form?.requestSubmit()
   }
 
-  function handleChangeShippingMethod(e: Event & { currentTarget: HTMLInputElement }) {
-    const { value } = e.currentTarget
-    setShippingMethod(value)
-  }
-
-  // TODO recalculate shipping prices on cart item changes.
+  // TODO: recalculate shipping prices on cart item changes.
   onMount(() => {
     calculateShippingPrices()
   })
@@ -87,7 +63,7 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each cart?.items as { product_handle, product_title, quantity, unit_price, id }}
+    {#each cart?.items as { product_handle, product_title, quantity, unit_price, id } (id)}
       {@const { image } = vermouths[product_handle as Handle]}
       <li
         class="px-4 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
@@ -110,8 +86,8 @@
             </dl>
           </div>
           <div class="flex justify-between items-center">
-            <Form onSubmit={handleUpdateQuantity}>
-              <input name="itemId" type="hidden" value={id} />
+            <Form action="?/addOrUpdateItemQuantity">
+              <input name="cart_item_id" type="hidden" value={id} />
               <QuantitySelector
                 min={1}
                 name="quantity"
@@ -119,20 +95,23 @@
                 value={quantity}
               />
             </Form>
-            <button aria-label="Fjern {product_title} fra kurv." class="p-5" type="button">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  d="M7 21C6.45 21 5.97917 20.8042 5.5875 20.4125C5.19583 20.0208 5 19.55 5 19V6H4V4H9V3H15V4H20V6H19V19C19 19.55 18.8042 20.0208 18.4125 20.4125C18.0208 20.8042 17.55 21 17 21H7ZM17 6H7V19H17V6ZM9 17H11V8H9V17ZM13 17H15V8H13V17Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </button>
+            <Form action="?/deleteItem">
+              <input name="cart_item_id" type="hidden" value={id} />
+              <button aria-label="Fjern {product_title} fra kurv." class="p-5" type="submit">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M7 21C6.45 21 5.97917 20.8042 5.5875 20.4125C5.19583 20.0208 5 19.55 5 19V6H4V4H9V3H15V4H20V6H19V19C19 19.55 18.8042 20.0208 18.4125 20.4125C18.0208 20.8042 17.55 21 17 21H7ZM17 6H7V19H17V6ZM9 17H11V8H9V17ZM13 17H15V8H13V17Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </Form>
           </div>
         </div>
       </li>
@@ -173,79 +152,128 @@
   {/if}
 {/snippet}
 
+{#snippet formAddressFields(addressType: 'billing' | 'shipping')}
+  {@const isDeliveryAddress = addressType === 'shipping'}
+  {@const prefix = isDeliveryAddress ? '' : 'billing_'}
+  {@const address = isDeliveryAddress ? cart?.shipping_address : cart?.billing_address}
+  <h2 class="text-sm font-bold mb-4">{isDeliveryAddress ? 'Levering' : 'Fakturering'}</h2>
+  <div class="flex flex-col gap-4 mb-12">
+    <input name="{prefix}country" type="hidden" value={region.countries?.[0].iso_2} />
+    <div class="flex *:flex-1 gap-3">
+      <Input
+        autocomplete="given-name"
+        label="Fornavn"
+        name="{prefix}first_name"
+        required
+        value={address?.first_name}
+      />
+      <Input
+        autocomplete="family-name"
+        label="Efternavn"
+        name="{prefix}last_name"
+        required
+        value={address?.last_name}
+      />
+    </div>
+    <Input
+      autocomplete="organization"
+      label="Firma (Valgfrit)"
+      name="{prefix}company"
+      value={address?.company}
+    />
+    <Input
+      autocomplete="address-line1"
+      label="Adresse"
+      name="{prefix}address"
+      required
+      value={address?.address_1}
+    />
+    <Input
+      autocomplete="address-line2"
+      label="Lejlighed, etage osv. (valgfrit)"
+      name="{prefix}address_2"
+      value={address?.address_2}
+    />
+    <div class="flex *:flex-1 gap-3">
+      <Input
+        autocomplete="postal-code"
+        label="Postnummer"
+        inputmode="numeric"
+        maxlength={4}
+        minlength={4}
+        name="{prefix}postal_code"
+        pattern="\d*"
+        required
+        type="text"
+        value={address?.postal_code}
+      />
+      <Input
+        autocomplete="address-level2"
+        label="By"
+        name="{prefix}city"
+        required
+        value={address?.city}
+      />
+    </div>
+    <Input
+      autocomplete="tel"
+      label="Telefonnummer"
+      minlength={8}
+      name="{prefix}phone"
+      pattern="\d*"
+      required
+      type="tel"
+      value={address?.phone}
+    />
+    {#if isDeliveryAddress}
+      <Checkbox
+        checked={!!cart?.metadata?.accepts_exclusive_offers}
+        label="Send sms-beskeder til mig med ekslusive tilbud"
+        name="accepts_exclusive_offers"
+      />
+    {/if}
+  </div>
+{/snippet}
+
 <section class="split-content">
   <div class="px-4 py-8 lg:copy">
     <h1 class="text-sm font-bold mb-4">Kontaktinformation</h1>
-    <Form onSubmit={handleSubmit}>
+    <Form action="?/checkout">
       <div class="flex flex-col gap-4 mb-12">
-        <Input autocomplete="email" label="E-mailadresse" name="email" required type="email" />
-        <Checkbox label="Tilmeld dig vores nyhedsbrev" name="acceptsNewsletter" />
-      </div>
-      <h2 class="text-sm font-bold mb-4">Levering</h2>
-      <div class="flex flex-col gap-4 mb-12">
-        <Input autocomplete="country" label="Land" name="country" required />
-        <div class="flex *:flex-1 gap-3">
-          <Input autocomplete="given-name" label="Fornavn" name="firstName" required />
-          <Input autocomplete="family-name" label="Efternavn" name="lastName" required />
-        </div>
-        <Input autocomplete="organization" label="Firma (Valgfrit)" name="company" />
-        <Input autocomplete="address-line1" label="Adresse" name="address" required />
         <Input
-          autocomplete="address-line2"
-          label="Lejlighed, etage osv. (valgfrit)"
-          name="addressLine2"
-        />
-        <div class="flex *:flex-1 gap-3">
-          <Input
-            autocomplete="postal-code"
-            label="Postnummer"
-            inputmode="numeric"
-            maxlength={4}
-            minlength={4}
-            name="postalCode"
-            pattern="\d*"
-            required
-            type="text"
-          />
-          <Input autocomplete="address-level2" label="By" name="city" required />
-        </div>
-        <Input
-          autocomplete="tel"
-          label="Telefonnummer"
-          minlength={8}
-          name="phone"
-          pattern="\d*"
+          autocomplete="email"
+          label="E-mailadresse"
+          name="email"
           required
-          type="tel"
+          type="email"
+          value={cart.email}
         />
-        <!-- <Checkbox label="Brug en anden faktureringsadresse" name="hasDifferentBillingAddress" /> -->
-        <!-- <Checkbox -->
-        <!--   label="Gem mine informationer for hurtigere udtjekning næste gang" -->
-        <!--   name="acceptsStoreInfo" -->
-        <!-- /> -->
         <Checkbox
-          label="Send sms-beskeder til mig med ekslusive tilbud"
-          name="acceptsExclusiveOffers"
+          checked={!!cart?.metadata?.accepts_newsletter}
+          label="Tilmeld dig vores nyhedsbrev"
+          name="acceptsNewsletter"
         />
       </div>
+      {@render formAddressFields('shipping')}
       <div class="mb-12">
         <RadioGroup
           groupLabel="Faktureringsadresse"
-          name="deliveryMethod"
-          onChange={handleChangeShippingMethod}
+          name="different_billing_address"
           options={[
-            { label: 'Samme addresse som leveringsadresse', value: 'yes' },
+            { label: 'Samme addresse som leveringsadresse', value: 'no' },
             { label: 'Brug en anden faktureringsadresse', value: 'yes' },
           ]}
-          selected={hasDifferentBillingAddress}
+          bind:selected={hasDifferentBillingAddress}
           required
         />
       </div>
+      {#if hasDifferentBillingAddress === 'yes'}
+        {@render formAddressFields('billing')}
+      {/if}
       <div class="mb-12">
         <RadioGroup
           groupLabel="Leveringsmetode"
-          name="billingAddress"
-          onChange={handleChangeShippingMethod}
+          name="shipping_method_id"
           options={shippingOptions.map((option) => ({
             description: option.type.description,
             label: option.name,
@@ -253,13 +281,15 @@
             value: option.id,
           }))}
           required
+          selected={cart.shipping_methods?.[0].shipping_option_id}
         />
       </div>
       <h2 class="text-sm font-bold mb-4">Bekræft betingelser</h2>
       <div class="flex flex-col gap-4 mb-12">
         <Checkbox
+          checked={!!cart?.metadata?.accepts_terms}
           label="Jeg accepterer handelsbetingelserne samt bekræfter, at jeg er over 18 år."
-          name="acceptsTerms"
+          name="accepts_terms"
           required
           requiredErrorMessage="Du skal bekræfte handelsbetingelser for at fortsætte."
         />

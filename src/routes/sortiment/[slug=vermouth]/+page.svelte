@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
   import { squareSrcSet } from '$lib/helpers/images'
@@ -9,11 +8,10 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import type { Checkout } from '$lib/stores/checkout.svelte'
 
   const { data }: PageProps = $props()
   const { red, white, other } = data.categories
-  const { locale, product, region } = $derived(data)
+  const { cart, locale, product, region } = $derived(data)
   const { extraImages, image, intro, origin, recommendation, scores, taste } = $derived(
     vermouths[product.handle as Handle],
   )
@@ -21,29 +19,7 @@
   const formattedPrice = $derived(
     formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
   )
-  const checkout = getContext<Checkout>('checkout')
-  const { addToCart, cart, updateItemQuantity } = $derived(checkout)
-  const cartItemVariant = $derived(
-    cart?.items?.find(({ variant_id }) => variant_id === variant?.id),
-  )
-
-  async function handleSubmit(e: SubmitEvent) {
-    try {
-      const form = e.currentTarget as HTMLFormElement
-      const formData = new FormData(form)
-      const quantity = Number(formData.get('quantity'))
-
-      if (cartItemVariant) {
-        updateItemQuantity(cartItemVariant.id, quantity)
-      } else if (variant) {
-        addToCart(variant.id, quantity)
-      }
-      // TODO: Pruduct added confirmation
-    } catch (e) {
-      // TODO: Add/update cart item failed
-      console.error(e)
-    }
-  }
+  const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
 </script>
 
 <Seo
@@ -64,10 +40,12 @@
       {formattedPrice}
     </p>
     <div class="mb-4">
-      <Form onSubmit={handleSubmit}>
+      <Form action="/kurv?/addOrUpdateItemQuantity">
+        <input name="variant_id" type="hidden" value={variant?.id} />
+        <input name="cart_item_id" type="hidden" value={cartItem?.id} />
         <div class="flex items-center justify-between md:gap-4">
           <button class="btn" type="submit">LÆG I KURV</button>
-          <QuantitySelector min={1} name="quantity" value={cartItemVariant?.quantity} />
+          <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
         </div>
       </Form>
     </div>

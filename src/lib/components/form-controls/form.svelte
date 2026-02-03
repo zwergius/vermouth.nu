@@ -1,41 +1,63 @@
 <script lang="ts">
+  import { enhance } from '$app/forms'
+  import type { ActionResult, SubmitFunction } from '@sveltejs/kit'
   import type { Snippet } from 'svelte'
   import type { HTMLFormAttributes } from 'svelte/elements'
 
   interface FormProps extends HTMLFormAttributes {
     children: Snippet
-    onSubmit: (event: SubmitEvent) => Promise<void>
+    onResult?: (result: ActionResult) => void
     ref?: HTMLFormElement
+    reset?: boolean
   }
 
-  let { children, ref = $bindable(), onSubmit, ...rest }: FormProps = $props()
+  let {
+    children,
+    onResult = () => null,
+    ref = $bindable(),
+    reset = false,
+    ...rest
+  }: FormProps = $props()
 
   let isSubmitting = false
+  // const reset = false
 
-  const handleSubmit = async (event: SubmitEvent) => {
-    event.preventDefault()
+  const handleSubmit: SubmitFunction = ({ cancel, formElement }) => {
+    if (isSubmitting) cancel()
 
-    if (isSubmitting) return
-
-    const form = event.currentTarget as HTMLFormElement
-    const isValid = form.reportValidity()
-
+    const isValid = formElement.reportValidity()
     if (!isValid) {
-      const elements = Array.from(form.elements) as HTMLInputElement[]
-      const firstInvalidField = elements.find((el) => !el.validity.valid)
-
-      firstInvalidField?.focus()
-      firstInvalidField?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      isSubmitting = false
+      const elements = Array.from(formElement.elements) as HTMLInputElement[]
+      const firstInvalidField = elements.find((element) => !element.validity.valid)
+      if (firstInvalidField) {
+        firstInvalidField.focus()
+        firstInvalidField.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        })
+      }
+      // isSubmitting = false
+      cancel()
       return
     }
-
     isSubmitting = true
-    await onSubmit(event)
-    isSubmitting = false
+
+    return async ({ result, update }) => {
+      // showMessage = result.type
+      // if (showMessage === 'success' || showMessage === 'redirect') {
+      //   if (!disableFeedback) notifications.add(successMessage)
+      //   if (onSuccess) onSuccess(result)
+      // } else if (!disableFeedback) {
+      //   notifications.add(errorMessage, true)
+      // }
+      onResult(result)
+      isSubmitting = false
+      update({ reset })
+    }
   }
 </script>
 
-<form bind:this={ref} novalidate {...rest} onsubmit={handleSubmit}>
+<form bind:this={ref} method="POST" novalidate {...rest} use:enhance={handleSubmit}>
   {@render children()}
 </form>
