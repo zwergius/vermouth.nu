@@ -105,7 +105,7 @@
     </p>
   </div>
   <div
-    class="grid grid-flow-row grid-rows-2 text-sm md:grid-flow-col md:grid-cols-2 md:grid-rows-1"
+    class="grid grid-flow-row grid-rows-3 text-sm md:grid-flow-col md:grid-cols-3 md:grid-rows-1"
   >
     <figure class="border-y border-black py-5 pl-16 md:border-r">
       <figcaption class="font-bold">LINKS</figcaption>
@@ -139,8 +139,22 @@
         </li>
       </ul>
     </figure>
+    <figure class="border-b border-black py-5 pl-16 md:border-l md:border-y text-left">
+      <figcaption class="font-bold">POLICES</figcaption>
+      <ul>
+        <li>
+          <a class="hover:font-bold" rel="external" href="/handelsbetingelser">Handelsbetingelser</a
+          >
+        </li>
+        <li>
+          <a class="hover:font-bold" rel="external" href="/fortrolighedspolitik"
+            >Fortrolighedspolitik</a
+          >
+        </li>
+      </ul>
+    </figure>
   </div>
-  <div class="bg-brand-yellow px-16 py-1.5 text-xs md:text-center">
+  <div class="bg-brand-yellow px-16 py-1.5 text-xs text-center">
     <p>© Copyright - Vermouth.nu</p>
   </div>
 </footer>

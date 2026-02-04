@@ -93,9 +93,21 @@ button {
     @apply w-screen left-0;
   }
 
-  /* .grid-item::before { */
-  /*   width: 0.9px; */
-  /*   right: 0px; */
-  /*   @apply h-screen top-0; */
-  /* } */
+  .policy {
+    @apply px-11 py-16 text-sm;
+
+    &>h1 {
+      @apply font-bold mb-2;
+    }
+
+    &>h2 {
+      @apply font-bold mb-2;
+    }
+
+    &>p,
+    &>ul {
+
+      @apply mb-2;
+    }
+  }
 }
