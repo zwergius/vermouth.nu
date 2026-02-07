@@ -66,7 +66,7 @@
     {#each cart?.items as { product_handle, product_title, quantity, unit_price, id } (id)}
       {@const { image } = vermouths[product_handle as Handle]}
       <li
-        class="px-4 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
+        class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
       >
         <img
           alt={product_title}
@@ -77,7 +77,7 @@
           srcset={thumbnailSrcSet(image)}
           src="{image}/w=186,h=186,fit=cover"
         />
-        <div class="flex flex-col flex-1 gap-2 justify-between lg:flex-row lg:gap-0">
+        <div class="flex flex-col flex-1 gap-0 justify-between lg:flex-row lg:gap-0">
           <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
             <p class="text-sm font-bold">{product_title}</p>
             <dl class="text-xs flex justify-between">
@@ -281,7 +281,7 @@
             value: option.id,
           }))}
           required
-          selected={cart.shipping_methods?.[0].shipping_option_id}
+          selected={cart.shipping_methods?.[0]?.shipping_option_id}
         />
       </div>
       <h2 class="text-sm font-bold mb-4">Bekræft betingelser</h2>

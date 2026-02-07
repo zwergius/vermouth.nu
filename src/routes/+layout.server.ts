@@ -25,6 +25,7 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
 
   if (cartId) {
     const res = await sdk.store.cart.retrieve(cartId)
+    // TODO: complete cart an re-initiate
     ;({ cart } = res)
   } else {
     const res = await sdk.store.cart.create({

@@ -25,12 +25,20 @@
 {/snippet}
 
 {#snippet cartIcon()}
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 16 20" fill="none">
-    <rect x="1" y="5" width="14" height="14" stroke="currentColor" stroke-width="2" />
-    <rect x="4" width="2" height="9" fill="currentColor" />
-    <rect x="10" width="2" height="9" fill="currentColor" />
-    <rect x="4" width="8" height="2" fill="currentColor" />
-  </svg>
+  <span class="relative">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 16 20" fill="none">
+      <rect x="1" y="5" width="14" height="14" stroke="currentColor" stroke-width="2" />
+      <rect x="4" width="2" height="9" fill="currentColor" />
+      <rect x="10" width="2" height="9" fill="currentColor" />
+      <rect x="4" width="8" height="2" fill="currentColor" />
+    </svg>
+    {#if cart.items?.length}
+      <span
+        class="bg-brand-red text-white rounded-full size-4 flex justify-center items-center text-xs absolute -bottom-2 -left-2"
+        transition:scale>{cart.items?.length}</span
+      >
+    {/if}
+  </span>
 {/snippet}
 
 <header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
@@ -52,14 +60,8 @@
         <div class="h-full flex-1 border-r border-black">
           {@render anchor('om-os')}
         </div>
-        <div class="h-full flex-1 relative">
+        <div class="h-full flex-1">
           {@render anchor('kurv', true)}
-          {#if cart.items?.length}
-            <span
-              class="bg-brand-red rounded-full size-4 flex justify-center items-center text-xs absolute top-1/2 right-7"
-              transition:scale>{cart.items?.length}</span
-            >
-          {/if}
         </div>
       </li>
       <li class="lg:hidden flex">
@@ -73,16 +75,10 @@
           </ul>
         </HamburgerMenu>
         <a
-          class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue relative"
+          class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue"
           href="/kurv"
         >
           {@render cartIcon()}
-          {#if cart.items?.length}
-            <span
-              class="bg-brand-red rounded-full size-4 flex justify-center items-center text-xs absolute top-1/2 right-9"
-              transition:scale>{cart.items?.length}</span
-            >
-          {/if}
         </a>
       </li>
     </ul>

@@ -1,6 +1,6 @@
 import type { Actions } from './$types'
 import { sdk } from '$lib/medusa'
-import { fail } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 
 function getAddressFields(data: FormData, isBillingAddress: boolean = false) {
   const prefix = isBillingAddress ? 'billing_' : ''
@@ -61,6 +61,7 @@ export const actions = {
       option_id: shipping_method_id,
     })
 
+    redirect(303, '/betaling')
     return { success: true }
   },
   addOrUpdateItemQuantity: async ({ cookies, request }) => {
