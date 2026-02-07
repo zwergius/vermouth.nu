@@ -8,6 +8,7 @@ const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies, locals }) => {
   const cartId = cookies.get(cookieCartKey)
+  console.info({ sdk })
   const { product_categories } = await sdk.store.category.list({
     fields: '*products',
   })
