@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite dev --host",
+    "prebuild": "npm run fix",
     "build": "vite build",
     "preview": "vite preview",
     "test": "npm run test:integration && npm run test:unit",
@@ -61,7 +62,7 @@
     ]
   },
   "dependencies": {
-    "@medusajs/js-sdk": "^2.11.3",
-    "@medusajs/types": "^2.11.3"
+    "@medusajs/js-sdk": "^2.13.1",
+    "@medusajs/types": "^2.13.1"
   }
 }
