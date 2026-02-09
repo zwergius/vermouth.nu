@@ -7,47 +7,44 @@ type CategoryHandle = 'red' | 'white' | 'other'
 const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies, locals }) => {
-  try {
-    const cartId = cookies.get(cookieCartKey)
-    console.info({ sdk })
-    const { product_categories } = await sdk.store.category.list({
-      fields: '*products',
+  const cartId = cookies.get(cookieCartKey)
+  console.info({ sdk })
+  const { product_categories } = await sdk.store.category.list({
+    fields: '*products',
+  })
+  const categories = product_categories.reduce(
+    (dict, category) => {
+      dict[category.handle as CategoryHandle] = category.products ?? []
+      return dict
+    },
+    {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
+  )
+
+  const { regions } = await sdk.store.region.list()
+  const [{ id: regionId }] = regions
+  let cart: HttpTypes.StoreCart
+
+  if (cartId) {
+    const res = await sdk.store.cart.retrieve(cartId)
+    // TODO: complete cart an re-initiate
+    ;({ cart } = res)
+  } else {
+    const res = await sdk.store.cart.create({
+      region_id: regionId,
     })
-    const categories = product_categories.reduce(
-      (dict, category) => {
-        dict[category.handle as CategoryHandle] = category.products ?? []
-        return dict
-      },
-      {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
-    )
+    ;({ cart } = res)
+    const today = new Date()
+    cookies.set(cookieCartKey, cart.id, {
+      httpOnly: false,
+      expires: new Date(today.setMonth(today.getMonth() + 1)),
+      path: '/',
+    })
+  }
 
-    const { regions } = await sdk.store.region.list()
-    const [{ id: regionId }] = regions
-    let cart: HttpTypes.StoreCart
-
-    if (cartId) {
-      const res = await sdk.store.cart.retrieve(cartId)
-      // TODO: complete cart an re-initiate
-      ;({ cart } = res)
-    } else {
-      const res = await sdk.store.cart.create({
-        region_id: regionId,
-      })
-      ;({ cart } = res)
-      const today = new Date()
-      cookies.set(cookieCartKey, cart.id, {
-        httpOnly: false,
-        expires: new Date(today.setMonth(today.getMonth() + 1)),
-        path: '/',
-      })
-    }
-    return {
-      cart,
-      categories,
-      locale: locals.locale,
-      region: regions[0],
-    }
-  } catch (e) {
-    console.error(e)
+  return {
+    cart,
+    categories,
+    locale: locals.locale,
+    region: regions[0],
   }
 }
