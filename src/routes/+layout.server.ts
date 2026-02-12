@@ -7,48 +7,52 @@ type CategoryHandle = 'red' | 'white' | 'other'
 const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
-  const cartId = cookies.get(cookieCartKey)
-  const { product_categories } = await sdk.store.category.list({
-    fields: '*products',
-  })
-
-  console.info({ product_categories })
-  const categories = product_categories.reduce(
-    (dict, category) => {
-      dict[category.handle as CategoryHandle] = category.products ?? []
-      return dict
-    },
-    {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
-  )
-
-  console.info({ categories })
-  const { regions } = await sdk.store.region.list()
-  const [{ id: regionId }] = regions
-  let cart: HttpTypes.StoreCart
-
-  console.info({ regions })
-  if (cartId) {
-    const res = await sdk.store.cart.retrieve(cartId)
-    // TODO: complete cart an re-initiate
-    ;({ cart } = res)
-  } else {
-    const res = await sdk.store.cart.create({
-      region_id: regionId,
+  try {
+    const cartId = cookies.get(cookieCartKey)
+    const { product_categories } = await sdk.store.category.list({
+      fields: '*products',
     })
-    ;({ cart } = res)
-    const today = new Date()
-    cookies.set(cookieCartKey, cart.id, {
-      httpOnly: false,
-      expires: new Date(today.setMonth(today.getMonth() + 1)),
-      path: '/',
-    })
-  }
 
-  return {
-    cart,
-    categories,
-    // locale: locals.locale,
-    locale: 'en',
-    region: regions[0],
+    console.info({ product_categories })
+    const categories = product_categories.reduce(
+      (dict, category) => {
+        dict[category.handle as CategoryHandle] = category.products ?? []
+        return dict
+      },
+      {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
+    )
+
+    console.info({ categories })
+    const { regions } = await sdk.store.region.list()
+    const [{ id: regionId }] = regions
+    let cart: HttpTypes.StoreCart
+
+    console.info({ regions })
+    if (cartId) {
+      const res = await sdk.store.cart.retrieve(cartId)
+      // TODO: complete cart an re-initiate
+      ;({ cart } = res)
+    } else {
+      const res = await sdk.store.cart.create({
+        region_id: regionId,
+      })
+      ;({ cart } = res)
+      const today = new Date()
+      cookies.set(cookieCartKey, cart.id, {
+        httpOnly: false,
+        expires: new Date(today.setMonth(today.getMonth() + 1)),
+        path: '/',
+      })
+    }
+
+    return {
+      cart,
+      categories,
+      // locale: locals.locale,
+      locale: 'en',
+      region: regions[0],
+    }
+  } catch (e) {
+    console.error('Layout catch: ', e)
   }
 }
