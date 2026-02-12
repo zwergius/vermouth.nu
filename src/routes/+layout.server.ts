@@ -6,7 +6,7 @@ type CategoryHandle = 'red' | 'white' | 'other'
 
 const cookieCartKey = 'cart_id'
 
-export const load: LayoutServerLoad = async ({ cookies, locals }) => {
+export const load: LayoutServerLoad = async ({ cookies }) => {
   const cartId = cookies.get(cookieCartKey)
   const { product_categories } = await sdk.store.category.list({
     fields: '*products',
@@ -47,7 +47,8 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
   return {
     cart,
     categories,
-    locale: locals.locale,
+    // locale: locals.locale,
+    locale: 'en',
     region: regions[0],
   }
 }
