@@ -1,13 +1,14 @@
 import type { LayoutServerLoad } from './$types'
-import { sdk } from '$lib/medusa'
+import { sdk } from '$lib/medusa/index'
 import { HttpTypes } from '@medusajs/types'
 
 type CategoryHandle = 'red' | 'white' | 'other'
 
 const cookieCartKey = 'cart_id'
 
-export const load: LayoutServerLoad = async ({ cookies }) => {
+export const load: LayoutServerLoad = async ({ cookies, locals }) => {
   try {
+    console.log('SERVER: ', { locals })
     const cartId = cookies.get(cookieCartKey)
     const { product_categories } = await sdk.store.category.list({
       fields: '*products',
@@ -48,8 +49,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
     return {
       cart,
       categories,
-      // locale: locals.locale,
-      locale: 'en',
+      locale: locals.locale,
       region: regions[0],
     }
   } catch (e) {
