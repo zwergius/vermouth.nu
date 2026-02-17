@@ -1,3 +1,4 @@
+import { PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
 import type { LayoutServerLoad } from './$types'
 import { HttpTypes } from '@medusajs/types'
 
@@ -6,7 +7,7 @@ type CategoryHandle = 'red' | 'white' | 'other'
 const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
-  const resRegions = await fetch('/store/regions')
+  const resRegions = await fetch(`${PUBLIC_VITE_BACKEND_URL}/store/regions`)
   console.log({ resRegions })
   const { regions } = (await resRegions.json()) as HttpTypes.StoreRegionListResponse
 
