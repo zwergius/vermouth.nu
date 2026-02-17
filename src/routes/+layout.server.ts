@@ -1,46 +1,18 @@
-import { PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
 import type { LayoutServerLoad } from './$types'
+import { sdk } from '$lib/medusa'
 import { HttpTypes } from '@medusajs/types'
 
 type CategoryHandle = 'red' | 'white' | 'other'
 
 const cookieCartKey = 'cart_id'
 
-export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
-  const resRegions = await fetch(`${PUBLIC_VITE_BACKEND_URL}/store/regions`)
-  console.log({ resRegions })
-  const { regions } = (await resRegions.json()) as HttpTypes.StoreRegionListResponse
+export const load: LayoutServerLoad = async ({ cookies, locals }) => {
+  const cartId = cookies.get(cookieCartKey)
+  const { product_categories } = await sdk.store.category.list({
+    fields: '*products',
+  })
 
-  const res = await fetch('/store/product-categories?fields=*products')
-  console.log({ res })
-  const { product_categories } = (await res.json()) as HttpTypes.StoreProductCategoryListResponse
-
-  // const productCategoriesPromise: Promise<HttpTypes.StoreProductCategoryListResponse> = fetch(
-  //   '/store/product-categories?fields=*products',
-  // ).then((res) => {
-  //   console.info({ res })
-  //   if (!res.ok) {
-  //     throw new Error('ProductCategories Network response was not ok')
-  //   }
-  //   return res.json() // No type assertion here, we'll handle types after
-  // })
-
-  // const regionsPromise: Promise<HttpTypes.StoreRegionListResponse> = fetch('/store/regions').then(
-  //   (res) => {
-  //     console.info({ res })
-  //     if (!res.ok) {
-  //       throw new Error('Regions Network response was not ok')
-  //     }
-  //     return res.json() // No type assertion here, we'll handle types after
-  //   },
-  // )
-
-  // const [{ product_categories }, { regions }] = await Promise.all([
-  //   productCategoriesPromise,
-  //   regionsPromise,
-  // ])
-  console.info({ product_categories, regions })
-
+  console.info({ product_categories })
   const categories = product_categories.reduce(
     (dict, category) => {
       dict[category.handle as CategoryHandle] = category.products ?? []
@@ -49,30 +21,21 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
     {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
   )
 
-  const cartId = cookies.get(cookieCartKey)
+  console.info({ categories })
+  const { regions } = await sdk.store.region.list()
+  const [{ id: regionId }] = regions
   let cart: HttpTypes.StoreCart
 
+  console.info({ regions })
   if (cartId) {
-    const data = await fetch(`/store/carts/${cartId}`).then((res) => {
-      if (!res.ok) {
-        throw new Error('Retrive Cart Network response was not ok')
-      }
-      return res.json() as Promise<HttpTypes.StoreCartResponse>
-    })
+    const res = await sdk.store.cart.retrieve(cartId)
     // TODO: complete cart an re-initiate
-    ;({ cart } = data)
+    ;({ cart } = res)
   } else {
-    const data = await fetch(`/store/carts`, {
-      method: 'POST',
-      body: JSON.stringify({ region_id: regions[0].id }),
-    }).then((res) => {
-      if (!res.ok) {
-        throw new Error('Create Cart Network response was not ok')
-      }
-      return res.json() as Promise<HttpTypes.StoreCartResponse>
+    const res = await sdk.store.cart.create({
+      region_id: regionId,
     })
-    ;({ cart } = data)
-
+    ;({ cart } = res)
     const today = new Date()
     cookies.set(cookieCartKey, cart.id, {
       httpOnly: false,
