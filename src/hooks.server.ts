@@ -1,4 +1,5 @@
-import type { Handle } from '@sveltejs/kit'
+import { PUBLIC_MEDUSA_PUBLISHABLE_KEY, PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
+import type { Handle, HandleFetch } from '@sveltejs/kit'
 
 export const handle: Handle = async ({ event, resolve }) => {
   const lang = event.request.headers.get('accept-language')?.split(',')[0]
@@ -6,4 +7,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     event.locals.locale = lang
   }
   return resolve(event)
+}
+
+export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
+  if (request.url.includes('/store/')) {
+    request = new Request(request.url.replace(event.url.origin, PUBLIC_VITE_BACKEND_URL), request)
+    request.headers.set('x-publishable-api-key', PUBLIC_MEDUSA_PUBLISHABLE_KEY)
+  }
+
+  return fetch(request)
 }
