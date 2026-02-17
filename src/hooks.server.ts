@@ -23,6 +23,6 @@ export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
     request.headers.set('x-publishable-api-key', PUBLIC_MEDUSA_PUBLISHABLE_KEY)
   }
 
-  console.log({ resuest })
+  console.log({ request })
   return fetch(request)
 }
