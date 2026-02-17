@@ -10,6 +10,7 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
     '/store/product-categories?fields=*products',
   ).then((res) => {
     if (!res.ok) {
+      console.info({ res })
       throw new Error('ProductCategories Network response was not ok')
     }
     return res.json() // No type assertion here, we'll handle types after
