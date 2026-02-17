@@ -6,13 +6,13 @@ type CategoryHandle = 'red' | 'white' | 'other'
 const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
-  const res = await fetch('/store/product-categories?fields=*products')
-  console.log({ res })
-  const { product_categories } = (await res.json()) as HttpTypes.StoreProductCategoryListResponse
-
   const resRegions = await fetch('/store/regions')
   console.log({ resRegions })
   const { regions } = (await resRegions.json()) as HttpTypes.StoreRegionListResponse
+
+  const res = await fetch('/store/product-categories?fields=*products')
+  console.log({ res })
+  const { product_categories } = (await res.json()) as HttpTypes.StoreProductCategoryListResponse
 
   // const productCategoriesPromise: Promise<HttpTypes.StoreProductCategoryListResponse> = fetch(
   //   '/store/product-categories?fields=*products',
