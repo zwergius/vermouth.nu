@@ -9,8 +9,8 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
   const productCategoriesPromise: Promise<HttpTypes.StoreProductCategoryListResponse> = fetch(
     '/store/product-categories?fields=*products',
   ).then((res) => {
+    console.info({ res })
     if (!res.ok) {
-      console.info({ res })
       throw new Error('ProductCategories Network response was not ok')
     }
     return res.json() // No type assertion here, we'll handle types after
@@ -18,6 +18,7 @@ export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
 
   const regionsPromise: Promise<HttpTypes.StoreRegionListResponse> = fetch('/store/regions').then(
     (res) => {
+      console.info({ res })
       if (!res.ok) {
         throw new Error('Regions Network response was not ok')
       }
