@@ -6,30 +6,38 @@ type CategoryHandle = 'red' | 'white' | 'other'
 const cookieCartKey = 'cart_id'
 
 export const load: LayoutServerLoad = async ({ cookies, fetch, locals }) => {
-  const productCategoriesPromise: Promise<HttpTypes.StoreProductCategoryListResponse> = fetch(
-    '/store/product-categories?fields=*products',
-  ).then((res) => {
-    console.info({ res })
-    if (!res.ok) {
-      throw new Error('ProductCategories Network response was not ok')
-    }
-    return res.json() // No type assertion here, we'll handle types after
-  })
+  const res = await fetch('/store/product-categories?fields=*products')
+  console.log({ res })
+  const { product_categories } = (await res.json()) as HttpTypes.StoreProductCategoryListResponse
 
-  const regionsPromise: Promise<HttpTypes.StoreRegionListResponse> = fetch('/store/regions').then(
-    (res) => {
-      console.info({ res })
-      if (!res.ok) {
-        throw new Error('Regions Network response was not ok')
-      }
-      return res.json() // No type assertion here, we'll handle types after
-    },
-  )
+  const resRegions = await fetch('/store/regions')
+  console.log({ resRegions })
+  const { regions } = (await resRegions.json()) as HttpTypes.StoreRegionListResponse
 
-  const [{ product_categories }, { regions }] = await Promise.all([
-    productCategoriesPromise,
-    regionsPromise,
-  ])
+  // const productCategoriesPromise: Promise<HttpTypes.StoreProductCategoryListResponse> = fetch(
+  //   '/store/product-categories?fields=*products',
+  // ).then((res) => {
+  //   console.info({ res })
+  //   if (!res.ok) {
+  //     throw new Error('ProductCategories Network response was not ok')
+  //   }
+  //   return res.json() // No type assertion here, we'll handle types after
+  // })
+
+  // const regionsPromise: Promise<HttpTypes.StoreRegionListResponse> = fetch('/store/regions').then(
+  //   (res) => {
+  //     console.info({ res })
+  //     if (!res.ok) {
+  //       throw new Error('Regions Network response was not ok')
+  //     }
+  //     return res.json() // No type assertion here, we'll handle types after
+  //   },
+  // )
+
+  // const [{ product_categories }, { regions }] = await Promise.all([
+  //   productCategoriesPromise,
+  //   regionsPromise,
+  // ])
   console.info({ product_categories, regions })
 
   const categories = product_categories.reduce(
