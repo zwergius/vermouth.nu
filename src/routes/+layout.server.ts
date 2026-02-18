@@ -12,7 +12,6 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
     fields: '*products',
   })
 
-  console.info({ product_categories })
   const categories = product_categories.reduce(
     (dict, category) => {
       dict[category.handle as CategoryHandle] = category.products ?? []
@@ -21,12 +20,10 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
     {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
   )
 
-  console.info({ categories })
   const { regions } = await sdk.store.region.list()
   const [{ id: regionId }] = regions
   let cart: HttpTypes.StoreCart
 
-  console.info({ regions })
   if (cartId) {
     const res = await sdk.store.cart.retrieve(cartId)
     // TODO: complete cart an re-initiate

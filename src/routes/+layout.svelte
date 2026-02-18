@@ -135,7 +135,9 @@
         </li>
       </ul>
     </figure>
-    <figure class="border-b border-black py-5 pl-16 md:border-l md:border-y text-left">
+    <figure
+      class="border-b border-black py-5 px-16 md:border-l md:border-y text-left flex flex-col"
+    >
       <figcaption class="font-bold">POLICES</figcaption>
       <ul>
         <li>
@@ -148,6 +150,9 @@
           >
         </li>
       </ul>
+      <figure class="mt-auto md:ml-auto overflow-visible">
+        <img class="h-8 w-auto max-w-n" src="/kort-logoer.png" alt="Betalingskort muligheder" />
+      </figure>
     </figure>
   </div>
   <div class="bg-brand-yellow px-16 py-1.5 text-xs text-center">
