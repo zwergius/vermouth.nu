@@ -20,6 +20,45 @@
     formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
   )
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
+
+  let buttonState = $state<'default' | 'loading' | 'success' | 'error'>('default')
+  let isFormSubmitting = $state(false)
+
+  const buttonText = $derived.by(() => {
+    if (buttonState === 'loading') return 'VENT...'
+    if (buttonState === 'success') return cartItem ? 'OPDATERET!' : 'TILFØJET!'
+    if (buttonState === 'error') return 'FEJL'
+    return 'LÆG I KURV'
+  })
+
+  const buttonColorClass = $derived.by(() => {
+    if (buttonState === 'loading') return 'bg-brand-blue/70'
+    if (buttonState === 'success') return 'bg-green-600'
+    if (buttonState === 'error') return 'bg-red-600'
+    return 'bg-brand-blue'
+  })
+
+  function handleFormResult(result: { type: string }) {
+    if (result.type === 'success') {
+      buttonState = 'success'
+      setTimeout(() => {
+        buttonState = 'default'
+      }, 2000)
+    } else {
+      buttonState = 'error'
+      setTimeout(() => {
+        buttonState = 'default'
+      }, 2000)
+    }
+  }
+
+  $effect(() => {
+    if (isFormSubmitting && buttonState === 'default') {
+      buttonState = 'loading'
+    } else if (!isFormSubmitting && buttonState === 'loading') {
+      buttonState = 'default'
+    }
+  })
 </script>
 
 <Seo
@@ -40,11 +79,21 @@
       {formattedPrice}
     </p>
     <div class="mb-4">
-      <Form action="/kurv?/addOrUpdateItemQuantity">
+      <Form
+        action="/kurv?/addOrUpdateItemQuantity"
+        bind:isSubmitting={isFormSubmitting}
+        onResult={handleFormResult}
+      >
         <input name="variant_id" type="hidden" value={variant?.id} />
         <input name="cart_item_id" type="hidden" value={cartItem?.id} />
         <div class="flex items-center justify-between md:gap-4">
-          <button class="btn" type="submit">LÆG I KURV</button>
+          <button
+            class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
+            disabled={buttonState !== 'default'}
+            type="submit"
+          >
+            {buttonText}
+          </button>
           <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
         </div>
       </Form>

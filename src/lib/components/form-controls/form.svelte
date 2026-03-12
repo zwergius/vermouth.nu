@@ -9,6 +9,7 @@
     onResult?: (result: ActionResult) => void
     ref?: HTMLFormElement
     reset?: boolean
+    isSubmitting?: boolean
   }
 
   let {
@@ -16,11 +17,9 @@
     onResult = () => null,
     ref = $bindable(),
     reset = false,
+    isSubmitting = $bindable(false),
     ...rest
   }: FormProps = $props()
-
-  let isSubmitting = false
-  // const reset = false
 
   const handleSubmit: SubmitFunction = ({ cancel, formElement }) => {
     if (isSubmitting) cancel()
