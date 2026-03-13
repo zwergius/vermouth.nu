@@ -23,10 +23,11 @@
 
   let buttonState = $state<'default' | 'loading' | 'success' | 'error'>('default')
   let isFormSubmitting = $state(false)
+  let itemWasInCart = $state(false)
 
   const buttonText = $derived.by(() => {
     if (buttonState === 'loading') return 'VENT...'
-    if (buttonState === 'success') return cartItem ? 'OPDATERET!' : 'TILFØJET!'
+    if (buttonState === 'success') return itemWasInCart ? 'OPDATERET!' : 'TILFØJET!'
     if (buttonState === 'error') return 'FEJL'
     return 'LÆG I KURV'
   })
@@ -40,6 +41,7 @@
 
   function handleFormResult(result: { type: string }) {
     if (result.type === 'success') {
+      itemWasInCart = !!cartItem
       buttonState = 'success'
       setTimeout(() => {
         buttonState = 'default'
