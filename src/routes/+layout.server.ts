@@ -22,13 +22,17 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
 
   const { regions } = await sdk.store.region.list()
   const [{ id: regionId }] = regions
-  let cart: HttpTypes.StoreCart
+  let cart!: HttpTypes.StoreCart
 
   if (cartId) {
     const res = await sdk.store.cart.retrieve(cartId)
-    // TODO: complete cart an re-initiate
-    ;({ cart } = res)
-  } else {
+    // checks if cart has been completed
+    if (!res.cart.completed_at) {
+      cart = res.cart
+    }
+  }
+
+  if (!cart) {
     const res = await sdk.store.cart.create({
       region_id: regionId,
     })

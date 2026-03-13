@@ -36,7 +36,7 @@ export default defineConfig(
   {
     rules: {
       'array-callback-return': 'error',
-      'prefer-destructuring': 'error',
+      'prefer-destructuring': 'off',
       'no-return-await': 'error',
       'no-undef': 'off',
       'no-var': 'error',
