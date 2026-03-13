@@ -16,6 +16,23 @@
   const { cart, locale, region, shippingOptions } = $derived(data)
   const shippingPrices: Record<string, number> = $state({})
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
+  let isSubmitting = $state(false)
+  let checkoutState = $state<'idle' | 'processing' | 'redirecting'>('idle')
+
+  function handleCheckoutResult(result: { type: string }) {
+    if (result.type === 'redirect') {
+      checkoutState = 'redirecting'
+    }
+    isSubmitting = false
+  }
+
+  $effect(() => {
+    if (isSubmitting && checkoutState === 'idle') {
+      checkoutState = 'processing'
+    } else if (!isSubmitting && checkoutState === 'processing') {
+      checkoutState = 'idle'
+    }
+  })
 
   function formattedPrice(price: number) {
     if (price === 0) return 'Gratis'
@@ -238,7 +255,7 @@
 <section class="split-content">
   <div class="px-4 py-8 lg:copy">
     <h1 class="text-sm font-bold mb-4">Kontaktinformation</h1>
-    <Form action="?/checkout">
+    <Form action="?/checkout" bind:isSubmitting onResult={handleCheckoutResult}>
       <div class="flex flex-col gap-4 mb-12">
         <Input
           autocomplete="email"
@@ -330,6 +347,23 @@
     {/if}
   </div>
 </section>
+
+{#if checkoutState !== 'idle'}
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 transition-opacity duration-300"
+    role="status"
+  >
+    <div class="text-center text-white">
+      {#if checkoutState === 'processing'}
+        <div class="mb-4 text-lg font-bold">Behandler din ordre...</div>
+        <div class="text-sm opacity-80">Vent venligst</div>
+      {:else if checkoutState === 'redirecting'}
+        <div class="mb-4 text-lg font-bold">Omdirigerer til betaling...</div>
+        <div class="text-sm opacity-80">Du bliver sendt videre om et øjeblik</div>
+      {/if}
+    </div>
+  </div>
+{/if}
 
 <style>
   details {
