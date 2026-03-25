@@ -15,6 +15,7 @@ interface EpayPayload {
   notificationUrl?: string
   successUrl: string
   failureUrl: string
+  reference?: string // cartId
 }
 
 export const load: PageServerLoad = async ({ fetch, parent, url }) => {
@@ -22,19 +23,19 @@ export const load: PageServerLoad = async ({ fetch, parent, url }) => {
 
   // Create headers for the payment request
   const headers = new Headers()
-  const demoApiKey = EPAY_API_KEY // Demo API key: NEVER use this client-side in production
-
   headers.append('Content-Type', 'application/json')
   headers.append('Accept', 'application/json')
-  headers.append('Authorization', `Bearer ${demoApiKey}`)
+  headers.append('Authorization', `Bearer ${EPAY_API_KEY}`)
 
   // Define the payment payload data
   const paymentData: EpayPayload = {
     amount: cart.total * 100, // minor amount
     currency: cart.currency_code.toUpperCase(),
-    pointOfSaleId: '019c24fb-6160-7f38-ba3f-17cf67a0fd72',
-    successUrl: `${url.origin}/betaling/success`,
     failureUrl: `${url.origin}/betaling/fejl`,
+    notificationUrl: 'https://medusa.vermouth-nu.hz2.oaklab.cloud/api/webhooks/epay',
+    pointOfSaleId: '019c24fb-6160-7f38-ba3f-17cf67a0fd72',
+    reference: cart.id.replace('cart_', ''),
+    successUrl: `${url.origin}/betaling/success`,
   }
 
   // Setup the fetch options
@@ -46,8 +47,11 @@ export const load: PageServerLoad = async ({ fetch, parent, url }) => {
   }
 
   const res = await fetch('https://payments.epay.eu/public/api/v1/cit', requestOptions)
-
-  if (!res.ok) throw Error()
+  if (!res.ok) {
+    const error = await res.json()
+    console.error(error.errors)
+    throw Error()
+  }
 
   const { paymentWindowUrl } = await res.json()
 
