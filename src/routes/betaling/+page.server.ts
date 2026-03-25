@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ fetch, parent, url }) => {
     amount: cart.total * 100, // minor amount
     currency: cart.currency_code.toUpperCase(),
     failureUrl: `${url.origin}/betaling/fejl`,
-    notificationUrl: 'https://medusa.vermouth-nu.hz2.oaklab.cloud/api/webhooks/epay',
+    notificationUrl: 'https://medusa.vermouth-nu.hz2.oaklab.cloud/webhooks/epay',
     pointOfSaleId: '019c24fb-6160-7f38-ba3f-17cf67a0fd72',
     reference: cart.id.replace('cart_', ''),
     successUrl: `${url.origin}/betaling/success`,
