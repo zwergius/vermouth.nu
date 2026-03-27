@@ -237,7 +237,7 @@
       label="Telefonnummer"
       minlength={8}
       name="{prefix}phone"
-      pattern="\d*"
+      pattern="(\+)?\d*"
       required
       type="tel"
       value={address?.phone}
