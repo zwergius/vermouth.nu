@@ -25,10 +25,14 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
   let cart!: HttpTypes.StoreCart
 
   if (cartId) {
-    const res = await sdk.store.cart.retrieve(cartId)
-    // checks if cart has been completed
-    if (!res.cart.completed_at) {
-      cart = res.cart
+    try {
+      const res = await sdk.store.cart.retrieve(cartId)
+      // checks if cart has been completed
+      if (!res.cart.completed_at) {
+        cart = res.cart
+      }
+    } catch (e) {
+      console.error('cart.retrieve failed with error: ', e)
     }
   }
 
@@ -39,7 +43,6 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
     ;({ cart } = res)
     const today = new Date()
     cookies.set(cookieCartKey, cart.id, {
-      httpOnly: false,
       expires: new Date(today.setMonth(today.getMonth() + 1)),
       path: '/',
     })

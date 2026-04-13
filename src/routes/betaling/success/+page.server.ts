@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
   const { cart } = await parent()
 
   if (cart.completed_at) {
-    return { completed: true }
+    return { completed: Promise.resolve(true) }
   }
 
   const poll = async () => {
@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
       await new Promise((resolve) => setTimeout(resolve, delay))
       const { cart: updatedCart } = await sdk.store.cart.retrieve(cartId)
       if (updatedCart.completed_at) {
-        return { completed: true }
+        return true
       }
     }
     throw redirect(303, '/betaling/fejl')

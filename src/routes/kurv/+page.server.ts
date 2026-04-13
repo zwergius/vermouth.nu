@@ -62,7 +62,7 @@ export const actions = {
     })
 
     redirect(303, '/betaling')
-    return { success: true }
+    // return { success: true }
   },
   addOrUpdateItemQuantity: async ({ cookies, request }) => {
     const cart_id = cookies.get('cart_id')

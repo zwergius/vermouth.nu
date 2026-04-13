@@ -111,7 +111,7 @@
     <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
     <p class="text-sm">{recommendation}</p>
   </div>
-  <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center">
+  <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center basis-1/2">
     <div class="max-w-screen lg:max-w-4xl lg:mx-auto">
       <img
         alt={product.title}
