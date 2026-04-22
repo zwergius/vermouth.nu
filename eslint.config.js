@@ -70,6 +70,6 @@ export default defineConfig(
     },
   },
   {
-    ignores: ['build/', 'dist/'],
+    ignores: ['build/', 'dist/', '.svelte-kit/', 'scripts/'],
   },
 )

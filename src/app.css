@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    font-family: "aktiv-grotesk-extended", system-ui, sans-serif;
+    font-family: 'aktiv-grotesk-extended', system-ui, sans-serif;
   }
 }
 
@@ -41,8 +41,8 @@ button {
     @apply px-11 py-16 text-center;
   }
 
-  .content>h2,
-  .content>h1 {
+  .content > h2,
+  .content > h1 {
     @apply mb-6 text-xs;
   }
 
@@ -59,15 +59,15 @@ button {
     @apply flex flex-col-reverse lg:flex-row;
   }
 
-  .split-content>.copy {
+  .split-content > .copy {
     @apply my-auto px-11 py-11 2xl:px-32 xl:basis-1/2 lg:flex-1;
   }
 
-  .split-content>.copy p {
+  .split-content > .copy p {
     @apply lg:max-w-[584px];
   }
 
-  .split-content>.portrait-image-wrapper {
+  .split-content > .portrait-image-wrapper {
     @apply aspect-square xl:basis-1/2 lg:aspect-[3/4];
   }
 
@@ -96,17 +96,16 @@ button {
   .policy {
     @apply px-11 py-16 text-sm;
 
-    &>h1 {
+    & > h1 {
       @apply font-bold mb-2;
     }
 
-    &>h2 {
+    & > h2 {
       @apply font-bold mb-2;
     }
 
-    &>p,
-    &>ul {
-
+    & > p,
+    & > ul {
       @apply mb-2;
     }
   }

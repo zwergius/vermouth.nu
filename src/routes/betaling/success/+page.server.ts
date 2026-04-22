@@ -1,32 +1,38 @@
 import type { PageServerLoad } from './$types'
-import { sdk } from '$lib/medusa'
 import { redirect } from '@sveltejs/kit'
+import type { HttpTypes } from '@medusajs/types'
 
-export const load: PageServerLoad = async ({ cookies, parent }) => {
+// Extend StoreCart type to include order when fetched with *order.id fields
+type CartWithOrder = HttpTypes.StoreCart & {
+  order?: { id: string }
+}
+
+export const load: PageServerLoad = async ({ cookies, url, parent }) => {
   const cartId = cookies.get('cart_id')
   if (!cartId) {
-    throw redirect(303, '/betaling/fejl')
+    redirect(303, '/betaling/fejl')
   }
 
+  // Get cart from parent layout
   const { cart } = await parent()
+  const cartWithOrder = cart as CartWithOrder
 
-  if (cart.completed_at) {
-    return { completed: Promise.resolve(true) }
+  // Check if cart is completed with order
+  const isCompleted = cartWithOrder.completed_at && cartWithOrder.order?.id
+
+  // Handle timeout from meta refresh (no-JS fallback)
+  const hasTimedOut = url.searchParams.get('timeout') === 'true'
+
+  if (isCompleted) {
+    // Cart completed, redirect to order page
+    redirect(303, `/orders/${cartWithOrder.order!.id}`)
+  } else if (hasTimedOut) {
+    redirect(303, '/betaling/fejl')
   }
 
-  const poll = async () => {
-    const delays = [200, 400, 600, 800, 1000]
-    for (const delay of delays) {
-      await new Promise((resolve) => setTimeout(resolve, delay))
-      const { cart: updatedCart } = await sdk.store.cart.retrieve(cartId)
-      if (updatedCart.completed_at) {
-        return true
-      }
-    }
-    throw redirect(303, '/betaling/fejl')
-  }
-
+  // Not completed yet, return data for client-side polling
   return {
-    completed: poll(),
+    completed: false,
+    cartId,
   }
 }
