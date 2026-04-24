@@ -43,7 +43,7 @@
 
           if (cartWithOrder.completed_at && cartWithOrder.order?.id) {
             // Success! Navigate to order page (no success state shown)
-            await goto(`/orders/${cartWithOrder.order.id}`)
+            goto(`/orders/${cartWithOrder.order.id}`)
             return
           }
         } catch (e) {

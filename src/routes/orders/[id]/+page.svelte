@@ -1,10 +1,19 @@
 <script lang="ts">
+  import { invalidate } from '$app/navigation'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
+  import { onMount } from 'svelte'
 
   const { data }: { data: PageData } = $props()
-  const order = $derived(data.order)
+  const { cart, order } = $derived(data)
   const locale = data.locale
+
+  onMount(() => {
+    // In some cases cart is not refreshed when arriving on this page
+    if (cart.completed_at) {
+      invalidate('refresh:cart')
+    }
+  })
 </script>
 
 <section class="content">

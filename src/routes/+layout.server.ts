@@ -6,7 +6,7 @@ type CategoryHandle = 'red' | 'white' | 'other'
 
 const cookieCartKey = 'cart_id'
 
-export const load: LayoutServerLoad = async ({ cookies, locals }) => {
+export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   const cartId = cookies.get(cookieCartKey)
   const { product_categories } = await sdk.store.category.list({
     fields: '*products',
@@ -23,6 +23,8 @@ export const load: LayoutServerLoad = async ({ cookies, locals }) => {
   const { regions } = await sdk.store.region.list()
   const [{ id: regionId }] = regions
   let cart!: HttpTypes.StoreCart
+
+  depends('refresh:cart')
 
   if (cartId) {
     try {
