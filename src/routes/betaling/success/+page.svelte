@@ -43,7 +43,8 @@
 
           if (cartWithOrder.completed_at && cartWithOrder.order?.id) {
             // Success! Navigate to order page (no success state shown)
-            goto(`/orders/${cartWithOrder.order.id}`)
+            console.log('POLL completed')
+            goto(`/orders/${cartWithOrder.order.id}`, { invalidate: ['refresh:cart'] })
             return
           }
         } catch (e) {

@@ -25,6 +25,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   let cart!: HttpTypes.StoreCart
 
   depends('refresh:cart')
+  console.log('--------------------LAYOUT_LOAD-----------------------')
 
   if (cartId) {
     try {
@@ -39,6 +40,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   }
 
   if (!cart) {
+    console.log('LAYOUT !cart - shoudl refresh cookie and create new cart')
     const res = await sdk.store.cart.create({
       region_id: regionId,
     })

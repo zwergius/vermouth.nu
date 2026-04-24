@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
   import { onMount } from 'svelte'
@@ -10,8 +9,10 @@
 
   onMount(() => {
     // In some cases cart is not refreshed when arriving on this page
+    console.log('/orders/', { cart })
     if (cart.completed_at) {
-      invalidate('refresh:cart')
+      console.log('onmount + cart.completed_at')
+      // invalidate('refresh:cart')
     }
   })
 </script>
