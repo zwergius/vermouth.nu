@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { page } from '$app/state'
+  import { PUBLIC_GA_MEASUREMENT_ID } from '$env/static/public'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
+  import { initializeAnalytics } from '$lib/helpers/analytics'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
   import type { LayoutProps } from './$types'
   import { scale } from 'svelte/transition'
@@ -9,7 +12,28 @@
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
   const { children, data }: LayoutProps = $props()
   const { cart } = $derived(data)
+
+  onMount(() => {
+    if (!PUBLIC_GA_MEASUREMENT_ID) return
+
+    initializeAnalytics(PUBLIC_GA_MEASUREMENT_ID)
+  })
 </script>
+
+<svelte:head>
+  {#if PUBLIC_GA_MEASUREMENT_ID}
+    <script
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${PUBLIC_GA_MEASUREMENT_ID}`}
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        window.dataLayer.push(arguments)
+      }
+    </script>
+  {/if}
+</svelte:head>
 
 {#snippet anchor(route: string, hasCartIcon?: true)}
   <a

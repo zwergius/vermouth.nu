@@ -6,23 +6,38 @@ type CategoryHandle = 'red' | 'white' | 'other'
 
 const cookieCartKey = 'cart_id'
 
+function isCategoryHandle(handle: string): handle is CategoryHandle {
+  return handle === 'red' || handle === 'white' || handle === 'other'
+}
+
 export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   const cartId = cookies.get(cookieCartKey)
-  const { product_categories } = await sdk.store.category.list({
-    fields: '*products',
-  })
-
-  const categories = product_categories.reduce(
-    (dict, category) => {
-      dict[category.handle as CategoryHandle] = category.products ?? []
-      return dict
-    },
-    {} as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
-  )
+  let cart!: HttpTypes.StoreCart
 
   const { regions } = await sdk.store.region.list()
   const [{ id: regionId }] = regions
-  let cart!: HttpTypes.StoreCart
+
+  const { products } = await sdk.store.product.list({
+    fields: '*categories,*variants.calculated_price',
+    region_id: regionId,
+  })
+
+  const categories = products.reduce(
+    (dict, product) => {
+      for (const category of product.categories ?? []) {
+        if (isCategoryHandle(category.handle)) {
+          dict[category.handle].push(product)
+        }
+      }
+
+      return dict
+    },
+    {
+      red: [],
+      white: [],
+      other: [],
+    } as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
+  )
 
   depends('refresh:cart')
 
