@@ -3,12 +3,21 @@
   import { productSrcSet } from '$lib/helpers/images'
   import { HttpTypes } from '@medusajs/types'
 
-  const { product }: { product: HttpTypes.StoreProduct } = $props()
+  const { product, onSelectItem }: { product: HttpTypes.StoreProduct; onSelectItem?: () => void } =
+    $props()
   const { image, origin } = $derived(vermouths[product.handle as Handle])
+
+  function handleSelectItem() {
+    onSelectItem?.()
+  }
 </script>
 
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
-  <a class="flex h-full flex-col items-center" href="/sortiment/{product.handle}">
+  <a
+    class="flex h-full flex-col items-center"
+    href="/sortiment/{product.handle}"
+    onclick={handleSelectItem}
+  >
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">
       {product.title}
     </h3>

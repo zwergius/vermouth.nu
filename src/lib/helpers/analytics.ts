@@ -47,4 +47,22 @@ export function trackViewItemList({ currency, items }: { currency?: string; item
   })
 }
 
+export function trackSelectItem({ currency, item }: { currency?: string; item: GaListItem }) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'select_item',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items: [item],
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] select_item payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export type { GaListItem }

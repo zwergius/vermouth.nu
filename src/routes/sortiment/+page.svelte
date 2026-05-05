@@ -5,7 +5,7 @@
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { trackViewItemList, type GaListItem } from '$lib/helpers/analytics'
+  import { trackSelectItem, trackViewItemList, type GaListItem } from '$lib/helpers/analytics'
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
@@ -19,70 +19,62 @@
     white: 'White Vermouth',
     other: 'Orange Vermouth',
   }
+  const MISSING = {
+    itemId: 'MISSING_ITEM_ID',
+    itemName: 'MISSING_ITEM_NAME',
+    itemBrand: 'MISSING_ITEM_BRAND',
+    itemCategory: 'MISSING_ITEM_CATEGORY',
+    itemListName: 'MISSING_ITEM_LIST_NAME',
+    itemListId: 'MISSING_ITEM_LIST_ID',
+    price: 'MISSING_PRICE',
+  } as const
 
-  function isTrackableProduct(
-    product: HttpTypes.StoreProduct,
-  ): product is HttpTypes.StoreProduct & {
-    id: string
-    title: string
-    handle: Handle
-  } {
-    return (
-      typeof product.id === 'string' &&
-      typeof product.title === 'string' &&
-      typeof product.handle === 'string' &&
-      product.handle in vermouths
-    )
+  function getCategoryHandle(product: HttpTypes.StoreProduct): keyof typeof categoryLabel | null {
+    for (const category of product.categories ?? []) {
+      if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
+        return category.handle
+      }
+    }
+
+    return null
   }
 
-  const itemsToTrack = $derived.by(() => {
-    const items: GaListItem[] = []
-    let index = 1
-
-    for (const product of red) {
-      if (!isTrackableProduct(product)) continue
-      items.push(mapProductToGaItem(product, 'red', index++))
-    }
-
-    for (const product of white) {
-      if (!isTrackableProduct(product)) continue
-      items.push(mapProductToGaItem(product, 'white', index++))
-    }
-
-    for (const product of other) {
-      if (!isTrackableProduct(product)) continue
-      items.push(mapProductToGaItem(product, 'other', index++))
-    }
-
-    return items
-  })
-
-  function mapProductToGaItem(
-    product: HttpTypes.StoreProduct & { id: string; title: string; handle: Handle },
-    category: keyof typeof categoryLabel,
-    index: number,
-  ): GaListItem {
-    const staticData = vermouths[product.handle]
+  function toGaItem(index: number, product: HttpTypes.StoreProduct): GaListItem {
+    const categoryHandle = getCategoryHandle(product)
+    const handle = typeof product.handle === 'string' ? product.handle : null
+    const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
     const price = product.variants?.[0]?.calculated_price?.calculated_amount
-    const itemListName = category
 
     return {
-      item_id: product.id,
-      item_name: product.title,
-      price: price !== null && price !== undefined ? String(price) : undefined,
-      item_brand: staticData.brand,
-      item_category: categoryLabel[category],
-      item_list_name: itemListName,
-      item_list_id: itemListName.toUpperCase(),
+      item_id: product.id || MISSING.itemId,
+      item_name: product.title || MISSING.itemName,
+      price: price !== null && price !== undefined ? String(price) : MISSING.price,
+      item_brand: staticData?.brand || MISSING.itemBrand,
+      item_category: categoryHandle ? categoryLabel[categoryHandle] : MISSING.itemCategory,
+      item_list_name: categoryHandle || MISSING.itemListName,
+      item_list_id: categoryHandle ? categoryHandle.toUpperCase() : MISSING.itemListId,
       index,
       quantity: '1',
     }
   }
 
+  function handleSelectItem(index: number, product: HttpTypes.StoreProduct) {
+    trackSelectItem({
+      currency,
+      item: toGaItem(index, product),
+    })
+  }
+
   onMount(() => {
+    const items = [
+      ...red.map((product, index) => toGaItem(index + 1, product)),
+      ...white.map((product, index) => toGaItem(index + 1, product)),
+      ...other.map((product, index) => toGaItem(index + 1, product)),
+    ]
+
     trackViewItemList({
       currency,
-      items: itemsToTrack,
+      items,
     })
   })
 </script>
@@ -105,24 +97,24 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each red as product (product.id || product.handle)}
-    <ProductGridItem {product} />
+  {#each red as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each white as product (product.id || product.handle)}
-    <ProductGridItem {product} />
+  {#each white as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each other as product (product.id || product.handle)}
-    <ProductGridItem {product} />
+  {#each other as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
