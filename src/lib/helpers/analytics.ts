@@ -10,6 +10,22 @@ type GaListItem = {
   quantity?: string
 }
 
+const GA_MISSING = {
+  itemId: 'MISSING_ITEM_ID',
+  itemName: 'MISSING_ITEM_NAME',
+  itemBrand: 'MISSING_ITEM_BRAND',
+  itemCategory: 'MISSING_ITEM_CATEGORY',
+  itemListName: 'MISSING_ITEM_LIST_NAME',
+  itemListId: 'MISSING_ITEM_LIST_ID',
+  price: 'MISSING_PRICE',
+} as const
+
+const GA_CATEGORY_LABEL_BY_HANDLE = {
+  red: 'Red Vermouth',
+  white: 'White Vermouth',
+  other: 'Orange Vermouth',
+} as const
+
 interface WindowWithDataLayer extends Window {
   dataLayer?: Record<string, unknown>[]
 }
@@ -65,4 +81,23 @@ export function trackSelectItem({ currency, item }: { currency?: string; item: G
   })
 }
 
+export function trackViewItem({ currency, item }: { currency?: string; item: GaListItem }) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'view_item',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items: [item],
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] view_item payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
+export { GA_CATEGORY_LABEL_BY_HANDLE, GA_MISSING }
 export type { GaListItem }

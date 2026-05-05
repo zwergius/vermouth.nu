@@ -5,7 +5,13 @@
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { trackSelectItem, trackViewItemList, type GaListItem } from '$lib/helpers/analytics'
+  import {
+    GA_CATEGORY_LABEL_BY_HANDLE,
+    GA_MISSING,
+    trackSelectItem,
+    trackViewItemList,
+    type GaListItem,
+  } from '$lib/helpers/analytics'
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
@@ -14,22 +20,9 @@
   const other = $derived.by(() => data.categories.other)
   const currency = $derived(data.region.currency_code.toUpperCase())
 
-  const categoryLabel: Record<'red' | 'white' | 'other', string> = {
-    red: 'Red Vermouth',
-    white: 'White Vermouth',
-    other: 'Orange Vermouth',
-  }
-  const MISSING = {
-    itemId: 'MISSING_ITEM_ID',
-    itemName: 'MISSING_ITEM_NAME',
-    itemBrand: 'MISSING_ITEM_BRAND',
-    itemCategory: 'MISSING_ITEM_CATEGORY',
-    itemListName: 'MISSING_ITEM_LIST_NAME',
-    itemListId: 'MISSING_ITEM_LIST_ID',
-    price: 'MISSING_PRICE',
-  } as const
+  type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
-  function getCategoryHandle(product: HttpTypes.StoreProduct): keyof typeof categoryLabel | null {
+  function getCategoryHandle(product: HttpTypes.StoreProduct): CategoryHandle | null {
     for (const category of product.categories ?? []) {
       if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
         return category.handle
@@ -46,13 +39,15 @@
     const price = product.variants?.[0]?.calculated_price?.calculated_amount
 
     return {
-      item_id: product.id || MISSING.itemId,
-      item_name: product.title || MISSING.itemName,
-      price: price !== null && price !== undefined ? String(price) : MISSING.price,
-      item_brand: staticData?.brand || MISSING.itemBrand,
-      item_category: categoryHandle ? categoryLabel[categoryHandle] : MISSING.itemCategory,
-      item_list_name: categoryHandle || MISSING.itemListName,
-      item_list_id: categoryHandle ? categoryHandle.toUpperCase() : MISSING.itemListId,
+      item_id: product.id || GA_MISSING.itemId,
+      item_name: product.title || GA_MISSING.itemName,
+      price: price !== null && price !== undefined ? String(price) : GA_MISSING.price,
+      item_brand: staticData?.brand || GA_MISSING.itemBrand,
+      item_category: categoryHandle
+        ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
+        : GA_MISSING.itemCategory,
+      item_list_name: categoryHandle || GA_MISSING.itemListName,
+      item_list_id: categoryHandle ? categoryHandle.toUpperCase() : GA_MISSING.itemListId,
       index,
       quantity: '1',
     }

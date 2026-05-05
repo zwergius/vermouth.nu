@@ -1,6 +1,12 @@
 <script lang="ts">
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
+  import {
+    GA_CATEGORY_LABEL_BY_HANDLE,
+    GA_MISSING,
+    trackViewItem,
+    type GaListItem,
+  } from '$lib/helpers/analytics'
   import { squareSrcSet } from '$lib/helpers/images'
   import { formatPrice } from '$lib/helpers/numbers'
   import { Form, QuantitySelector } from '$lib/components/form-controls'
@@ -38,6 +44,30 @@
     return 'bg-brand-blue'
   })
 
+  function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
+    if (color === 'RED') return 'red'
+    if (color === 'WHITE') return 'white'
+    return 'other'
+  }
+
+  function toGaItem(): GaListItem {
+    const handle = typeof product.handle === 'string' ? product.handle : null
+    const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
+    const price = product.variants?.[0]?.calculated_price?.calculated_amount
+    const categoryHandle = staticData ? getCategoryHandle(staticData.color) : null
+
+    return {
+      item_id: product.id || GA_MISSING.itemId,
+      item_name: product.title || GA_MISSING.itemName,
+      price: price !== null && price !== undefined ? String(price) : GA_MISSING.price,
+      item_brand: staticData?.brand || GA_MISSING.itemBrand,
+      item_category: categoryHandle
+        ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
+        : GA_MISSING.itemCategory,
+      quantity: '1',
+    }
+  }
+
   function handleFormResult(result: { type: string }) {
     if (result.type === 'success') {
       buttonState = 'success'
@@ -58,6 +88,15 @@
     } else if (!isFormSubmitting && buttonState === 'loading') {
       buttonState = 'default'
     }
+  })
+
+  $effect(() => {
+    void product.id
+
+    trackViewItem({
+      currency: region.currency_code.toUpperCase(),
+      item: toGaItem(),
+    })
   })
 </script>
 
