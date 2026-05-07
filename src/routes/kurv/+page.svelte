@@ -1,7 +1,15 @@
 <script lang="ts">
+  import type { ActionResult } from '@sveltejs/kit'
   import { onMount } from 'svelte'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
+  import {
+    GA_CATEGORY_LABEL_BY_HANDLE,
+    GA_MISSING,
+    trackAddToCart,
+    trackRemoveFromCart,
+    type GaListItem,
+  } from '$lib/helpers/analytics'
   import { thumbnailSrcSet } from '$lib/helpers/images'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
@@ -18,6 +26,17 @@
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
   let isSubmitting = $state(false)
   let checkoutState = $state<'idle' | 'processing' | 'redirecting'>('idle')
+  const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
+
+  type QuantityActionSuccess = { success: true; quantity: number }
+  type CartItemAnalyticsContext = {
+    cartItemId: string
+    productHandle?: string
+    productTitle?: string
+    unitPrice: number
+    previousQuantity: number
+    productId?: string
+  }
 
   function handleCheckoutResult(result: { type: string }) {
     if (result.type === 'redirect') {
@@ -72,6 +91,66 @@
     form?.requestSubmit()
   }
 
+  function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
+    if (color === 'RED') return 'red'
+    if (color === 'WHITE') return 'white'
+    return 'other'
+  }
+
+  function toGaItem(context: CartItemAnalyticsContext, quantity: string): GaListItem {
+    const handle = context.productHandle
+    const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
+    const categoryHandle = staticData ? getCategoryHandle(staticData.color) : null
+
+    return {
+      item_id: context.productId || context.cartItemId || GA_MISSING.itemId,
+      item_name: context.productTitle || GA_MISSING.itemName,
+      price: String(context.unitPrice),
+      item_brand: staticData?.brand || GA_MISSING.itemBrand,
+      item_category: categoryHandle
+        ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
+        : GA_MISSING.itemCategory,
+      quantity,
+    }
+  }
+
+  function makeQuantityResultHandler(context: CartItemAnalyticsContext) {
+    return (result: ActionResult) => {
+      if (result.type !== 'success') return
+
+      const previousQuantity = context.previousQuantity
+      const resultQuantity = (result.data as QuantityActionSuccess).quantity
+      const delta = resultQuantity - previousQuantity
+
+      if (delta > 0) {
+        trackAddToCart({
+          currency: analyticsCurrencyCode,
+          item: toGaItem(context, String(delta)),
+        })
+      }
+
+      if (delta < 0) {
+        trackRemoveFromCart({
+          currency: analyticsCurrencyCode,
+          item: toGaItem(context, String(Math.abs(delta))),
+        })
+      }
+    }
+  }
+
+  function makeDeleteResultHandler(context: CartItemAnalyticsContext) {
+    return (result: ActionResult) => {
+      if (result.type !== 'success') return
+
+      const deletedQuantity = context.previousQuantity
+
+      trackRemoveFromCart({
+        currency: analyticsCurrencyCode,
+        item: toGaItem(context, String(deletedQuantity)),
+      })
+    }
+  }
+
   // TODO: recalculate shipping prices on cart item changes.
   onMount(() => {
     calculateShippingPrices()
@@ -80,7 +159,7 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each cart?.items as { product_handle, product_title, quantity, unit_price, id } (id)}
+    {#each cart?.items as { product_id, product_handle, product_title, quantity, unit_price, id } (id)}
       {@const { image } = vermouths[product_handle as Handle]}
       <li
         class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
@@ -103,7 +182,17 @@
             </dl>
           </div>
           <div class="flex justify-between items-center">
-            <Form action="?/addOrUpdateItemQuantity">
+            <Form
+              action="?/addOrUpdateItemQuantity"
+              onResult={makeQuantityResultHandler({
+                cartItemId: id,
+                previousQuantity: quantity,
+                productHandle: product_handle,
+                productId: product_id,
+                productTitle: product_title,
+                unitPrice: unit_price,
+              })}
+            >
               <input name="cart_item_id" type="hidden" value={id} />
               <QuantitySelector
                 min={1}
@@ -112,7 +201,17 @@
                 value={quantity}
               />
             </Form>
-            <Form action="?/deleteItem">
+            <Form
+              action="?/deleteItem"
+              onResult={makeDeleteResultHandler({
+                cartItemId: id,
+                previousQuantity: quantity,
+                productHandle: product_handle,
+                productId: product_id,
+                productTitle: product_title,
+                unitPrice: unit_price,
+              })}
+            >
               <input name="cart_item_id" type="hidden" value={id} />
               <button aria-label="Fjern {product_title} fra kurv." class="p-5" type="submit">
                 <svg
