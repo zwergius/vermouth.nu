@@ -1,7 +1,10 @@
 <script lang="ts">
+  import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
   import {
+    trackAddToCart,
+    trackRemoveFromCart,
     GA_CATEGORY_LABEL_BY_HANDLE,
     GA_MISSING,
     trackViewItem,
@@ -14,9 +17,12 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
+  import { page } from '$app/state'
+  import { untrack } from 'svelte'
 
+  const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
-  const { red, white, other } = data.categories
+  const { red, white, other } = $derived(data.categories)
   const { cart, locale, product, region } = $derived(data)
   const { extraImages, image, intro, origin, recommendation, scores, taste } = $derived(
     vermouths[product.handle as Handle],
@@ -26,6 +32,7 @@
     formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
   )
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
+  type QuantityActionSuccess = { success: true; quantity: number }
 
   let buttonState = $state<'default' | 'loading' | 'success' | 'error'>('default')
   let isFormSubmitting = $state(false)
@@ -50,7 +57,7 @@
     return 'other'
   }
 
-  function toGaItem(): GaListItem {
+  function toGaItem(quantity: string): GaListItem {
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
     const price = product.variants?.[0]?.calculated_price?.calculated_amount
@@ -64,12 +71,30 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
-      quantity: '1',
+      quantity,
     }
   }
 
-  function handleFormResult(result: { type: string }) {
+  function handleFormResult(result: ActionResult) {
     if (result.type === 'success') {
+      const resultQuantity = (result.data as QuantityActionSuccess).quantity
+      const previousQuantity = cartItem?.quantity ?? 0
+      const quantityDelta = resultQuantity - previousQuantity
+
+      if (quantityDelta > 0) {
+        trackAddToCart({
+          currency: region.currency_code.toUpperCase(),
+          item: toGaItem(String(quantityDelta)),
+        })
+      }
+
+      if (quantityDelta < 0) {
+        trackRemoveFromCart({
+          currency: region.currency_code.toUpperCase(),
+          item: toGaItem(String(Math.abs(quantityDelta))),
+        })
+      }
+
       buttonState = 'success'
       setTimeout(() => {
         buttonState = 'default'
@@ -91,11 +116,13 @@
   })
 
   $effect(() => {
-    void product.id
+    void slug
 
-    trackViewItem({
-      currency: region.currency_code.toUpperCase(),
-      item: toGaItem(),
+    untrack(() => {
+      trackViewItem({
+        currency: region.currency_code.toUpperCase(),
+        item: toGaItem('1'),
+      })
     })
   })
 </script>
@@ -204,7 +231,7 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each red as product}
+  {#each red as product (product.id)}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -212,7 +239,7 @@
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each white as product}
+  {#each white as product (product.id)}
     <ProductGridItem {product} />
   {/each}
 </ul>
@@ -220,7 +247,7 @@
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each other as product}
+  {#each other as product (product.id)}
     <ProductGridItem {product} />
   {/each}
 </ul>

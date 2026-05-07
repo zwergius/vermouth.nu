@@ -81,7 +81,7 @@ export const actions = {
       await sdk.store.cart.createLineItem(cart_id, { variant_id, quantity })
     }
 
-    return { success: true }
+    return { success: true, quantity }
   },
   deleteItem: async ({ cookies, request }) => {
     const cart_id = cookies.get('cart_id')

@@ -99,5 +99,41 @@ export function trackViewItem({ currency, item }: { currency?: string; item: GaL
   })
 }
 
+export function trackAddToCart({ currency, item }: { currency?: string; item: GaListItem }) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'add_to_cart',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items: [item],
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] add_to_cart payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
+export function trackRemoveFromCart({ currency, item }: { currency?: string; item: GaListItem }) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'remove_from_cart',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items: [item],
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] remove_from_cart payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export { GA_CATEGORY_LABEL_BY_HANDLE, GA_MISSING }
 export type { GaListItem }
