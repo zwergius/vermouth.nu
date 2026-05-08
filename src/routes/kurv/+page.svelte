@@ -8,6 +8,7 @@
     GA_MISSING,
     trackAddToCart,
     trackRemoveFromCart,
+    trackViewCart,
     type GaListItem,
   } from '$lib/helpers/analytics'
   import { thumbnailSrcSet } from '$lib/helpers/images'
@@ -114,6 +115,24 @@
     }
   }
 
+  function getCartGaItems() {
+    return (
+      cart?.items?.map((item) =>
+        toGaItem(
+          {
+            cartItemId: item.id,
+            previousQuantity: item.quantity,
+            productHandle: item.product_handle,
+            productId: item.product_id,
+            productTitle: item.product_title,
+            unitPrice: item.unit_price,
+          },
+          String(item.quantity),
+        ),
+      ) ?? []
+    )
+  }
+
   function makeQuantityResultHandler(context: CartItemAnalyticsContext) {
     return (result: ActionResult) => {
       if (result.type !== 'success') return
@@ -154,6 +173,10 @@
   // TODO: recalculate shipping prices on cart item changes.
   onMount(() => {
     calculateShippingPrices()
+    trackViewCart({
+      currency: analyticsCurrencyCode,
+      items: getCartGaItems(),
+    })
   })
 </script>
 

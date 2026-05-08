@@ -135,5 +135,23 @@ export function trackRemoveFromCart({ currency, item }: { currency?: string; ite
   })
 }
 
+export function trackViewCart({ currency, items }: { currency?: string; items: GaListItem[] }) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'view_cart',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items,
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] view_cart payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export { GA_CATEGORY_LABEL_BY_HANDLE, GA_MISSING }
 export type { GaListItem }
