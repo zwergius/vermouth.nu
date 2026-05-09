@@ -10,6 +10,18 @@ type GaListItem = {
   quantity?: string
 }
 
+type GaPurchaseAddress = {
+  first_name: string
+  last_name: string
+  email: string
+  phone_number: string
+  street: string
+  city: string
+  region: string
+  country: string
+  postal_code: string
+}
+
 const GA_MISSING = {
   itemId: 'MISSING_ITEM_ID',
   itemName: 'MISSING_ITEM_NAME',
@@ -204,5 +216,47 @@ export function trackAddShippingInfo({
   })
 }
 
+export function trackPurchase({
+  address,
+  currency,
+  coupon,
+  items,
+  shipping,
+  tax,
+  transactionId,
+  value,
+}: {
+  address: GaPurchaseAddress
+  currency?: string
+  coupon: string
+  items: GaListItem[]
+  shipping: string
+  tax: string
+  transactionId: string
+  value: string
+}) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'purchase',
+      address,
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        value,
+        tax,
+        shipping,
+        transaction_id: transactionId,
+        coupon,
+        items,
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] purchase payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export { GA_CATEGORY_LABEL_BY_HANDLE, GA_MISSING }
-export type { GaListItem }
+export type { GaListItem, GaPurchaseAddress }
