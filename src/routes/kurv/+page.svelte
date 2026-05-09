@@ -4,6 +4,7 @@
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
   import {
+    trackAddShippingInfo,
     GA_CATEGORY_LABEL_BY_HANDLE,
     GA_MISSING,
     trackAddToCart,
@@ -25,8 +26,14 @@
   const { cart, locale, region, shippingOptions } = $derived(data)
   const shippingPrices: Record<string, number> = $state({})
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
+  let selectedShippingMethodId = $derived(
+    cart.shipping_methods?.[0]?.shipping_option_id ?? shippingOptions[0]?.id ?? '',
+  )
   let isSubmitting = $state(false)
-  let checkoutState = $state<'idle' | 'processing' | 'redirecting'>('idle')
+  let hasCheckoutRedirected = $state(false)
+  const checkoutState = $derived<'idle' | 'processing' | 'redirecting'>(
+    hasCheckoutRedirected ? 'redirecting' : isSubmitting ? 'processing' : 'idle',
+  )
   const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
 
   type QuantityActionSuccess = { success: true; quantity: number }
@@ -39,20 +46,21 @@
     productId?: string
   }
 
-  function handleCheckoutResult(result: { type: string }) {
+  function handleCheckoutResult(result: ActionResult) {
     if (result.type === 'redirect') {
-      checkoutState = 'redirecting'
+      const shippingTier =
+        shippingOptions.find(({ id }) => id === selectedShippingMethodId)?.name ?? ''
+
+      trackAddShippingInfo({
+        currency: analyticsCurrencyCode,
+        shippingTier,
+        items: getCartGaItems(),
+      })
+
+      hasCheckoutRedirected = true
     }
     isSubmitting = false
   }
-
-  $effect(() => {
-    if (isSubmitting && checkoutState === 'idle') {
-      checkoutState = 'processing'
-    } else if (!isSubmitting && checkoutState === 'processing') {
-      checkoutState = 'idle'
-    }
-  })
 
   function formattedPrice(price: number) {
     if (price === 0) return 'Gratis'
@@ -419,8 +427,8 @@
             price: formattedPrice(shippingPrices[option.id]),
             value: option.id,
           }))}
+          bind:selected={selectedShippingMethodId}
           required
-          selected={cart.shipping_methods?.[0]?.shipping_option_id}
         />
       </div>
       <h2 class="text-sm font-bold mb-4">Bekræft betingelser</h2>

@@ -153,5 +153,32 @@ export function trackViewCart({ currency, items }: { currency?: string; items: G
   })
 }
 
+export function trackAddShippingInfo({
+  currency,
+  shippingTier,
+  items,
+}: {
+  currency?: string
+  shippingTier: string
+  items: GaListItem[]
+}) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'add_shipping_info',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        shipping_tier: shippingTier,
+        items,
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] add_shipping_info payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export { GA_CATEGORY_LABEL_BY_HANDLE, GA_MISSING }
 export type { GaListItem }
