@@ -153,6 +153,30 @@ export function trackViewCart({ currency, items }: { currency?: string; items: G
   })
 }
 
+export function trackBeginCheckout({
+  currency,
+  items,
+}: {
+  currency?: string
+  items: GaListItem[]
+}) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'begin_checkout',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        items,
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] begin_checkout payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export function trackAddShippingInfo({
   currency,
   shippingTier,

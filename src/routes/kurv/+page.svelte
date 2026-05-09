@@ -5,6 +5,7 @@
   import { vermouths, type Handle } from '$lib/data/products'
   import {
     trackAddShippingInfo,
+    trackBeginCheckout,
     GA_CATEGORY_LABEL_BY_HANDLE,
     GA_MISSING,
     trackAddToCart,
@@ -181,6 +182,12 @@
   // TODO: recalculate shipping prices on cart item changes.
   onMount(() => {
     calculateShippingPrices()
+
+    trackBeginCheckout({
+      currency: analyticsCurrencyCode,
+      items: getCartGaItems(),
+    })
+
     trackViewCart({
       currency: analyticsCurrencyCode,
       items: getCartGaItems(),
