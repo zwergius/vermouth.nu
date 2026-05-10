@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { page } from '$app/state'
-  import { PUBLIC_GA_MEASUREMENT_ID } from '$env/static/public'
+  import { PUBLIC_COOKIE_YES_ID, PUBLIC_GA_MEASUREMENT_ID } from '$env/static/public'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import { initializeAnalytics } from '$lib/helpers/analytics'
@@ -21,6 +21,14 @@
 </script>
 
 <svelte:head>
+  <!-- Start cookieyes banner -->
+  <script
+    id="cookieyes"
+    type="text/javascript"
+    src={`https://cdn-cookieyes.com/client_data/${PUBLIC_COOKIE_YES_ID}/script.js`}
+  ></script>
+  <!-- End cookieyes banner -->
+
   {#if PUBLIC_GA_MEASUREMENT_ID}
     <script
       async
