@@ -8,6 +8,7 @@
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
   import type { LayoutProps } from './$types'
   import { scale } from 'svelte/transition'
+  import { dev } from '$app/environment'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
   const { children, data }: LayoutProps = $props()
@@ -22,13 +23,15 @@
 
 <svelte:head>
   <!-- Start cookieyes banner -->
-  <script
-    id="cookieyes"
-    type="text/javascript"
-    src={`https://cdn-cookieyes.com/client_data/${PUBLIC_COOKIE_YES_ID}/script.js`}
-  ></script>
-  <!-- End cookieyes banner -->
-
+  {#if PUBLIC_COOKIE_YES_ID && !dev}
+    <script
+      id="cookieyes"
+      type="text/javascript"
+      src={`https://cdn-cookieyes.com/client_data/${PUBLIC_COOKIE_YES_ID}/script.js`}
+    >
+    </script>
+    <!-- End cookieyes banner -->
+  {/if}
   {#if PUBLIC_GA_MEASUREMENT_ID}
     <script
       async
