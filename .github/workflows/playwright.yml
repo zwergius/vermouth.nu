@@ -6,7 +6,8 @@ on:
 
 permissions:
   contents: read
-  deployments: read
+  issues: read
+  pull-requests: read
 
 jobs:
   test-preview:
@@ -37,42 +38,41 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const ref = context.payload.pull_request.head.sha
+            const shortSha = context.payload.pull_request.head.sha.slice(0, 7)
+            const issue_number = context.payload.pull_request.number
             const deadline = Date.now() + 20 * 60 * 1000
 
             while (Date.now() < deadline) {
-              const { data: deployments } = await github.rest.repos.listDeployments({
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref,
+                issue_number,
                 per_page: 100,
               })
 
-              for (const deployment of deployments) {
-                const environment = deployment.environment?.toLowerCase() ?? ''
-                if (!environment.includes('preview')) continue
-
-                const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  deployment_id: deployment.id,
-                  per_page: 1,
+              const cloudflareComment = comments
+                .filter((comment) => comment.user?.login === 'cloudflare-workers-and-pages[bot]')
+                .reverse()
+                .find((comment) => {
+                  const body = comment.body ?? ''
+                  return body.includes(`<code>${shortSha}</code>`)
                 })
 
-                const [latestStatus] = statuses
-                if (!latestStatus) continue
-
-                if (latestStatus.state === 'success' && latestStatus.environment_url) {
-                  core.setOutput('url', latestStatus.environment_url)
-                  return
-                }
-
-                if (latestStatus.state === 'failure' || latestStatus.state === 'error') {
-                  throw new Error(`Cloudflare preview deployment failed: ${latestStatus.log_url}`)
-                }
+              const body = cloudflareComment?.body ?? ''
+              if (body.includes('Deploy failed')) {
+                throw new Error('Cloudflare Pages preview deployment failed')
               }
 
-              core.info('Waiting for Cloudflare Pages preview deployment...')
+              if (body.includes('Deploy successful')) {
+                const match = body.match(/<strong>Preview URL:<\/strong>[\s\S]*?<a href='([^']+)'/)
+                if (!match) {
+                  throw new Error('Cloudflare Pages preview URL was not found in the deployment comment')
+                }
+                core.setOutput('url', match[1])
+                return
+              }
+
+              core.info('Waiting for Cloudflare Pages preview deployment comment...')
               await new Promise((resolve) => setTimeout(resolve, 15000))
             }
 
