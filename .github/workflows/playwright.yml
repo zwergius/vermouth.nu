@@ -1,25 +1,85 @@
-name: Playwright Tests
+name: Playwright Preview Tests
+
 on:
-  push:
-    branches: [main, master]
   pull_request:
-    branches: [main, master]
+    branches: [e-commerce]
+
+permissions:
+  contents: read
+  deployments: read
+
 jobs:
-  test:
-    timeout-minutes: 60
+  test-preview:
+    name: Playwright on Cloudflare preview
+    timeout-minutes: 30
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
+          cache: npm
+
       - name: Install dependencies
         run: npm ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v3
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Wait for Cloudflare Pages preview
+        id: preview
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const ref = context.payload.pull_request.head.sha
+            const deadline = Date.now() + 20 * 60 * 1000
+
+            while (Date.now() < deadline) {
+              const { data: deployments } = await github.rest.repos.listDeployments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref,
+                per_page: 100,
+              })
+
+              for (const deployment of deployments) {
+                const environment = deployment.environment?.toLowerCase() ?? ''
+                if (!environment.includes('preview')) continue
+
+                const { data: statuses } = await github.rest.repos.listDeploymentStatuses({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  deployment_id: deployment.id,
+                  per_page: 1,
+                })
+
+                const [latestStatus] = statuses
+                if (!latestStatus) continue
+
+                if (latestStatus.state === 'success' && latestStatus.environment_url) {
+                  core.setOutput('url', latestStatus.environment_url)
+                  return
+                }
+
+                if (latestStatus.state === 'failure' || latestStatus.state === 'error') {
+                  throw new Error(`Cloudflare preview deployment failed: ${latestStatus.log_url}`)
+                }
+              }
+
+              core.info('Waiting for Cloudflare Pages preview deployment...')
+              await new Promise((resolve) => setTimeout(resolve, 15000))
+            }
+
+            throw new Error('Timed out waiting for Cloudflare Pages preview deployment')
+
+      - name: Run Playwright tests against preview
+        env:
+          PLAYWRIGHT_BASE_URL: ${{ steps.preview.outputs.url }}
+        run: npm run test:integration
+
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
