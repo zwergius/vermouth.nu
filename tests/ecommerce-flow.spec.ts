@@ -34,6 +34,34 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
   await expect(productRow).toBeHidden()
 })
 
+test('customer can update cart item quantity', async ({ page }) => {
+  await addProductToCart(page)
+  await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
+
+  const productRow = page.locator('li').filter({ hasText: productName }).first()
+  const quantityInput = productRow.locator('input[name="quantity"]')
+  await expect(quantityInput).toHaveValue('1')
+
+  await quantityInput.fill('2')
+  await quantityInput.dispatchEvent('change')
+  await expect(quantityInput).toHaveValue('2')
+
+  await quantityInput.fill('1')
+  await quantityInput.dispatchEvent('change')
+  await expect(quantityInput).toHaveValue('1')
+})
+
+test('checkout form marks invalid postal codes as invalid', async ({ page }) => {
+  await addProductToCart(page)
+  await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
+
+  const postalCodeInput = page.getByRole('textbox', { name: 'Postnummer' })
+  await postalCodeInput.fill('abcd')
+
+  await expect(postalCodeInput).toHaveAttribute('pattern', '\\d*')
+  await expect(postalCodeInput).toHaveJSProperty('validity.valid', false)
+})
+
 test('customer can continue from cart to payment', async ({ page }) => {
   await addProductToCart(page)
   await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
