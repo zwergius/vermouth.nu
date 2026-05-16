@@ -4,6 +4,7 @@
   import {
     GA_CATEGORY_LABEL_BY_HANDLE,
     GA_MISSING,
+    trackAddPaymentInfo,
     trackPurchase,
     type GaListItem,
     type GaPurchaseAddress,
@@ -13,6 +14,21 @@
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
+
+  type AddPaymentInfoMetadata = {
+    paymentMethodType?: string
+    paymentMethodSubType?: string
+  }
+
+  type PaymentCollectionWithMetadata = {
+    metadata?: {
+      add_payment_info?: AddPaymentInfoMetadata
+    } | null
+  }
+
+  type OrderWithPaymentCollections = {
+    payment_collections?: PaymentCollectionWithMetadata[] | PaymentCollectionWithMetadata
+  }
 
   function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
     if (color === 'RED') return 'red'
@@ -55,6 +71,24 @@
     return shippingCode ?? ''
   }
 
+  function getPaymentType() {
+    const { payment_collections: paymentCollections } =
+      order as unknown as OrderWithPaymentCollections
+    const collections = Array.isArray(paymentCollections)
+      ? paymentCollections
+      : paymentCollections
+        ? [paymentCollections]
+        : []
+    const addPaymentInfo = collections
+      .map((collection) => collection.metadata?.add_payment_info)
+      .find((metadata): metadata is AddPaymentInfoMetadata => !!metadata?.paymentMethodType)
+
+    if (!addPaymentInfo) return ''
+    if (!addPaymentInfo.paymentMethodSubType) return addPaymentInfo.paymentMethodType
+
+    return `${addPaymentInfo.paymentMethodType}-${addPaymentInfo.paymentMethodSubType}`
+  }
+
   function getTransactionId() {
     const captureTransaction = (order.transactions ?? []).find(
       (transaction) => transaction.reference === 'capture',
@@ -80,11 +114,22 @@
   }
 
   onMount(() => {
+    const paymentType = getPaymentType()
+    const items = toGaItems()
+
+    if (paymentType) {
+      trackAddPaymentInfo({
+        currency: order.currency_code.toUpperCase(),
+        paymentType,
+        items,
+      })
+    }
+
     trackPurchase({
       address: getPurchaseAddress(),
       currency: order.currency_code.toUpperCase(),
       coupon: getCouponCode(),
-      items: toGaItems(),
+      items,
       shipping: String(order.shipping_total),
       tax: String(order.tax_total),
       transactionId: getTransactionId(),
