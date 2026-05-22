@@ -31,16 +31,18 @@
     <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
     <p class="text-sm">{data.vermouth.recommendation}</p>
   </div>
-  <div class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center">
-    <div class="max-w-screen lg:max-w-4xl lg:mx-auto">
+  <div
+    class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
+  >
+    <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
       <img
         alt={data.vermouth.name}
-        class="h-full max-h-[896px] w-auto max-w-full"
+        class="h-full w-full object-contain"
         srcset={squareSrcSet(data.vermouth.image)}
         src="{data.vermouth.image}/w=400,h=400,fit=cover"
         sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-        width="450"
-        height="450"
+        width="896"
+        height="896"
       />
     </div>
   </div>
