@@ -64,7 +64,7 @@
         >
           <input
             bind:group={selected}
-            class="appearance-none border border-dark-blue size-8 shrink-0 checked:bg-white p-1 bg-white/40
+            class="appearance-none rounded-none border border-dark-blue size-8 shrink-0 checked:bg-white p-1 bg-white/40
             data-[touched=true]:invalid:border-brand-red data-[touched=true]:invalid:outline-2 data-[touched=true]:invalid:outline data-[touched=true]:invalid:outline-brand-red"
             data-touched={touched}
             {disabled}

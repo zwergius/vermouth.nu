@@ -313,7 +313,7 @@
   <h2 class="text-sm font-bold mb-4">{isDeliveryAddress ? 'Levering' : 'Fakturering'}</h2>
   <div class="flex flex-col gap-4 mb-12">
     <input name="{prefix}country" type="hidden" value={region.countries?.[0].iso_2} />
-    <div class="flex *:flex-1 gap-3">
+    <div class="flex flex-col gap-4 sm:flex-row sm:*:flex-1 sm:gap-3">
       <Input
         autocomplete="given-name"
         label="Fornavn"
@@ -348,7 +348,7 @@
       name="{prefix}address_2"
       value={address?.address_2}
     />
-    <div class="flex *:flex-1 gap-3">
+    <div class="flex flex-col gap-4 sm:flex-row sm:*:flex-1 sm:gap-3">
       <Input
         autocomplete="postal-code"
         label="Postnummer"
@@ -490,7 +490,7 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 transition-opacity duration-300"
     role="status"
   >
-    <div class="text-center text-white">
+    <div class="w-full max-w-sm px-6 text-center text-white">
       {#if checkoutState === 'processing'}
         <div class="mb-4 text-lg font-bold">Behandler din ordre...</div>
         <div class="text-sm opacity-80">Vent venligst</div>
