@@ -1,5 +1,4 @@
-import type { Config } from 'tailwindcss'
-
+/** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
 
@@ -19,9 +18,13 @@ export default {
         'brand-pink': '#FFC0CB',
         'brand-red': '#F20505',
         'brand-yellow': '#FFC000',
+        'dark-blue': '#091853',
+        // 'dark-pink': '#E5ADB6', // black/10
+        // 'darkest-pink': '#CB9EA6', // black/20
+        // 'light-pink': '#FADBE0', // white/40
       },
     },
   },
 
   plugins: [],
-} as Config
+}

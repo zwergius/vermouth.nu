@@ -1,5 +1,33 @@
-export const vermouths = {
+export type Handle =
+  | 'forzudo-rojo'
+  | 'forzudo-blanco'
+  | 'sardino-rojo'
+  | 'sardino-blanco'
+  | 'carmeleta-orange'
+  | 'carmeleta-blanco'
+  // | 'carmeleta-rojo'
+  | 'tabira'
+
+interface Vermouth {
+  color: 'RED' | 'WHITE' | 'ORANGE' // deprecated
+  country: string
+  extraImages: Array<{ altText: string; url: string }>
+  image: string
+  intro: string // deprecated
+  name: string // deprecated
+  brand: string
+  origin: string
+  recommendation: string
+  region: string
+  scores: { body: number; fruityness: number; spiciness: number; sweetness: number }
+  sizeAndDegrees: string
+  taste: string
+  titleName: string //deprecated
+}
+
+export const vermouths: Record<Handle, Vermouth> = {
   'forzudo-rojo': {
+    brand: 'Forzudo',
     color: 'RED',
     country: 'Spanien',
     extraImages: [
@@ -38,6 +66,7 @@ export const vermouths = {
     titleName: 'Klassens frække dreng',
   },
   'forzudo-blanco': {
+    brand: 'Forzudo',
     color: 'WHITE',
     country: 'Spanien',
     extraImages: [
@@ -75,6 +104,7 @@ export const vermouths = {
     titleName: 'Forfriskende og stærkt vanedanende',
   },
   'sardino-rojo': {
+    brand: 'Sardino',
     color: 'RED',
     country: 'Spanien',
     extraImages: [
@@ -110,6 +140,7 @@ export const vermouths = {
     titleName: 'Sømandens foretrukne',
   },
   'sardino-blanco': {
+    brand: 'Sardino',
     color: 'WHITE',
     country: 'Spanien',
     extraImages: [
@@ -137,6 +168,7 @@ export const vermouths = {
     titleName: 'Maritim Vermouth fra den Spanske vestkyst',
   },
   'carmeleta-orange': {
+    brand: 'Carmeleta',
     color: 'ORANGE',
     country: 'Spanien',
     extraImages: [
@@ -167,6 +199,7 @@ export const vermouths = {
     titleName: 'Orange og Trendy',
   },
   'carmeleta-blanco': {
+    brand: 'Carmeleta',
     color: 'WHITE',
     country: 'Spanien',
     extraImages: [
@@ -221,6 +254,7 @@ export const vermouths = {
   //  titleName: 'Hvid og Autentisk',
   //},
   tabira: {
+    brand: 'Tabira',
     color: 'RED',
     country: 'Spanien',
     extraImages: [
