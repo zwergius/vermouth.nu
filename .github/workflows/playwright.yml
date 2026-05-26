@@ -5,6 +5,7 @@ on:
     branches: [e-commerce]
 
 permissions:
+  checks: read
   contents: read
   issues: read
   pull-requests: read
@@ -38,11 +39,54 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const shortSha = context.payload.pull_request.head.sha.slice(0, 7)
+            const headSha = context.payload.pull_request.head.sha
+            const shortSha = headSha.slice(0, 7)
             const issue_number = context.payload.pull_request.number
             const deadline = Date.now() + 20 * 60 * 1000
+            const previewUrlPattern = /<strong>Preview URL:<\/strong>[\s\S]*?<a href='([^']+)'/
+
+            function readDeployment(body, source) {
+              if (body.includes('Deploy failed')) {
+                throw new Error(`Cloudflare Pages preview deployment failed in ${source}`)
+              }
+
+              if (!body.includes('Deploy successful')) {
+                return false
+              }
+
+              const match = body.match(previewUrlPattern)
+              if (!match) {
+                throw new Error(`Cloudflare Pages preview URL was not found in ${source}`)
+              }
+
+              core.setOutput('url', match[1])
+              return true
+            }
 
             while (Date.now() < deadline) {
+              const { data: checkRuns } = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: headSha,
+                check_name: 'Cloudflare Pages',
+                per_page: 100,
+              })
+
+              const cloudflareCheck = checkRuns.check_runs
+                .filter((check) => check.app?.slug === 'cloudflare-workers-and-pages')
+                .find((check) => check.name === 'Cloudflare Pages')
+
+              if (cloudflareCheck?.conclusion === 'failure') {
+                throw new Error('Cloudflare Pages preview deployment failed')
+              }
+
+              if (
+                cloudflareCheck?.status === 'completed' &&
+                readDeployment(cloudflareCheck.output?.summary ?? '', 'Cloudflare Pages check')
+              ) {
+                return
+              }
+
               const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -58,21 +102,11 @@ jobs:
                   return body.includes(`<code>${shortSha}</code>`)
                 })
 
-              const body = cloudflareComment?.body ?? ''
-              if (body.includes('Deploy failed')) {
-                throw new Error('Cloudflare Pages preview deployment failed')
-              }
-
-              if (body.includes('Deploy successful')) {
-                const match = body.match(/<strong>Preview URL:<\/strong>[\s\S]*?<a href='([^']+)'/)
-                if (!match) {
-                  throw new Error('Cloudflare Pages preview URL was not found in the deployment comment')
-                }
-                core.setOutput('url', match[1])
+              if (readDeployment(cloudflareComment?.body ?? '', 'deployment comment')) {
                 return
               }
 
-              core.info('Waiting for Cloudflare Pages preview deployment comment...')
+              core.info('Waiting for Cloudflare Pages preview deployment...')
               await new Promise((resolve) => setTimeout(resolve, 15000))
             }
 
