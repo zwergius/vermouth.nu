@@ -44,114 +44,27 @@ jobs:
       - name: Wait for Cloudflare Pages preview
         id: preview
         env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          ISSUE_NUMBER: ${{ github.event.pull_request.number }}
-          REPOSITORY: ${{ github.repository }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         shell: bash
         run: |
           set -euo pipefail
 
           deadline=$((SECONDS + 20 * 60))
-          short_sha="${HEAD_SHA:0:7}"
-
-          read_deployment() {
-            python - "$@" <<'PY'
-          import json
-          import re
-          import sys
-
-          source = sys.argv[1]
-          path = sys.argv[2]
-          data = json.load(open(path))
-          preview_url_pattern = re.compile(
-              r"<strong>Preview URL:</strong>[\s\S]*?<a href='([^']+)'",
-          )
-
-          bodies = []
-          if source == "checks":
-              for check in data.get("check_runs", []):
-                  app = check.get("app") or {}
-                  if app.get("slug") != "cloudflare-workers-and-pages":
-                      continue
-                  if check.get("name") != "Cloudflare Pages":
-                      continue
-                  if check.get("conclusion") == "failure":
-                      print("failure")
-                      sys.exit(0)
-                  if check.get("status") == "completed":
-                      output = check.get("output") or {}
-                      bodies.append(output.get("summary") or "")
-          else:
-              short_sha = sys.argv[3]
-              for comment in reversed(data):
-                  user = comment.get("user") or {}
-                  body = comment.get("body") or ""
-                  if user.get("login") != "cloudflare-workers-and-pages[bot]":
-                      continue
-                  if f"<code>{short_sha}</code>" in body:
-                      bodies.append(body)
-                      break
-
-          for body in bodies:
-              if "Deploy failed" in body:
-                  print("failure")
-                  sys.exit(0)
-              if "Deploy successful" not in body:
-                  continue
-              match = preview_url_pattern.search(body)
-              if not match:
-                  print("missing-url")
-                  sys.exit(0)
-              print(f"success {match.group(1)}")
-              sys.exit(0)
-
-          print("pending")
-          PY
-          }
+          branch_alias="$(
+            printf '%s' "$HEAD_REF" |
+              tr '[:upper:]' '[:lower:]' |
+              sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' |
+              cut -c1-28
+          )"
+          preview_url="https://${branch_alias}.vermouth-nu.pages.dev"
 
           while (( SECONDS < deadline )); do
-            check_runs_json="$(mktemp)"
-            comments_json="$(mktemp)"
-
-            gh api "repos/${REPOSITORY}/commits/${HEAD_SHA}/check-runs" \
-              -F check_name='Cloudflare Pages' \
-              -F per_page=100 > "$check_runs_json"
-
-            check_result="$(read_deployment checks "$check_runs_json")"
-            if [[ "$check_result" == failure ]]; then
-              echo "Cloudflare Pages preview deployment failed"
-              exit 1
-            fi
-            if [[ "$check_result" == missing-url ]]; then
-              echo "Cloudflare Pages preview URL was not found in the check run"
-              exit 1
-            fi
-            if [[ "$check_result" == success\ * ]]; then
-              preview_url="${check_result#success }"
+            if curl --fail --silent --show-error --location --max-time 10 "$preview_url" > /dev/null; then
               echo "url=${preview_url}" >> "$GITHUB_OUTPUT"
               exit 0
             fi
 
-            gh api "repos/${REPOSITORY}/issues/${ISSUE_NUMBER}/comments" \
-              -F per_page=100 > "$comments_json"
-
-            comment_result="$(read_deployment comments "$comments_json" "$short_sha")"
-            if [[ "$comment_result" == failure ]]; then
-              echo "Cloudflare Pages preview deployment failed"
-              exit 1
-            fi
-            if [[ "$comment_result" == missing-url ]]; then
-              echo "Cloudflare Pages preview URL was not found in the deployment comment"
-              exit 1
-            fi
-            if [[ "$comment_result" == success\ * ]]; then
-              preview_url="${comment_result#success }"
-              echo "url=${preview_url}" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-
-            echo "Waiting for Cloudflare Pages preview deployment..."
+            echo "Waiting for Cloudflare Pages preview at ${preview_url}..."
             sleep 15
           done
 
