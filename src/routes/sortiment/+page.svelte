@@ -1,14 +1,77 @@
 <script lang="ts">
-  import { vermouths } from '$lib/data/products'
+  import { onMount } from 'svelte'
+  import type { PageProps } from './$types'
+  import { vermouths, type Handle } from '$lib/data/products'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
+  import {
+    GA_CATEGORY_LABEL_BY_HANDLE,
+    GA_MISSING,
+    trackSelectItem,
+    trackViewItemList,
+    type GaListItem,
+  } from '$lib/helpers/analytics'
+  import type { HttpTypes } from '@medusajs/types'
 
-  const redVermouths = Object.values(vermouths).filter(({ color }) => color === 'RED')
-  const whiteVermouths = Object.values(vermouths).filter(({ color }) => color === 'WHITE')
-  const otherVermouths = Object.values(vermouths).filter(
-    ({ color }) => color !== 'WHITE' && color !== 'RED',
-  )
+  const { data }: PageProps = $props()
+  const red = $derived.by(() => data.categories.red)
+  const white = $derived.by(() => data.categories.white)
+  const other = $derived.by(() => data.categories.other)
+  const currency = $derived(data.region.currency_code.toUpperCase())
+
+  type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
+
+  function getCategoryHandle(product: HttpTypes.StoreProduct): CategoryHandle | null {
+    for (const category of product.categories ?? []) {
+      if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
+        return category.handle
+      }
+    }
+
+    return null
+  }
+
+  function toGaItem(index: number, product: HttpTypes.StoreProduct): GaListItem {
+    const categoryHandle = getCategoryHandle(product)
+    const handle = typeof product.handle === 'string' ? product.handle : null
+    const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
+    const price = product.variants?.[0]?.calculated_price?.calculated_amount
+
+    return {
+      item_id: product.id || GA_MISSING.itemId,
+      item_name: product.title || GA_MISSING.itemName,
+      price: price !== null && price !== undefined ? String(price) : GA_MISSING.price,
+      item_brand: staticData?.brand || GA_MISSING.itemBrand,
+      item_category: categoryHandle
+        ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
+        : GA_MISSING.itemCategory,
+      item_list_name: categoryHandle || GA_MISSING.itemListName,
+      item_list_id: categoryHandle ? categoryHandle.toUpperCase() : GA_MISSING.itemListId,
+      index,
+      quantity: '1',
+    }
+  }
+
+  function handleSelectItem(index: number, product: HttpTypes.StoreProduct) {
+    trackSelectItem({
+      currency,
+      item: toGaItem(index, product),
+    })
+  }
+
+  onMount(() => {
+    const items = [
+      ...red.map((product, index) => toGaItem(index + 1, product)),
+      ...white.map((product, index) => toGaItem(index + 1, product)),
+      ...other.map((product, index) => toGaItem(index + 1, product)),
+    ]
+
+    trackViewItemList({
+      currency,
+      items,
+    })
+  })
 </script>
 
 <Seo
@@ -29,24 +92,24 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each redVermouths as product}
-    <ProductGridItem {product} />
+  {#each red as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each whiteVermouths as product}
-    <ProductGridItem {product} />
+  {#each white as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each otherVermouths as product}
-    <ProductGridItem {product} />
+  {#each other as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
 
