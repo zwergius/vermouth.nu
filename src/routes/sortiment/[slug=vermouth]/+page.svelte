@@ -181,15 +181,17 @@
     class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
-      <img
-        alt={product.title}
-        class="h-full w-full object-contain"
-        srcset={squareSrcSet(image)}
-        src="{image}/w=400,h=400,fit=cover"
-        sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-        width="896"
-        height="896"
-      />
+      {#key image}
+        <img
+          alt={product.title}
+          class="h-full w-full object-contain"
+          srcset={squareSrcSet(image)}
+          src="{image}/w=400,h=400,fit=cover"
+          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+          width="896"
+          height="896"
+        />
+      {/key}
     </div>
   </div>
 </section>

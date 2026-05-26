@@ -5,6 +5,7 @@ on:
     branches: [e-commerce]
 
 permissions:
+  checks: read
   contents: read
   issues: read
   pull-requests: read
@@ -16,16 +17,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
+      - name: Checkout repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth=1 origin "${GITHUB_REF}"
+          git checkout --force FETCH_HEAD
 
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10 --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -35,48 +43,33 @@ jobs:
 
       - name: Wait for Cloudflare Pages preview
         id: preview
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const shortSha = context.payload.pull_request.head.sha.slice(0, 7)
-            const issue_number = context.payload.pull_request.number
-            const deadline = Date.now() + 20 * 60 * 1000
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
 
-            while (Date.now() < deadline) {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number,
-                per_page: 100,
-              })
+          deadline=$((SECONDS + 20 * 60))
+          branch_alias="$(
+            printf '%s' "$HEAD_REF" |
+              tr '[:upper:]' '[:lower:]' |
+              sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' |
+              cut -c1-28
+          )"
+          preview_url="https://${branch_alias}.vermouth-nu.pages.dev"
 
-              const cloudflareComment = comments
-                .filter((comment) => comment.user?.login === 'cloudflare-workers-and-pages[bot]')
-                .reverse()
-                .find((comment) => {
-                  const body = comment.body ?? ''
-                  return body.includes(`<code>${shortSha}</code>`)
-                })
+          while (( SECONDS < deadline )); do
+            if curl --fail --silent --show-error --location --max-time 10 "$preview_url" > /dev/null; then
+              echo "url=${preview_url}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
 
-              const body = cloudflareComment?.body ?? ''
-              if (body.includes('Deploy failed')) {
-                throw new Error('Cloudflare Pages preview deployment failed')
-              }
+            echo "Waiting for Cloudflare Pages preview at ${preview_url}..."
+            sleep 15
+          done
 
-              if (body.includes('Deploy successful')) {
-                const match = body.match(/<strong>Preview URL:<\/strong>[\s\S]*?<a href='([^']+)'/)
-                if (!match) {
-                  throw new Error('Cloudflare Pages preview URL was not found in the deployment comment')
-                }
-                core.setOutput('url', match[1])
-                return
-              }
-
-              core.info('Waiting for Cloudflare Pages preview deployment comment...')
-              await new Promise((resolve) => setTimeout(resolve, 15000))
-            }
-
-            throw new Error('Timed out waiting for Cloudflare Pages preview deployment')
+          echo "Timed out waiting for Cloudflare Pages preview deployment"
+          exit 1
 
       - name: Run Playwright tests against preview
         env:
