@@ -216,6 +216,33 @@ export function trackAddShippingInfo({
   })
 }
 
+export function trackAddPaymentInfo({
+  currency,
+  paymentType,
+  items,
+}: {
+  currency?: string
+  paymentType: string
+  items: GaListItem[]
+}) {
+  withDataLayer((dataLayer) => {
+    const payload = {
+      event: 'add_payment_info',
+      ecommerce: {
+        ...(currency ? { currency } : {}),
+        payment_type: paymentType,
+        items,
+      },
+    }
+
+    if (import.meta.env.DEV) {
+      console.info('[analytics] add_payment_info payload', payload)
+    }
+
+    dataLayer.push(payload)
+  })
+}
+
 export function trackPurchase({
   address,
   currency,
