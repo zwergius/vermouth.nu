@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types'
 import { EPAY_API_KEY } from '$env/static/private'
-import { PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
+import { PUBLIC_POINT_OF_SALE_ID, PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
 import { redirect } from '@sveltejs/kit'
 
 interface EpayPayload {
@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ fetch, parent, url }) => {
     currency: cart.currency_code.toUpperCase(),
     failureUrl: `${url.origin}/betaling/fejl`,
     notificationUrl: `${PUBLIC_VITE_BACKEND_URL}/webhooks/epay`,
-    pointOfSaleId: '019c24fb-6160-7f38-ba3f-17cf67a0fd72',
+    pointOfSaleId: PUBLIC_POINT_OF_SALE_ID,
     reference: cart.id.replace('cart_', ''),
     successUrl: `${url.origin}/betaling/success`,
   }
