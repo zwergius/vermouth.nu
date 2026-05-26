@@ -36,81 +36,120 @@ jobs:
 
       - name: Wait for Cloudflare Pages preview
         id: preview
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const headSha = context.payload.pull_request.head.sha
-            const shortSha = headSha.slice(0, 7)
-            const issue_number = context.payload.pull_request.number
-            const deadline = Date.now() + 20 * 60 * 1000
-            const previewUrlPattern = /<strong>Preview URL:<\/strong>[\s\S]*?<a href='([^']+)'/
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          ISSUE_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
 
-            function readDeployment(body, source) {
-              if (body.includes('Deploy failed')) {
-                throw new Error(`Cloudflare Pages preview deployment failed in ${source}`)
-              }
+          deadline=$((SECONDS + 20 * 60))
+          short_sha="${HEAD_SHA:0:7}"
 
-              if (!body.includes('Deploy successful')) {
-                return false
-              }
+          read_deployment() {
+            python - "$@" <<'PY'
+          import json
+          import re
+          import sys
 
-              const match = body.match(previewUrlPattern)
-              if (!match) {
-                throw new Error(`Cloudflare Pages preview URL was not found in ${source}`)
-              }
+          source = sys.argv[1]
+          path = sys.argv[2]
+          data = json.load(open(path))
+          preview_url_pattern = re.compile(
+              r"<strong>Preview URL:</strong>[\s\S]*?<a href='([^']+)'",
+          )
 
-              core.setOutput('url', match[1])
-              return true
-            }
+          bodies = []
+          if source == "checks":
+              for check in data.get("check_runs", []):
+                  app = check.get("app") or {}
+                  if app.get("slug") != "cloudflare-workers-and-pages":
+                      continue
+                  if check.get("name") != "Cloudflare Pages":
+                      continue
+                  if check.get("conclusion") == "failure":
+                      print("failure")
+                      sys.exit(0)
+                  if check.get("status") == "completed":
+                      output = check.get("output") or {}
+                      bodies.append(output.get("summary") or "")
+          else:
+              short_sha = sys.argv[3]
+              for comment in reversed(data):
+                  user = comment.get("user") or {}
+                  body = comment.get("body") or ""
+                  if user.get("login") != "cloudflare-workers-and-pages[bot]":
+                      continue
+                  if f"<code>{short_sha}</code>" in body:
+                      bodies.append(body)
+                      break
 
-            while (Date.now() < deadline) {
-              const { data: checkRuns } = await github.rest.checks.listForRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: headSha,
-                check_name: 'Cloudflare Pages',
-                per_page: 100,
-              })
+          for body in bodies:
+              if "Deploy failed" in body:
+                  print("failure")
+                  sys.exit(0)
+              if "Deploy successful" not in body:
+                  continue
+              match = preview_url_pattern.search(body)
+              if not match:
+                  print("missing-url")
+                  sys.exit(0)
+              print(f"success {match.group(1)}")
+              sys.exit(0)
 
-              const cloudflareCheck = checkRuns.check_runs
-                .filter((check) => check.app?.slug === 'cloudflare-workers-and-pages')
-                .find((check) => check.name === 'Cloudflare Pages')
+          print("pending")
+          PY
+          }
 
-              if (cloudflareCheck?.conclusion === 'failure') {
-                throw new Error('Cloudflare Pages preview deployment failed')
-              }
+          while (( SECONDS < deadline )); do
+            check_runs_json="$(mktemp)"
+            comments_json="$(mktemp)"
 
-              if (
-                cloudflareCheck?.status === 'completed' &&
-                readDeployment(cloudflareCheck.output?.summary ?? '', 'Cloudflare Pages check')
-              ) {
-                return
-              }
+            gh api "repos/${REPOSITORY}/commits/${HEAD_SHA}/check-runs" \
+              -F check_name='Cloudflare Pages' \
+              -F per_page=100 > "$check_runs_json"
 
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number,
-                per_page: 100,
-              })
+            check_result="$(read_deployment checks "$check_runs_json")"
+            if [[ "$check_result" == failure ]]; then
+              echo "Cloudflare Pages preview deployment failed"
+              exit 1
+            fi
+            if [[ "$check_result" == missing-url ]]; then
+              echo "Cloudflare Pages preview URL was not found in the check run"
+              exit 1
+            fi
+            if [[ "$check_result" == success\ * ]]; then
+              preview_url="${check_result#success }"
+              echo "url=${preview_url}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
 
-              const cloudflareComment = comments
-                .filter((comment) => comment.user?.login === 'cloudflare-workers-and-pages[bot]')
-                .reverse()
-                .find((comment) => {
-                  const body = comment.body ?? ''
-                  return body.includes(`<code>${shortSha}</code>`)
-                })
+            gh api "repos/${REPOSITORY}/issues/${ISSUE_NUMBER}/comments" \
+              -F per_page=100 > "$comments_json"
 
-              if (readDeployment(cloudflareComment?.body ?? '', 'deployment comment')) {
-                return
-              }
+            comment_result="$(read_deployment comments "$comments_json" "$short_sha")"
+            if [[ "$comment_result" == failure ]]; then
+              echo "Cloudflare Pages preview deployment failed"
+              exit 1
+            fi
+            if [[ "$comment_result" == missing-url ]]; then
+              echo "Cloudflare Pages preview URL was not found in the deployment comment"
+              exit 1
+            fi
+            if [[ "$comment_result" == success\ * ]]; then
+              preview_url="${comment_result#success }"
+              echo "url=${preview_url}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
 
-              core.info('Waiting for Cloudflare Pages preview deployment...')
-              await new Promise((resolve) => setTimeout(resolve, 15000))
-            }
+            echo "Waiting for Cloudflare Pages preview deployment..."
+            sleep 15
+          done
 
-            throw new Error('Timed out waiting for Cloudflare Pages preview deployment')
+          echo "Timed out waiting for Cloudflare Pages preview deployment"
+          exit 1
 
       - name: Run Playwright tests against preview
         env:
