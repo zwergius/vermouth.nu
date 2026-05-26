@@ -30,6 +30,17 @@
   let selectedShippingMethodId = $derived(
     cart.shipping_methods?.[0]?.shipping_option_id ?? shippingOptions[0]?.id ?? '',
   )
+  const hasCartShippingMethod = $derived(Boolean(cart.shipping_methods?.length))
+  const selectedShippingOption = $derived(
+    shippingOptions.find(({ id }) => id === selectedShippingMethodId),
+  )
+  const selectedShippingPrice = $derived(getShippingOptionPrice(selectedShippingOption))
+  const displayedShippingTotal = $derived(
+    hasCartShippingMethod ? cart.shipping_total : selectedShippingPrice,
+  )
+  const displayedCartTotal = $derived(
+    hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
+  )
   let isSubmitting = $state(false)
   let hasCheckoutRedirected = $state(false)
   const checkoutState = $derived<'idle' | 'processing' | 'redirecting'>(
@@ -63,9 +74,15 @@
     isSubmitting = false
   }
 
-  function formattedPrice(price: number) {
+  function formattedPrice(price: number | undefined) {
+    if (price === undefined) return ''
     if (price === 0) return 'Gratis'
     return formatPrice(price, region.currency_code, locale)
+  }
+
+  function getShippingOptionPrice(option?: { amount?: number | null; id: string }) {
+    if (!option) return undefined
+    return shippingPrices[option.id] ?? option.amount ?? undefined
   }
 
   async function calculateShippingPrices() {
@@ -280,11 +297,11 @@
         </div>
         <div class="flex justify-between">
           <dt>Levering</dt>
-          <dd>{formattedPrice(cart?.shipping_total)}</dd>
+          <dd>{formattedPrice(displayedShippingTotal)}</dd>
         </div>
         <div class="flex justify-between">
           <dt>I alt</dt>
-          <dd>{formattedPrice(cart?.total)}</dd>
+          <dd>{formattedPrice(displayedCartTotal)}</dd>
         </div>
       </dl>
       <p class="text-xs mb-2">Inklusiv {formattedPrice(cart?.tax_total)} i afgifter</p>
@@ -431,7 +448,7 @@
           options={shippingOptions.map((option) => ({
             description: option.type.description,
             label: option.name,
-            price: formattedPrice(shippingPrices[option.id]),
+            price: formattedPrice(getShippingOptionPrice(option)),
             value: option.id,
           }))}
           bind:selected={selectedShippingMethodId}

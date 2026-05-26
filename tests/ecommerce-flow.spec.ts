@@ -30,6 +30,22 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
   await expect(productRow).toBeVisible()
   await expect(productRow.locator('input[name="quantity"]')).toHaveValue('1')
 
+  const selectedShippingMethod = page
+    .locator('fieldset')
+    .filter({ hasText: 'Leveringsmetode' })
+    .locator('label')
+    .filter({ has: page.locator('input:checked') })
+  const selectedShippingPrice = await selectedShippingMethod.locator('p').nth(1).innerText()
+  const deliverySummaryPrice = page
+    .locator('dl')
+    .filter({ hasText: 'Subtotal' })
+    .first()
+    .locator('div')
+    .filter({ hasText: 'Levering' })
+    .locator('dd')
+
+  await expect(deliverySummaryPrice).toHaveText(selectedShippingPrice)
+
   await productRow.getByRole('button', { name: `Fjern ${productName} fra kurv.` }).click()
   await expect(productRow).toBeHidden()
 })
