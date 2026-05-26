@@ -16,6 +16,7 @@ declare module '$env/static/public' {
   export const PUBLIC_COOKIE_YES_ID: string
   export const PUBLIC_GA_MEASUREMENT_ID: string
   export const PUBLIC_MEDUSA_PUBLISHABLE_KEY: string
+  export const PUBLIC_POINT_OF_SALE_ID: string
   export const PUBLIC_VITE_BACKEND_URL: string
 }
 
