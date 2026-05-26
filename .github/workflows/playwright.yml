@@ -2,7 +2,6 @@ name: Playwright Preview Tests
 
 on:
   pull_request:
-    branches: [e-commerce]
 
 permissions:
   checks: read
