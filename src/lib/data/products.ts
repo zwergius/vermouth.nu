@@ -232,6 +232,10 @@ export const vermouths: Record<Handle, Vermouth> = {
     country: 'Spanien',
     extraImages: [
       {
+        altText: 'Negroni cocktail lavet med Forzudo Rojo',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e320c5f1-3b7c-4b6f-b76c-61273e76fc00',
+      },
+      {
         altText: 'Sardino Rojo Cocktail',
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/02f9761c-d8dd-4994-365f-5182984a4400',
       },
