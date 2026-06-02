@@ -5,7 +5,7 @@ export type Handle =
   | 'sardino-blanco'
   | 'carmeleta-orange'
   | 'carmeleta-blanco'
-  // | 'carmeleta-rojo'
+  | 'carmeleta-rosso'
   | 'tabira'
 
 interface Vermouth {
@@ -226,33 +226,30 @@ export const vermouths: Record<Handle, Vermouth> = {
       'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian. Næsen er forfriskende og har klare noter af timian og fennikel.',
     titleName: 'Hvid og Autentisk',
   },
-  //'carmeleta-rosso': {
-  //  color: 'RED',
-  //  country: 'Spanien',
-  //  extraImages: [
-  //    {
-  //      altText: 'Carmeleta Blanco cocktail',
-  //      url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7d277bd1-e2c6-4c74-0b97-2a3bab563a00',
-  //    },
-  //    {
-  //      altText: 'Carmeleta Blanco med oliven i skål',
-  //      url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ed6a141-b110-4101-7a8a-2ae86f9bc100',
-  //    },
-  //  ],
-  //  image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/684162e5-028c-4ccd-0057-4f9c9a0f4900',
-  //  intro:
-  //    'Carmeleta Blanco er en autentisk vermouth som kombinerer aromatiske urter og krydderier, hvilet  gør den hvide vermouth til en forfriskende aperitif. Lavet på hvide druer fra middelhavsområdet, herunder Malvasía, Muscat, Planta og udviklet med en original kombination af urter og krydderrier. En klassisk blanding med bløde toner af Malurt, Artemis og Dictamo fra Kreta. Vermouthen er sødere og lettere end en traditionel rød vermouth, og egner sig til alle tidspunkter af dagen. En sand Gane Gentleman.',
-  //  name: 'Carmeleta Blanco',
-  //  origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
-  //  recommendation:
-  //    'Serveres kold med is, alternativt i drinks med gin som en forfriskende supplement.',
-  //  region: 'L’Alquería de la Comtessa, Valencia',
-  //  scores: { sweetness: 2, fruityness: 3, body: 2, spiciness: 3 },
-  //  sizeAndDegrees: '75 cl. / 15%',
-  //  taste:
-  //    'Smagen er karakteriseret af elegante smage fra de traditionelle smage fra vermouth, men forfriskede med behagelige noter fra Ingefær og Saigon Kanel og afslutningsvis er vermouthen tilsmagt med fennikel og timian. Næsen er forfriskende og har klare noter af timian og fennikel.',
-  //  titleName: 'Hvid og Autentisk',
-  //},
+  'carmeleta-rosso': {
+    brand: 'Carmeleta',
+    color: 'RED',
+    country: 'Spanien',
+    extraImages: [
+      {
+        altText: 'Sardino Rojo Cocktail',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/02f9761c-d8dd-4994-365f-5182984a4400',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/95ec3491-7126-4e90-a732-a8cf64eb5000',
+    intro:
+      'Carmeleta Rosso, født af Valencias varme jord, bittersøde citrusfrugter og den mediterrane passion for aperitivo. En intens og karakterfuld vermouth, hvor noter af lakrids, appelsinskal og varme krydderier møder friske urter og florale nuancer. Malvasia, moscatel og planta nova danner fundamentet, mens malurt, artemisia og saigonkanel tilfører dybde, bitterhed og elegance.',
+    name: 'Carmeleta Rosso',
+    origin: 'L’Alquería de la Comtessa Valencia 75cl / 15%',
+    recommendation:
+      'Serveres bedst over is med appelsinskal – eller som fundament i klassiske cocktails som Negroni og Manhattan.',
+    region: 'L’Alquería de la Comtessa, Valencia',
+    scores: { sweetness: 3, fruityness: 2, body: 3, spiciness: 5 },
+    sizeAndDegrees: '75 cl. / 15%',
+    taste:
+      'I næsen opleves Rosso aromatisk og balsamisk med mørke citrusnoter og krydret sødme. Smagen er fyldig og harmonisk med en flot balance mellem syre, bitterhed og sødme. Den lange finish efterlader noter af appelsin, krydderier og et elegant bittert bid.',
+    titleName: 'Essensen fra appelsintræet',
+  },
   tabira: {
     brand: 'Tabira',
     color: 'RED',
