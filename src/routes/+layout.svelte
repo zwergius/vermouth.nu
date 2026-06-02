@@ -200,6 +200,9 @@
             >Fortrolighedspolitik</a
           >
         </li>
+        <li>
+          <a class="hover:font-bold" rel="external" href="/cookiepolitik">Cookiepolitik</a>
+        </li>
       </ul>
       <figure class="mt-auto md:ml-auto overflow-visible">
         <img class="h-8 w-auto max-w-n" src="/kort-logoer.png" alt="Betalingskort muligheder" />
