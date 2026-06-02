@@ -192,13 +192,13 @@
       <figcaption class="font-bold">POLICES</figcaption>
       <ul>
         <li>
-          <a class="hover:font-bold" rel="external" href="/handelsbetingelser">Handelsbetingelser</a
-          >
+          <a class="hover:font-bold" href="/handelsbetingelser">Handelsbetingelser</a>
         </li>
         <li>
-          <a class="hover:font-bold" rel="external" href="/fortrolighedspolitik"
-            >Fortrolighedspolitik</a
-          >
+          <a class="hover:font-bold" href="/fortrolighedspolitik">Fortrolighedspolitik</a>
+        </li>
+        <li>
+          <a class="hover:font-bold" href="/cookiepolitik">Cookiepolitik</a>
         </li>
       </ul>
       <figure class="mt-auto md:ml-auto overflow-visible">
