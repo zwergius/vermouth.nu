@@ -15,6 +15,10 @@ This is a SvelteKit e-commerce project for a vermouth store using:
 
 ## Commands
 
+Prefer the scripts defined in `package.json` for standard project workflows.
+Use direct `pnpm exec ...` commands only when there is no matching script or when
+running a focused command against specific files.
+
 ### Branch And Issue Workflow
 
 - Follow the global Codex branch isolation rules: one Linear issue, one branch.
@@ -66,17 +70,6 @@ EPAY_API_KEY=test \
 PUBLIC_COOKIE_YES_ID= \
 PUBLIC_GA_MEASUREMENT_ID= \
 pnpm check
-```
-
-- When starting a local dev server for browser checks, bind to localhost explicitly if host mode is blocked:
-
-```bash
-PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_test \
-PUBLIC_VITE_BACKEND_URL=http://127.0.0.1:9000 \
-EPAY_API_KEY=test \
-PUBLIC_COOKIE_YES_ID= \
-PUBLIC_GA_MEASUREMENT_ID= \
-pnpm exec vite dev --host 127.0.0.1 --port 5175
 ```
 
 - If `/kurv` renders a Vite 500 with `ERR_UNSUPPORTED_DIR_IMPORT` from `@medusajs/js-sdk/dist/esm/admin`, run `pnpm fix` and restart the dev server before browser verification.
