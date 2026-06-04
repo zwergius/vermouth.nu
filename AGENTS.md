@@ -9,7 +9,7 @@ This is a SvelteKit e-commerce project for a vermouth store using:
 - **Styling**: Tailwind CSS + PostCSS
 - **Testing**: Vitest (unit) + Playwright (integration)
 - **E-commerce**: Medusa JS SDK
-- **Deployment**: Cloudflare Pages / static adapter
+- **Deployment**: Cloudflare adapter with SSR environment
 
 ---
 
@@ -22,7 +22,6 @@ running a focused command against specific files.
 ### Branch And Issue Workflow
 
 - Follow the global Codex branch isolation rules: one Linear issue, one branch.
-- Ecommerce/cart work currently lives on the `e-commerce` branch. If a Linear issue mentions `/kurv`, checkout, cart, payment, Medusa, or storefront commerce behavior, start from `origin/e-commerce` unless the user explicitly says otherwise.
 - Include the single Linear issue ID in the branch name, for example `codex/VNU-4-mobile-kurv-checkboxes`.
 - If the user asks to fix multiple Linear issues, split them into separate branches/worktrees and handle one issue at a time.
 
