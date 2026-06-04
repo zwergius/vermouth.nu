@@ -221,7 +221,7 @@ Pre-commit hooks run automatically:
 - ESLint
 - Prettier format
 
-To bypass (use cautiously): `git commit --no-verify`
+It is strictly forbidden to bypass pre-commit hooks.
 
 ---
 
