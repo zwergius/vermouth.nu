@@ -24,9 +24,10 @@
   const { data }: PageProps = $props()
   const { red, white, other } = $derived(data.categories)
   const { cart, locale, product, region } = $derived(data)
-  const { extraImages, image, intro, origin, recommendation, scores, taste } = $derived(
+  const { extraImages, image, origin, recommendation, scores, taste } = $derived(
     vermouths[product.handle as Handle],
   )
+  const productDescription = $derived(product.description ?? '')
   const variant = $derived(product.variants?.[0])
   const formattedPrice = $derived(
     formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
@@ -51,17 +52,21 @@
     return 'bg-brand-blue'
   })
 
-  function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
-    if (color === 'RED') return 'red'
-    if (color === 'WHITE') return 'white'
-    return 'other'
+  function getCategoryHandle(): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE | null {
+    for (const category of product.categories ?? []) {
+      if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
+        return category.handle
+      }
+    }
+
+    return null
   }
 
   function toGaItem(quantity: string): GaListItem {
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
     const price = product.variants?.[0]?.calculated_price?.calculated_amount
-    const categoryHandle = staticData ? getCategoryHandle(staticData.color) : null
+    const categoryHandle = getCategoryHandle()
 
     return {
       item_id: product.id || GA_MISSING.itemId,
@@ -129,7 +134,7 @@
 
 <Seo
   title={product.title}
-  description={intro}
+  description={productDescription}
   image="{image}/w=800,h=800,fit=cover"
   imageAlt={product.title}
 />
@@ -171,7 +176,7 @@
       href="/forhandlere">KØB ELLER SMAG HER &#8594;</a
     >
     <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
-    <p class="text-sm mb-6">{intro}</p>
+    <p class="text-sm mb-6">{productDescription}</p>
     <h3 class="text-sm font-bold mb-4">Smag & Duft</h3>
     <p class="text-sm mb-6">{taste}</p>
     <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
