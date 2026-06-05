@@ -13,6 +13,39 @@ This is a SvelteKit e-commerce project for a vermouth store using:
 
 ---
 
+## Way Of Working
+
+### Start Here: Required First Actions
+
+Before any coding or project edit, you must:
+
+1. For implementation work that changes product behavior or project scope, read [Linear](/Users/zwergius/.codex/LINEAR.md); if no issue is provided, ask whether to create one before editing.
+2. Read [Git](/Users/zwergius/.codex/GIT.md); confirm isolation and include the Linear ID in the branch name when present.
+3. For GitHub, PR, issue, or CI work, read [GitHub](/Users/zwergius/.codex/GITHUB.md).
+4. Confirm the branch is current with the repository default branch unless told otherwise.
+5. In separate worktrees, symlink ignored env files from the main checkout when present: `.env`, `.env.local`, `.dev.vars`.
+6. Run dependency install only when required by the repo or missing dependencies; otherwise use the existing lockfile/install state.
+7. Run the repo's relevant checks, such as `pnpm check`, focused tests, and `pnpm test:integration` when applicable.
+8. Before editing, state a short startup receipt: docs read, local overrides checked, scope, Linear issue or none, branch/worktree, expected files, task-specific companion files from [AGENTS](/Users/zwergius/.codex/AGENTS.md), and verification plan.
+
+If you have not done these steps, do not edit files.
+
+### End
+
+Before handing work back, you must:
+
+1. Run the planned verification commands, including focused checks for changed files.
+2. Run `git diff --check` and review the diff for unrelated changes.
+3. Stop dev servers or background processes started for the task.
+4. Remove accidental temp files, logs, screenshots, or generated artifacts unless they are part of the deliverable.
+5. Report any verification that failed, was skipped, or needs external services.
+6. Summarize the behavior changed and the files touched.
+7. Leave the branch/worktree scoped to the task and never bypass git hooks.
+8. After a PR is merged, delete the task worktree and local branch only after confirming no uncommitted work remains.
+9. If the task used Linear, state whether the issue needs a comment, status change, or follow-up.
+
+---
+
 ## Commands
 
 Prefer the scripts defined in `package.json` for standard project workflows.
