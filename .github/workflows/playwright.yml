@@ -52,8 +52,9 @@ jobs:
           branch_alias="$(
             printf '%s' "$HEAD_REF" |
               tr '[:upper:]' '[:lower:]' |
-              sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' |
-              cut -c1-28
+              sed -E 's/[^a-z0-9]+/-/g; s/^-+//' |
+              cut -c1-28 |
+              sed -E 's/-+$//'
           )"
           preview_url="https://${branch_alias}.vermouth-nu.pages.dev"
 
