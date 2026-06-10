@@ -36,6 +36,7 @@ const GA_CATEGORY_LABEL_BY_HANDLE = {
   red: 'Red Vermouth',
   white: 'White Vermouth',
   other: 'Orange Vermouth',
+  packs: 'Vermouth Bundle',
 } as const
 
 interface WindowWithDataLayer extends Window {

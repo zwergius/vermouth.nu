@@ -20,12 +20,9 @@
   import RadioGroup from '$lib/components/form-controls/radio-group.svelte'
   import { formatPrice } from '$lib/helpers/numbers'
   import QuantitySelector from '$lib/components/form-controls/quantity-selector.svelte'
-  import { sdk } from '$lib/medusa'
-  import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
-  const { cart, locale, region, shippingOptions } = $derived(data)
-  const shippingPrices: Record<string, number> = $state({})
+  const { cart, locale, region, shippingOptions, shippingPrices } = $derived(data)
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
   let selectedShippingMethodId = $derived(
     cart.shipping_methods?.[0]?.shipping_option_id ?? shippingOptions[0]?.id ?? '',
@@ -57,6 +54,7 @@
     previousQuantity: number
     productId?: string
   }
+  type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
   function handleCheckoutResult(result: ActionResult) {
     if (result.type === 'redirect') {
@@ -85,49 +83,27 @@
     return shippingPrices[option.id] ?? option.amount ?? undefined
   }
 
-  async function calculateShippingPrices() {
-    try {
-      if (!cart?.id) throw Error('No cart.id !?')
-
-      const promises: Promise<HttpTypes.StoreShippingOptionResponse>[] = []
-      shippingOptions.forEach(({ amount, id, price_type }) => {
-        if (price_type === 'flat') {
-          shippingPrices[id] = amount
-          return
-        }
-        promises.push(sdk.store.fulfillment.calculate(id, { cart_id: cart?.id, data: {} }))
-      })
-
-      if (promises.length) {
-        const results = await Promise.allSettled(promises)
-
-        results.forEach((result) => {
-          if (result.status === 'fulfilled' && result.value) {
-            const { amount, id } = result.value.shipping_option
-            shippingPrices[id] = amount
-          }
-        })
-      }
-    } catch (e) {
-      console.error(`Could not calculate shipping prices ${e}`)
-    }
-  }
-
   function handleChangeQuantity(e: Event & { currentTarget: HTMLInputElement }) {
     const { form } = e.currentTarget
     form?.requestSubmit()
   }
 
-  function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
-    if (color === 'RED') return 'red'
-    if (color === 'WHITE') return 'white'
-    return 'other'
+  function getCategoryHandleByProductHandle(productHandle?: string): CategoryHandle | null {
+    if (!productHandle) return null
+
+    for (const categoryHandle of ['red', 'white', 'other', 'packs'] as const) {
+      if (data.categories[categoryHandle].some((product) => product.handle === productHandle)) {
+        return categoryHandle
+      }
+    }
+
+    return null
   }
 
   function toGaItem(context: CartItemAnalyticsContext, quantity: string): GaListItem {
     const handle = context.productHandle
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
-    const categoryHandle = staticData ? getCategoryHandle(staticData.color) : null
+    const categoryHandle = getCategoryHandleByProductHandle(handle)
 
     return {
       item_id: context.productId || context.cartItemId || GA_MISSING.itemId,
@@ -196,10 +172,7 @@
     }
   }
 
-  // TODO: recalculate shipping prices on cart item changes.
   onMount(() => {
-    calculateShippingPrices()
-
     trackBeginCheckout({
       currency: analyticsCurrencyCode,
       items: getCartGaItems(),

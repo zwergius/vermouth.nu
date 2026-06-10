@@ -12,21 +12,13 @@ export const load: PageLoad = async ({ params, parent }) => {
   const { region } = await parent()
   const data = await sdk.store.product.list({
     handle: params.slug,
-    fields: '*variants.calculated_price',
+    fields: '*categories,*variants.calculated_price',
     region_id: region.id,
   })
 
   const vermouth = vermouths[vermouthSlug]
-  const redVermouths = Object.values(vermouths).filter(({ color }) => color === 'RED')
-  const whiteVermouths = Object.values(vermouths).filter(({ color }) => color === 'WHITE')
-  const otherVermouths = Object.values(vermouths).filter(
-    ({ color }) => color !== 'WHITE' && color !== 'RED',
-  )
   return {
     product: data.products[0],
     vermouth,
-    redVermouths,
-    whiteVermouths,
-    otherVermouths,
   }
 }

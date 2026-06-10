@@ -14,6 +14,7 @@
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
+  type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
   type AddPaymentInfoMetadata = {
     paymentMethodType?: string
@@ -30,17 +31,23 @@
     payment_collections?: PaymentCollectionWithMetadata[] | PaymentCollectionWithMetadata
   }
 
-  function getCategoryHandle(color: string): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE {
-    if (color === 'RED') return 'red'
-    if (color === 'WHITE') return 'white'
-    return 'other'
+  function getCategoryHandleByProductHandle(productHandle?: string | null): CategoryHandle | null {
+    if (!productHandle) return null
+
+    for (const categoryHandle of ['red', 'white', 'other', 'packs'] as const) {
+      if (data.categories[categoryHandle].some((product) => product.handle === productHandle)) {
+        return categoryHandle
+      }
+    }
+
+    return null
   }
 
   function toGaItems() {
     return order.items!.map((item): GaListItem => {
       const handle = item.product_handle as Handle | null
       const staticData = handle && handle in vermouths ? vermouths[handle] : null
-      const categoryHandle = staticData ? getCategoryHandle(staticData.color) : null
+      const categoryHandle = getCategoryHandleByProductHandle(handle)
 
       return {
         item_id: item.product_id || item.id || GA_MISSING.itemId,

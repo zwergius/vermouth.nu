@@ -18,13 +18,19 @@
   const red = $derived.by(() => data.categories.red)
   const white = $derived.by(() => data.categories.white)
   const other = $derived.by(() => data.categories.other)
+  const packs = $derived.by(() => data.categories.packs)
   const currency = $derived(data.region.currency_code.toUpperCase())
 
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
   function getCategoryHandle(product: HttpTypes.StoreProduct): CategoryHandle | null {
     for (const category of product.categories ?? []) {
-      if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
+      if (
+        category.handle === 'red' ||
+        category.handle === 'white' ||
+        category.handle === 'other' ||
+        category.handle === 'packs'
+      ) {
         return category.handle
       }
     }
@@ -65,6 +71,7 @@
       ...red.map((product, index) => toGaItem(index + 1, product)),
       ...white.map((product, index) => toGaItem(index + 1, product)),
       ...other.map((product, index) => toGaItem(index + 1, product)),
+      ...packs.map((product, index) => toGaItem(index + 1, product)),
     ]
 
     trackViewItemList({
@@ -109,6 +116,14 @@
 
 <ul class="grid-layout border-b border-black">
   {#each other as product, index (product.id || product.handle)}
+    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
+  {/each}
+</ul>
+
+<Marquee text="BUNDLES // PAKKER //" theme="pink"></Marquee>
+
+<ul class="grid-layout border-b border-black">
+  {#each packs as product, index (product.id || product.handle)}
     <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
   {/each}
 </ul>
