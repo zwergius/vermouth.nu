@@ -13,6 +13,31 @@ This is a SvelteKit e-commerce project for a vermouth store using:
 
 ---
 
+You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
+
+## Available Svelte MCP Tools:
+
+### 1. list-sections
+
+Use this FIRST to discover all available documentation sections. Returns a structured list with titles, use_cases, and paths.
+When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start of the chat to find relevant sections.
+
+### 2. get-documentation
+
+Retrieves full documentation content for specific sections. Accepts single or multiple sections.
+After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
+
+### 3. svelte-autofixer
+
+Analyzes Svelte code and returns issues and suggestions.
+You MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling it until no issues or suggestions are returned.
+
+### 4. playground-link
+
+Generates a Svelte Playground link with the provided code.
+After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
+
+
 ## Way Of Working
 
 ### Start Here: Required First Actions
@@ -49,14 +74,6 @@ Before handing work back, you must:
 ## Commands
 
 Prefer the scripts defined in `package.json` for standard project workflows.
-Use direct `pnpm exec ...` commands only when there is no matching script or when
-running a focused command against specific files.
-
-### Branch And Issue Workflow
-
-- Follow the global Codex branch isolation rules: one Linear issue, one branch.
-- Include the single Linear issue ID in the branch name, for example `codex/VNU-4-mobile-kurv-checkboxes`.
-- If the user asks to fix multiple Linear issues, split them into separate branches/worktrees and handle one issue at a time.
 
 ### Development
 
@@ -86,73 +103,6 @@ pnpm test:integration    # Run Playwright integration tests only
 # Single test file examples:
 pnpm exec vitest run src/lib/helpers/numbers.test.ts
 pnpm exec playwright test tests/main-page.spec.ts
-```
-
----
-
-## Local Setup And Verification Notes
-
-- Use `pnpm install`, not `npm install`. The ecommerce branch is pnpm-locked, and npm can fail with peer dependency resolution conflicts.
-- `pnpm check` requires local env values for static `$env` imports. For local verification, placeholder values are enough:
-
-```bash
-PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_test \
-PUBLIC_VITE_BACKEND_URL=http://127.0.0.1:9000 \
-EPAY_API_KEY=test \
-PUBLIC_COOKIE_YES_ID= \
-PUBLIC_GA_MEASUREMENT_ID= \
-pnpm check
-```
-
-- If `/kurv` renders a Vite 500 with `ERR_UNSUPPORTED_DIR_IMPORT` from `@medusajs/js-sdk/dist/esm/admin`, run `pnpm fix` and restart the dev server before browser verification.
-- For focused UI fixes, at minimum run `pnpm exec prettier --check <changed files>`, `pnpm exec eslint <changed files>`, `git diff --check`, and `pnpm check` with the env values above.
-
-## Code Style Guidelines
-
-### Formatting (Prettier)
-
-- 2 space indentation
-- No semicolons
-- Single quotes
-- Trailing commas: `all`
-- Print width: 100 characters
-- Svelte sort order: `options-scripts-markup-styles`
-
-### ESLint Rules
-
-- Prefer `const` (with destructuring)
-- No `var`, use `const`/`let`
-- Prefer template literals
-- Use object shorthand
-- No `else return`
-- Use `eqeqeq` (strict equality)
-- No duplicate imports
-- Array callbacks must return
-- Prefer destructuring
-
-### TypeScript
-
-- **Strict mode enabled** - all strict checks on
-- **No `any`** - use `unknown` or proper types
-- **No unused vars** - prefix with `_` if intentional (e.g., `_event`)
-- **Use interfaces** - with single extends allowed
-
-### Svelte 5 Conventions
-
-```svelte
-<script lang="ts">
-  // Use runes for reactive state
-  let count = $state(0)
-  const doubled = $derived(count * 2)
-
-  // Props with $props()
-  let { title, count = 0 }: { title: string; count?: number } = $props()
-
-  // Effects
-  $effect(() => {
-    // side effects
-  })
-</script>
 ```
 
 ---
