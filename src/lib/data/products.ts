@@ -1,11 +1,17 @@
 export type Handle =
   | 'forzudo-rojo'
   | 'forzudo-blanco'
+  | 'forzudo-combo'
   | 'sardino-rojo'
   | 'sardino-blanco'
+  | 'sardino-combo'
   | 'carmeleta-orange'
   | 'carmeleta-blanco'
   | 'carmeleta-rosso'
+  | 'carmeleta-combo'
+  | 'mix-red'
+  | 'mix-white'
+  | 'mix-trio'
   | 'tabira'
 
 interface Vermouth {
@@ -84,6 +90,27 @@ export const vermouths: Record<Handle, Vermouth> = {
     taste:
       'Forzudo Blanco giver en cremet fornemmelse med smagsnuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter. Her fås en meget balanceret Vermouth med lige dele sødme og bitter.',
   },
+  'forzudo-combo': {
+    brand: 'Forzudo',
+    extraImages: [
+      {
+        altText: 'Bordanretning med Forzudo Rojo/Blanco og skiveskåret grape frugt',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/77370af8-a66c-4301-89ed-2aa376436800',
+      },
+      {
+        altText: 'Forzudo Rojo bliver skænket i glas med is og grape',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e531d91a-1702-4d63-5a3d-0ee5f146fe00',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/77370af8-a66c-4301-89ed-2aa376436800',
+    origin: 'El Bierzo Leon, Nordvest Spanien 2 x 100 cl. / 15%',
+    recommendation:
+      'Serveres afkølet med is og citrus. Rojo er oplagt som aperitif eller i Negroni og Manhattan, mens Blanco er frisk, aromatisk og perfekt med grape.',
+    scores: { sweetness: 2, fruityness: 2, body: 2, spiciness: 3 },
+    sizeAndDegrees: '2 x 100 cl. / 15%',
+    taste:
+      'En pakke med Forzudo Rojo og Blanco fra León. Rojo er fyldig, krydret og bittersød, mens Blanco er lys, frisk og aromatisk med citrus, bitterhed og afrundet sødme.',
+  },
   'sardino-rojo': {
     brand: 'Sardino',
     extraImages: [
@@ -133,6 +160,26 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',
+  },
+  'sardino-combo': {
+    brand: 'Sardino',
+    extraImages: [
+      {
+        altText: 'Sardino Rojo/Blanco på en stige',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/8e2fdb55-16f5-4a44-1708-f2aff1171300',
+      },
+      {
+        altText: 'Carmeleta Orange, Sardino Rojo & Sardino Blanco på en stige',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3ad597b-a795-4a66-b612-953e6a4aa600',
+    origin: 'Galicien, Nordvestkysten Spanien 2 x 75 cl / 15%',
+    recommendation:
+      'Blanco fungerer perfekt som frisk aperitif på terrassen, mens Rojo er oplagt før maden eller i klassiske cocktails som Negroni og Manhattan.',
+    scores: { sweetness: 5, fruityness: 3, body: 5, spiciness: 3 },
+    sizeAndDegrees: '2 x 75 cl. / 15%',
+    taste: 'Blanco er lys, frisk og aromatisk, mens Rojo har mere fylde, krydderi og bitterhed.',
   },
   'carmeleta-orange': {
     brand: 'Carmeleta',
@@ -199,6 +246,90 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'I næsen opleves Rosso aromatisk og balsamisk med mørke citrusnoter og krydret sødme. Smagen er fyldig og harmonisk med en flot balance mellem syre, bitterhed og sødme. Den lange finish efterlader noter af appelsin, krydderier og et elegant bittert bid.',
+  },
+  'carmeleta-combo': {
+    brand: 'Carmeleta',
+    extraImages: [
+      {
+        altText: 'Carmeleta Orange Vermouth Tonic cocktails',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/13485ffe-2691-45bc-69e8-3bc54dc6bc00',
+      },
+      {
+        altText: 'Carmeleta Blanco med oliven i skål',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ed6a141-b110-4101-7a8a-2ae86f9bc100',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
+    origin: 'L’Alquería de la Comtessa Valencia 3 x 75 cl / 15%',
+    recommendation:
+      'Serveres afkølet med is og citrus. Orange er oplagt som frisk spritz, Rosso passer perfekt til Negroni og Manhattan, og Blanco er en lys aperitif til lange dage i solen.',
+    scores: { sweetness: 3, fruityness: 3, body: 4, spiciness: 3 },
+    sizeAndDegrees: '3 x 75 cl. / 15%',
+    taste:
+      'En smagskasse med Carmeleta Orange, Rosso og Blanco. Tre moderne spanske vermouther fra Valencia med appelsin, middelhavsurter, frisk citrus, krydderi og balanceret bitterhed.',
+  },
+  'mix-red': {
+    brand: 'Vermouth.NU',
+    extraImages: [
+      {
+        altText: 'Sardino Rojo Cocktail',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/02f9761c-d8dd-4994-365f-5182984a4400',
+      },
+      {
+        altText: 'Forzudo Rojo bliver skænket i glas med is og grape',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e531d91a-1702-4d63-5a3d-0ee5f146fe00',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ea8c7c08-b9b5-4b73-89f1-47546bdd7800',
+    origin: 'Spanien 3 x 75/100 cl. / 15%',
+    recommendation:
+      'Serveres afkølet med is og appelsin. En oplagt rød vermouth-pakke til aperitif, snacks og klassiske cocktails som Negroni og Manhattan.',
+    scores: { sweetness: 3, fruityness: 2, body: 4, spiciness: 4 },
+    sizeAndDegrees: '3 flasker / 15%',
+    taste:
+      'En blandet rød smagskasse med Sardino Rojo, Tabira og Forzudo Rojo. Tre fyldige spanske vermouther med krydderi, bitterhed, sødme og tydelig aperitif-karakter.',
+  },
+  'mix-white': {
+    brand: 'Vermouth.NU',
+    extraImages: [
+      {
+        altText: 'Sardino Rojo/Blanco på en stige',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/8e2fdb55-16f5-4a44-1708-f2aff1171300',
+      },
+      {
+        altText: 'Forzudo Blanco cocktail',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7d277bd1-e2c6-4c74-0b97-2a3bab563a00',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ecc64e1-b948-40b1-93a1-83c307b10900',
+    origin: 'Spanien 3 x 75/100 cl. / 15%',
+    recommendation:
+      'Serveres godt afkølet med is, citrus eller grøn oliven. En frisk hvid vermouth-pakke til aperitif, terrasseglas og lette cocktails.',
+    scores: { sweetness: 3, fruityness: 3, body: 3, spiciness: 2 },
+    sizeAndDegrees: '3 flasker / 15%',
+    taste:
+      'En blandet hvid smagskasse med Sardino Blanco, Carmeleta Blanco og Forzudo Blanco. Tre friske spanske vermouther med citrus, urter, aromatisk sødme og let bitterhed.',
+  },
+  'mix-trio': {
+    brand: 'Vermouth.NU',
+    extraImages: [
+      {
+        altText: 'Carmeleta Orange serveret i glas med skåret appelsin',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/497dbaa1-1fd1-4868-6a12-d8a440987000',
+      },
+      {
+        altText: 'Tabira Vermouth blandt andre flasker',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ea8c7c08-b9b5-4b73-89f1-47546bdd7800',
+      },
+    ],
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
+    origin: 'Spanien 3 x 75/100 cl. / 15%',
+    recommendation:
+      'Serveres afkølet med is og citrus. En oplagt gavepakke eller startpakke til dig, der vil smage rød, hvid og orange vermouth.',
+    scores: { sweetness: 3, fruityness: 3, body: 4, spiciness: 3 },
+    sizeAndDegrees: '3 flasker / 15%',
+    taste:
+      'En blandet smagskasse med Tabira, Carmeleta Orange og Forzudo Blanco. Fra klassisk rød vermouth fra León til solmoden appelsin fra Valencia og frisk hvid vermouth fra El Bierzo.',
   },
   tabira: {
     brand: 'Tabira',
