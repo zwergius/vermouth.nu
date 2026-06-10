@@ -2,12 +2,12 @@ import type { LayoutServerLoad } from './$types'
 import { sdk } from '$lib/medusa'
 import { HttpTypes } from '@medusajs/types'
 
-type CategoryHandle = 'red' | 'white' | 'other'
+type CategoryHandle = 'red' | 'white' | 'other' | 'packs'
 
 const cookieCartKey = 'cart_id'
 
 function isCategoryHandle(handle: string): handle is CategoryHandle {
-  return handle === 'red' || handle === 'white' || handle === 'other'
+  return handle === 'red' || handle === 'white' || handle === 'other' || handle === 'packs'
 }
 
 export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
@@ -36,6 +36,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
       red: [],
       white: [],
       other: [],
+      packs: [],
     } as Record<CategoryHandle, HttpTypes.StoreProduct[]>,
   )
 
