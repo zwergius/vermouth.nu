@@ -61,7 +61,7 @@ Before handing work back, you must:
 
 1. Run the planned verification commands, including focused checks for changed files.
 2. Run `git diff --check` and review the diff for unrelated changes.
-3. Stop dev servers or background processes started for the task.
+3. Leave a dev server running when useful for quick visual verification; otherwise stop task background processes.
 4. Remove accidental temp files, logs, screenshots, or generated artifacts unless they are part of the deliverable.
 5. Report any verification that failed, was skipped, or needs external services.
 6. Summarize the behavior changed and the files touched.
