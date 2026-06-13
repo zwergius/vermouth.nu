@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  export let theme: 'blue' | 'red' | 'yellow' | 'white' = 'blue'
+  export let theme: 'blue' | 'red' | 'yellow' | 'white' | 'pink' = 'blue'
   export let text: string
 
   const pixelsPerSecond = 100
@@ -63,9 +63,11 @@
   class="marquee"
   class:text-brand-pink={theme === 'blue' || theme === 'red'}
   class:text-brand-red={theme === 'yellow' || theme === 'white'}
+  class:text-brand-blue={theme === 'pink'}
   class:bg-brand-blue={theme === 'blue'}
   class:bg-brand-red={theme === 'red'}
   class:bg-brand-yellow={theme === 'yellow'}
+  class:bg-brand-pink={theme === 'pink'}
   class:bg-white={theme === 'white'}
   style="--animation-duration: {animationDuration}s"
 >

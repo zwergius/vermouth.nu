@@ -22,7 +22,7 @@
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
-  const { red, white, other } = $derived(data.categories)
+  const { red, white, other, packs } = $derived(data.categories)
   const { cart, locale, product, region } = $derived(data)
   const { extraImages, image, origin, recommendation, scores, taste } = $derived(
     vermouths[product.handle as Handle],
@@ -54,7 +54,12 @@
 
   function getCategoryHandle(): keyof typeof GA_CATEGORY_LABEL_BY_HANDLE | null {
     for (const category of product.categories ?? []) {
-      if (category.handle === 'red' || category.handle === 'white' || category.handle === 'other') {
+      if (
+        category.handle === 'red' ||
+        category.handle === 'white' ||
+        category.handle === 'other' ||
+        category.handle === 'packs'
+      ) {
         return category.handle
       }
     }
@@ -257,6 +262,14 @@
 
 <ul class="grid-layout border-b border-black">
   {#each other as product (product.id)}
+    <ProductGridItem {product} />
+  {/each}
+</ul>
+
+<Marquee text="BUNDLES // PAKKER //" theme="pink"></Marquee>
+
+<ul class="grid-layout border-b border-black">
+  {#each packs as product (product.id)}
     <ProductGridItem {product} />
   {/each}
 </ul>

@@ -52,7 +52,7 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
 
 test('customer can continue from cart to payment', async ({ page }) => {
   await addProductToCart(page)
-  await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
+  await page.goto('/kurv', { waitUntil: 'networkidle' })
 
   await expect(page.getByText(productName).first()).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Kontaktinformation' })).toBeVisible()
@@ -60,6 +60,6 @@ test('customer can continue from cart to payment', async ({ page }) => {
   await fillCheckoutForm(page)
   await page.getByRole('button', { name: 'Gå til betaling' }).click()
 
-  await expect(page).toHaveURL(/payments\.epay\.eu/)
+  await expect(page).toHaveURL(/payments\.epay\.eu/, { timeout: 15_000 })
   await expect(page.getByText('Secure payment by')).toBeVisible()
 })

@@ -91,7 +91,7 @@
   function getCategoryHandleByProductHandle(productHandle?: string): CategoryHandle | null {
     if (!productHandle) return null
 
-    for (const categoryHandle of ['red', 'white', 'other'] as const) {
+    for (const categoryHandle of ['red', 'white', 'other', 'packs'] as const) {
       if (data.categories[categoryHandle].some((product) => product.handle === productHandle)) {
         return categoryHandle
       }
