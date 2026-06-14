@@ -30,7 +30,7 @@
         srcset={productSrcSet(image)}
         src="{image}/w=145,h=290,fit=cover"
         sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
-        width="145"
+        width="290"
         height="290"
       />
       <div class="overlay">
