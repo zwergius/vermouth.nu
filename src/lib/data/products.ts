@@ -102,7 +102,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e531d91a-1702-4d63-5a3d-0ee5f146fe00',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/77370af8-a66c-4301-89ed-2aa376436800',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3977254-55e5-47f2-5a20-fbb544816800',
     origin: 'El Bierzo Leon, Nordvest Spanien 2 x 100 cl. / 15%',
     recommendation:
       'Serveres afkølet med is og citrus. Rojo er oplagt som aperitif eller i Negroni og Manhattan, mens Blanco er frisk, aromatisk og perfekt med grape.',
@@ -173,7 +173,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d3ad597b-a795-4a66-b612-953e6a4aa600',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ad5d1750-dfa9-4aae-0bf3-b86e9b03b600',
     origin: 'Galicien, Nordvestkysten Spanien 2 x 75 cl / 15%',
     recommendation:
       'Blanco fungerer perfekt som frisk aperitif på terrassen, mens Rojo er oplagt før maden eller i klassiske cocktails som Negroni og Manhattan.',
@@ -259,7 +259,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ed6a141-b110-4101-7a8a-2ae86f9bc100',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/5f386ebe-dbbf-48d3-ec31-bbf48116eb00',
     origin: 'L’Alquería de la Comtessa Valencia 3 x 75 cl / 15%',
     recommendation:
       'Serveres afkølet med is og citrus. Orange er oplagt som frisk spritz, Rosso passer perfekt til Negroni og Manhattan, og Blanco er en lys aperitif til lange dage i solen.',
@@ -280,7 +280,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e531d91a-1702-4d63-5a3d-0ee5f146fe00',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ea8c7c08-b9b5-4b73-89f1-47546bdd7800',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/03ff1c99-011f-4978-736f-7e56cc30be00',
     origin: 'Spanien 3 x 75/100 cl. / 15%',
     recommendation:
       'Serveres afkølet med is og appelsin. En oplagt rød vermouth-pakke til aperitif, snacks og klassiske cocktails som Negroni og Manhattan.',
@@ -301,7 +301,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7d277bd1-e2c6-4c74-0b97-2a3bab563a00',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/2ecc64e1-b948-40b1-93a1-83c307b10900',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/68fe27a7-d137-4474-3de0-9441db70bd00',
     origin: 'Spanien 3 x 75/100 cl. / 15%',
     recommendation:
       'Serveres godt afkølet med is, citrus eller grøn oliven. En frisk hvid vermouth-pakke til aperitif, terrasseglas og lette cocktails.',
@@ -322,7 +322,7 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/ea8c7c08-b9b5-4b73-89f1-47546bdd7800',
       },
     ],
-    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/b44ab755-b6ac-440f-c1ae-4faa077fc400',
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/3a18bbad-4d4e-4ef4-3d55-797154b1fd00',
     origin: 'Spanien 3 x 75/100 cl. / 15%',
     recommendation:
       'Serveres afkølet med is og citrus. En oplagt gavepakke eller startpakke til dig, der vil smage rød, hvid og orange vermouth.',
