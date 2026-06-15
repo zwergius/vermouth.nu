@@ -1,23 +1,53 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { page } from '$app/state'
+  import { dev } from '$app/environment'
   import { PUBLIC_COOKIE_YES_ID, PUBLIC_GA_MEASUREMENT_ID } from '$env/static/public'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
+  import { reduced_motion } from '$lib/actions/reduced-motion'
   import { initializeAnalytics } from '$lib/helpers/analytics'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
   import type { LayoutProps } from './$types'
-  import { scale } from 'svelte/transition'
-  import { dev } from '$app/environment'
+  import { fade, scale } from 'svelte/transition'
 
   const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
+  const topBannerMessages = [
+    {
+      href: '/sortiment',
+      text: 'Gratis fragt ved køb over 550 dkk',
+      variant: 'green',
+    },
+    {
+      href: '/smagninger',
+      text: 'Book en smagning',
+      variant: 'yellow',
+    },
+  ] as const
+
   const { children, data }: LayoutProps = $props()
   const { cart } = $derived(data)
+  let topBannerIndex = $state(0)
+  let isTopBannerPaused = $state(false)
+  const topBanner = $derived(topBannerMessages[topBannerIndex])
+  const topBannerFadeDuration = $derived($reduced_motion ? 0 : 400)
 
   onMount(() => {
     if (!PUBLIC_GA_MEASUREMENT_ID) return
 
     initializeAnalytics(PUBLIC_GA_MEASUREMENT_ID)
+  })
+
+  onMount(() => {
+    const interval = window.setInterval(() => {
+      if (isTopBannerPaused) return
+
+      topBannerIndex = (topBannerIndex + 1) % topBannerMessages.length
+    }, 5000)
+
+    return () => {
+      window.clearInterval(interval)
+    }
   })
 </script>
 
@@ -93,9 +123,23 @@
 {/snippet}
 
 <header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
-  <a class="block bg-brand-yellow py-1.5 text-center text-xs" href="/smagninger"
-    >BOOK EN SMAGNING&nbsp;<span class="underline">NU</span></a
+  <a
+    class="grid overflow-hidden py-1.5 text-center text-xs"
+    class:bg-green-600={topBanner.variant === 'green'}
+    class:bg-brand-yellow={topBanner.variant === 'yellow'}
+    class:text-white={topBanner.variant === 'green'}
+    href={topBanner.href}
+    onblur={() => (isTopBannerPaused = false)}
+    onfocus={() => (isTopBannerPaused = true)}
+    onpointerenter={() => (isTopBannerPaused = true)}
+    onpointerleave={() => (isTopBannerPaused = false)}
   >
+    {#key topBannerIndex}
+      <span class="col-start-1 row-start-1" transition:fade={{ duration: topBannerFadeDuration }}>
+        {topBanner.text}&nbsp;<span class="underline">NU</span>
+      </span>
+    {/key}
+  </a>
   <nav class="flex-1 border-b border-t border-black text-sm">
     <ul class="nav-list h-full">
       <li class="col-span-2 lg:col-span-1">
