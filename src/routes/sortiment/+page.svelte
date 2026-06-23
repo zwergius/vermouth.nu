@@ -12,6 +12,7 @@
     trackViewItemList,
     type GaListItem,
   } from '$lib/helpers/analytics'
+  import { resolve } from '$app/paths'
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
@@ -19,6 +20,7 @@
   const white = $derived.by(() => data.categories.white)
   const other = $derived.by(() => data.categories.other)
   const packs = $derived.by(() => data.categories.packs)
+  const { locale, region } = $derived(data)
   const currency = $derived(data.region.currency_code.toUpperCase())
 
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
@@ -93,14 +95,19 @@
 <section class="content border-b border-black">
   <h1>VIL DU SMAGE FØR DU KØBER?</h1>
   <p>Så frygt ej! Du kan smage vores lækre dråber på et udvalg af steder i København</p>
-  <a class="btn" href="/forhandlere">SE HVOR</a>
+  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
 </section>
 
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
   {#each red as product, index (product.id || product.handle)}
-    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      {locale}
+      {product}
+      onSelectItem={() => handleSelectItem(index + 1, product)}
+    />
   {/each}
 </ul>
 
@@ -108,7 +115,12 @@
 
 <ul class="grid-layout border-b border-black">
   {#each white as product, index (product.id || product.handle)}
-    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      {locale}
+      {product}
+      onSelectItem={() => handleSelectItem(index + 1, product)}
+    />
   {/each}
 </ul>
 
@@ -116,7 +128,12 @@
 
 <ul class="grid-layout border-b border-black">
   {#each other as product, index (product.id || product.handle)}
-    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      {locale}
+      {product}
+      onSelectItem={() => handleSelectItem(index + 1, product)}
+    />
   {/each}
 </ul>
 
@@ -124,7 +141,12 @@
 
 <ul class="grid-layout border-b border-black">
   {#each packs as product, index (product.id || product.handle)}
-    <ProductGridItem {product} onSelectItem={() => handleSelectItem(index + 1, product)} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      {locale}
+      {product}
+      onSelectItem={() => handleSelectItem(index + 1, product)}
+    />
   {/each}
 </ul>
 
@@ -134,5 +156,5 @@
     Vermouth smagninger til både private og firmaer. Den helt rigtige måde at komme igang med
     vermouth på.
   </p>
-  <a class="btn" href="/smagninger">BOOK EN SMAGNING</a>
+  <a class="btn" href={resolve('/smagninger')}>BOOK EN SMAGNING</a>
 </section>

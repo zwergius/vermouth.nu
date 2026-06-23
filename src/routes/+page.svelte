@@ -6,8 +6,10 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
   import Hero from '$lib/components/hero.svelte'
+  import { resolve } from '$app/paths'
 
   const { data }: PageProps = $props()
+  const { locale, region } = $derived(data)
 
   const founders = [
     {
@@ -60,7 +62,7 @@
     endnu. Fortvivl ikke! Lad os hjælpe dig med at<br />
     opdage og nyde vermouth.
   </p>
-  <a class="btn" href="/forhandlere">SE HVOR</a>
+  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
 </section>
 
 <Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
@@ -71,14 +73,14 @@
     Rojo, Blanco, Orange eller Rosa?<br />
     Vi har det&nbsp;<span class="underline">hele</span>.
   </p>
-  <a class="btn" href="/sortiment">SE HELE UDVALGET</a>
+  <a class="btn" href={resolve('/sortiment')}>SE HELE UDVALGET</a>
 </section>
 
 <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each data.products as product}
-    <ProductGridItem {product} />
+  {#each data.products as product (product.id || product.handle)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
   {/each}
 </ul>
 
@@ -89,7 +91,7 @@
       <p class="mb-6 md:mb-8">
         Skift ginen ud:<br />Sådan laver du den perfekte vermouth & tonic og meget mere..
       </p>
-      <a class="btn" href="/inspiration">DRINKSOPSKRIFTER</a>
+      <a class="btn" href={resolve('/inspiration')}>DRINKSOPSKRIFTER</a>
     </div>
   </div>
 
@@ -121,12 +123,12 @@
       Med kærlighed til urterne og en drøm om at bringe ægte spansk vermouth til danske hjem,
       importerer vi nu de mest udsøgte flasker, der emmer af spansk charme og passion. ¡Salud!
     </p>
-    <a class="btn" href="/om-os">LÆS MERE</a>
+    <a class="btn" href={resolve('/om-os')}>LÆS MERE</a>
   </div>
 </section>
 
 <ul class="founding-fathers md:grid md:grid-cols-3 border-b border-black">
-  {#each founders as { name, imgUrl }}
+  {#each founders as { name, imgUrl } (name)}
     <li class="relative aspect-square">
       <img
         alt={name}
