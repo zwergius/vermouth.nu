@@ -16,12 +16,10 @@
     {
       href: '/sortiment',
       text: 'Gratis fragt ved køb over 550 dkk',
-      variant: 'green',
     },
     {
       href: '/smagninger',
       text: 'Book en smagning',
-      variant: 'yellow',
     },
   ] as const
 
@@ -173,10 +171,7 @@
 
 <header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
   <a
-    class="grid overflow-hidden py-1.5 text-center text-xs"
-    class:bg-green-600={topBanner.variant === 'green'}
-    class:bg-brand-yellow={topBanner.variant === 'yellow'}
-    class:text-white={topBanner.variant === 'green'}
+    class="grid overflow-hidden bg-brand-yellow py-1.5 text-center text-xs"
     href={topBanner.href}
     onblur={() => (isTopBannerPaused = false)}
     onfocus={() => (isTopBannerPaused = true)}
