@@ -11,13 +11,14 @@
     type GaListItem,
   } from '$lib/helpers/analytics'
   import { squareSrcSet } from '$lib/helpers/images'
-  import { formatPrice } from '$lib/helpers/numbers'
+  import { getProductPriceDisplay } from '$lib/helpers/prices'
   import { Form, QuantitySelector } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
   import { page } from '$app/state'
+  import { resolve } from '$app/paths'
   import { untrack } from 'svelte'
 
   const { slug } = $derived(page.params)
@@ -29,9 +30,7 @@
   )
   const productDescription = $derived(product.description ?? '')
   const variant = $derived(product.variants?.[0])
-  const formattedPrice = $derived(
-    formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
-  )
+  const priceDisplay = $derived(getProductPriceDisplay(product, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
   type QuantityActionSuccess = { success: true; quantity: number }
 
@@ -39,14 +38,14 @@
   let isFormSubmitting = $state(false)
 
   const buttonText = $derived.by(() => {
-    if (buttonState === 'loading') return 'VENT...'
+    if (isFormSubmitting && buttonState === 'default') return 'VENT...'
     if (buttonState === 'success') return cartItem ? 'OPDATERET!' : 'TILFØJET!'
     if (buttonState === 'error') return 'FEJL'
     return 'LÆG I KURV'
   })
 
   const buttonColorClass = $derived.by(() => {
-    if (buttonState === 'loading') return 'bg-brand-blue/70'
+    if (isFormSubmitting && buttonState === 'default') return 'bg-brand-blue/70'
     if (buttonState === 'success') return 'bg-green-600'
     if (buttonState === 'error') return 'bg-red-600'
     return 'bg-brand-blue'
@@ -118,14 +117,6 @@
   }
 
   $effect(() => {
-    if (isFormSubmitting && buttonState === 'default') {
-      buttonState = 'loading'
-    } else if (!isFormSubmitting && buttonState === 'loading') {
-      buttonState = 'default'
-    }
-  })
-
-  $effect(() => {
     void slug
 
     untrack(() => {
@@ -151,9 +142,23 @@
     <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
     <h1 class="text-2xl mb-2">{product.title}</h1>
     <p class="font-bold text-xs mb-4">{origin}</p>
-    <p class="font-bold text-base mb-6">
-      {formattedPrice}
-    </p>
+    {#if priceDisplay}
+      <div class="mb-6">
+        <p class="text-base font-bold">
+          {#if priceDisplay.isDiscounted}
+            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
+            <span class="ml-2 text-sm font-normal line-through opacity-70">
+              <span class="sr-only">Normalpris </span>{priceDisplay.original}
+            </span>
+          {:else}
+            {priceDisplay.current}
+          {/if}
+        </p>
+        {#if priceDisplay.savingsPercent}
+          <p class="mt-1 text-xs font-bold text-brand-red">SPAR {priceDisplay.savingsPercent}%</p>
+        {/if}
+      </div>
+    {/if}
     <div class="mb-4">
       <Form
         action="/kurv?/addOrUpdateItemQuantity"
@@ -165,7 +170,7 @@
         <div class="flex items-center justify-between md:gap-4">
           <button
             class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
-            disabled={buttonState !== 'default'}
+            disabled={buttonState !== 'default' || isFormSubmitting}
             type="submit"
           >
             {buttonText}
@@ -178,7 +183,7 @@
       class="block text-xs italic
       mb-10
       hover:font-bold"
-      href="/forhandlere">KØB ELLER SMAG HER &#8594;</a
+      href={resolve('/forhandlere')}>KØB ELLER SMAG HER &#8594;</a
     >
     <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
     <p class="text-sm mb-6">{productDescription}</p>
@@ -239,14 +244,14 @@
 <section class="content md:hidden border-b border-black">
   <h2>VIL DU SMAGE FØR DU KØBER SÅ FRYGT EJ!</h2>
   <p>Du kan smage vores lækre dråber på et udvalg af barer & restauranter i København</p>
-  <a class="btn" href="/inspiration">SE HVOR</a>
+  <a class="btn" href={resolve('/inspiration')}>SE HVOR</a>
 </section>
 
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
   {#each red as product (product.id)}
-    <ProductGridItem {product} />
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
   {/each}
 </ul>
 
@@ -254,7 +259,7 @@
 
 <ul class="grid-layout border-b border-black">
   {#each white as product (product.id)}
-    <ProductGridItem {product} />
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
   {/each}
 </ul>
 
@@ -262,7 +267,7 @@
 
 <ul class="grid-layout border-b border-black">
   {#each other as product (product.id)}
-    <ProductGridItem {product} />
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
   {/each}
 </ul>
 
@@ -270,7 +275,7 @@
 
 <ul class="grid-layout border-b border-black">
   {#each packs as product (product.id)}
-    <ProductGridItem {product} />
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
   {/each}
 </ul>
 
@@ -286,5 +291,5 @@
 <section class="content hidden md:block border-b border-black">
   <h2>Inspiration</h2>
   <p>Op dit cocktails-game med Vermouth</p>
-  <a class="btn" href="/inspiration">DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
+  <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
