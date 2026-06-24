@@ -17,11 +17,18 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
+  import { replaceState } from '$app/navigation'
+  import { resolve } from '$app/paths'
   import { page } from '$app/state'
   import { untrack } from 'svelte'
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
+  type ProductReviewsResponse = PageProps['data']['reviews']
+  type ProductReview = ProductReviewsResponse['reviews'][number]
+
+  const REVIEWS_PAGE_SIZE = 2
+
   const { red, white, other, packs } = $derived(data.categories)
   const { cart, locale, product, region } = $derived(data)
   const { extraImages, image, origin, recommendation, scores, taste } = $derived(
@@ -33,10 +40,25 @@
     formatPrice(variant?.calculated_price?.calculated_amount ?? 0, region.currency_code, locale),
   )
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
+  let reviews = $derived(data.reviews)
+  let visibleReviews = $derived(data.reviews.reviews)
+  const averageRating = $derived(Math.round(reviews.average_rating * 10) / 10)
+  const formattedAverageRating = $derived(
+    new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(averageRating),
+  )
+  const hasReviews = $derived(reviews.review_count > 0)
+  const reviewCountLabel = $derived(
+    `${reviews.review_count} ${reviews.review_count === 1 ? 'anmeldelse' : 'anmeldelser'}`,
+  )
+  const visibleReviewCount = $derived(reviews.offset + visibleReviews.length)
+  const remainingReviewCount = $derived(Math.max(reviews.review_count - visibleReviewCount, 0))
+  const hasMoreReviews = $derived(remainingReviewCount > 0)
   type QuantityActionSuccess = { success: true; quantity: number }
 
   let buttonState = $state<'default' | 'loading' | 'success' | 'error'>('default')
   let isFormSubmitting = $state(false)
+  let isLoadingMoreReviews = $state(false)
+  let reviewsLoadError = $state(false)
 
   const buttonText = $derived.by(() => {
     if (buttonState === 'loading') return 'VENT...'
@@ -82,6 +104,77 @@
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
       quantity,
+    }
+  }
+
+  function getRatingPercentage(rating: number) {
+    return `${Math.max(0, Math.min(5, rating)) * 20}%`
+  }
+
+  function formatReviewDate(date: string) {
+    return new Intl.DateTimeFormat(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(date))
+  }
+
+  function updateReviewPaginationUrl(limit: number, offset: number) {
+    const currentSlug = slug ?? product.handle
+    if (!currentSlug) return
+
+    const nextUrl = new URL(page.url)
+    nextUrl.searchParams.set('reviews_limit', String(limit))
+    nextUrl.searchParams.set('reviews_offset', String(offset))
+    nextUrl.hash = 'product-reviews'
+    replaceState(
+      `${resolve('/sortiment/[slug=vermouth]', { slug: currentSlug })}${nextUrl.search}${nextUrl.hash}`,
+      page.state,
+    )
+  }
+
+  async function loadMoreReviews() {
+    if (!product.id || isLoadingMoreReviews || !hasMoreReviews) return
+
+    isLoadingMoreReviews = true
+    reviewsLoadError = false
+    const nextOffset = visibleReviewCount
+
+    const params = new URLSearchParams({
+      limit: String(REVIEWS_PAGE_SIZE),
+      offset: String(nextOffset),
+      order: '-created_at',
+    })
+
+    try {
+      const response = await fetch(
+        `/api/products/${encodeURIComponent(product.id)}/reviews?${params}`,
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch more product reviews')
+      }
+
+      const nextReviews = (await response.json()) as ProductReviewsResponse
+      const visibleReviewIds = new Set(visibleReviews.map((review) => review.id))
+      const mergedReviews: ProductReview[] = [
+        ...visibleReviews,
+        ...nextReviews.reviews.filter((review) => !visibleReviewIds.has(review.id)),
+      ]
+
+      visibleReviews = mergedReviews
+      reviews = {
+        ...nextReviews,
+        offset: reviews.offset,
+        limit: reviews.offset + mergedReviews.length,
+        reviews: mergedReviews,
+      }
+      updateReviewPaginationUrl(reviews.limit, reviews.offset)
+    } catch (error) {
+      console.error('load more product reviews failed with error: ', error)
+      reviewsLoadError = true
+    } finally {
+      isLoadingMoreReviews = false
     }
   }
 
@@ -148,6 +241,29 @@
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
+    {#if hasReviews}
+      <div class="mb-8 flex flex-col items-start gap-3 text-brand-blue">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p
+            class="relative inline-block text-[1.9375rem]/[1.9375rem] font-bold tracking-normal"
+            aria-label="{formattedAverageRating} ud af 5 stjerner"
+          >
+            <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
+            <span
+              aria-hidden="true"
+              class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
+              style:width={getRatingPercentage(reviews.average_rating)}
+            >
+              ★★★★★
+            </span>
+          </p>
+          <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
+        </div>
+        <a class="text-xs font-bold underline underline-offset-2" href="#product-reviews">
+          Læs {reviewCountLabel}
+        </a>
+      </div>
+    {/if}
     <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
     <h1 class="text-2xl mb-2">{product.title}</h1>
     <p class="font-bold text-xs mb-4">{origin}</p>
@@ -178,7 +294,7 @@
       class="block text-xs italic
       mb-10
       hover:font-bold"
-      href="/forhandlere">KØB ELLER SMAG HER &#8594;</a
+      href={resolve('/forhandlere')}>KØB ELLER SMAG HER &#8594;</a
     >
     <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
     <p class="text-sm mb-6">{productDescription}</p>
@@ -236,10 +352,81 @@
   </li>
 </ul>
 
+{#if hasReviews}
+  <section
+    class="border-b border-black px-11 py-12 text-brand-blue lg:px-20 lg:py-20 2xl:px-32"
+    id="product-reviews"
+  >
+    <div class="mb-12 flex items-end justify-between gap-6 border-b border-black pb-5">
+      <h2 class="text-base font-bold uppercase md:text-lg">SMAGT &amp; VURDERET</h2>
+      <div class="text-right">
+        <p
+          class="text-xl font-bold md:text-[3rem]/[3.5rem]"
+          aria-label="{formattedAverageRating} ud af 5 stjerner"
+        >
+          {formattedAverageRating}/5
+        </p>
+        <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
+      </div>
+    </div>
+    <ul class="grid gap-10 lg:grid-cols-2" id="product-review-list">
+      {#each visibleReviews as review (review.id)}
+        <li
+          class="grid gap-4 border-t border-black pt-6 first:border-t-0 lg:[&:nth-child(-n+2)]:border-t-0"
+        >
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p
+              class="relative inline-block text-[1.5rem]/[1.5rem] font-bold"
+              aria-label="{review.rating} ud af 5 stjerner"
+            >
+              <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
+              <span
+                aria-hidden="true"
+                class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
+                style:width={getRatingPercentage(review.rating)}
+              >
+                ★★★★★
+              </span>
+            </p>
+            <p class="text-xs font-bold text-black">{formatReviewDate(review.created_at)}</p>
+          </div>
+          {#if review.title}
+            <h3 class="text-sm font-bold text-black">{review.title}</h3>
+          {/if}
+          {#if review.content}
+            <p class="max-w-[40rem] text-sm text-black">{review.content}</p>
+          {/if}
+          {#if review.reviewer_name}
+            <p class="text-xs font-bold text-black">- {review.reviewer_name}</p>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+    {#if hasMoreReviews}
+      <div class="mt-12 flex justify-center">
+        <button
+          class="btn justify-center transition-colors disabled:cursor-not-allowed disabled:bg-brand-blue/60"
+          type="button"
+          disabled={isLoadingMoreReviews}
+          onclick={loadMoreReviews}
+          aria-controls="product-review-list"
+        >
+          {isLoadingMoreReviews ? 'HENTER...' : `VIS FLERE (${remainingReviewCount})`}
+        </button>
+      </div>
+    {/if}
+    {#if reviewsLoadError}
+      <p class="mt-4 text-center text-xs font-bold text-black" aria-live="polite">
+        Kunne ikke hente flere anmeldelser. Prøv igen.
+      </p>
+    {/if}
+  </section>
+{/if}
+
 <section class="content md:hidden border-b border-black">
   <h2>VIL DU SMAGE FØR DU KØBER SÅ FRYGT EJ!</h2>
   <p>Du kan smage vores lækre dråber på et udvalg af barer & restauranter i København</p>
-  <a class="btn" href="/inspiration">SE HVOR</a>
+  <a class="btn" href={resolve('/inspiration')}>SE HVOR</a>
 </section>
 
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
@@ -286,5 +473,5 @@
 <section class="content hidden md:block border-b border-black">
   <h2>Inspiration</h2>
   <p>Op dit cocktails-game med Vermouth</p>
-  <a class="btn" href="/inspiration">DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
+  <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
