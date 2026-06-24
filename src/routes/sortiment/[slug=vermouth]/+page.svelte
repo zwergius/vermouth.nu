@@ -17,15 +17,13 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { replaceState } from '$app/navigation'
+  import { goto } from '$app/navigation'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
   import { untrack } from 'svelte'
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
-  type ProductReviewsResponse = PageProps['data']['reviews']
-  type ProductReview = ProductReviewsResponse['reviews'][number]
 
   const REVIEWS_PAGE_SIZE = 2
 
@@ -38,8 +36,8 @@
   const variant = $derived(product.variants?.[0])
   const priceDisplay = $derived(getProductPriceDisplay(product, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
-  let reviews = $derived(data.reviews)
-  let visibleReviews = $derived(data.reviews.reviews)
+  const reviews = $derived(data.reviews)
+  const visibleReviews = $derived(data.reviews.reviews)
   const averageRating = $derived(Math.round(reviews.average_rating * 10) / 10)
   const formattedAverageRating = $derived(
     new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(averageRating),
@@ -117,57 +115,31 @@
     }).format(new Date(date))
   }
 
-  function updateReviewPaginationUrl(limit: number, offset: number) {
-    const currentSlug = slug ?? product.handle
-    if (!currentSlug) return
-
-    const nextUrl = new URL(page.url)
-    nextUrl.searchParams.set('reviews_limit', String(limit))
-    nextUrl.searchParams.set('reviews_offset', String(offset))
-    nextUrl.hash = 'product-reviews'
-    replaceState(
-      `${resolve('/sortiment/[slug=vermouth]', { slug: currentSlug })}${nextUrl.search}${nextUrl.hash}`,
-      page.state,
-    )
-  }
-
   async function loadMoreReviews() {
-    if (!product.id || isLoadingMoreReviews || !hasMoreReviews) return
+    const currentSlug = slug ?? product.handle
+    if (!currentSlug || isLoadingMoreReviews || !hasMoreReviews) return
 
     isLoadingMoreReviews = true
     reviewsLoadError = false
-    const nextOffset = visibleReviewCount
-
-    const params = new URLSearchParams({
-      limit: String(REVIEWS_PAGE_SIZE),
-      offset: String(nextOffset),
-      order: '-created_at',
-    })
+    const nextSearchParams = new URLSearchParams(page.url.searchParams)
+    const maxVisibleReviews = Math.max(reviews.review_count - reviews.offset, 0)
+    nextSearchParams.set(
+      'reviews_limit',
+      String(Math.min(visibleReviews.length + REVIEWS_PAGE_SIZE, maxVisibleReviews)),
+    )
+    nextSearchParams.set('reviews_offset', String(reviews.offset))
 
     try {
-      const response = await fetch(
-        `/api/products/${encodeURIComponent(product.id)}/reviews?${params}`,
+      await goto(
+        resolve(
+          `/sortiment/${encodeURIComponent(currentSlug)}?${nextSearchParams}#product-reviews`,
+        ),
+        {
+          keepFocus: true,
+          noScroll: true,
+          replaceState: true,
+        },
       )
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch more product reviews')
-      }
-
-      const nextReviews = (await response.json()) as ProductReviewsResponse
-      const visibleReviewIds = new Set(visibleReviews.map((review) => review.id))
-      const mergedReviews: ProductReview[] = [
-        ...visibleReviews,
-        ...nextReviews.reviews.filter((review) => !visibleReviewIds.has(review.id)),
-      ]
-
-      visibleReviews = mergedReviews
-      reviews = {
-        ...nextReviews,
-        offset: reviews.offset,
-        limit: reviews.offset + mergedReviews.length,
-        reviews: mergedReviews,
-      }
-      updateReviewPaginationUrl(reviews.limit, reviews.offset)
     } catch (error) {
       console.error('load more product reviews failed with error: ', error)
       reviewsLoadError = true
