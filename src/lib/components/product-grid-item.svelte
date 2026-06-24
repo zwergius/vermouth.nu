@@ -51,7 +51,7 @@
       {#if priceDisplay?.savingsPercent}
         <div
           aria-label="Spar {priceDisplay.savingsPercent}%"
-          class="discount-badge absolute left-1/2 top-[40%] z-10 flex aspect-square w-[clamp(5.25rem,16vw,6.75rem)] flex-col items-center justify-center gap-3 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red [translate:calc(-128%-60px)_-112%]"
+          class="discount-badge absolute left-0 top-1/2 z-10 flex size-24 -translate-x-20 -translate-y-28 flex-col items-center justify-center gap-3 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red md:size-28"
         >
           <span class="text-sm">SPAR</span>
           <span class="text-lg">{priceDisplay.savingsPercent}%</span>
