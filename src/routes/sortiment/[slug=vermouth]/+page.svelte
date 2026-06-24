@@ -130,16 +130,11 @@
     nextSearchParams.set('reviews_offset', String(reviews.offset))
 
     try {
-      await goto(
-        resolve(
-          `/sortiment/${encodeURIComponent(currentSlug)}?${nextSearchParams}#product-reviews`,
-        ),
-        {
-          keepFocus: true,
-          noScroll: true,
-          replaceState: true,
-        },
-      )
+      await goto(resolve(`/sortiment/${encodeURIComponent(currentSlug)}?${nextSearchParams}`), {
+        keepFocus: true,
+        noScroll: true,
+        replaceState: true,
+      })
     } catch (error) {
       console.error('load more product reviews failed with error: ', error)
       reviewsLoadError = true
