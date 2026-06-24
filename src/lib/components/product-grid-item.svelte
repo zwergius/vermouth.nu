@@ -51,10 +51,10 @@
       {#if priceDisplay?.savingsPercent}
         <div
           aria-label="Spar {priceDisplay.savingsPercent}%"
-          class="discount-badge absolute z-10 flex aspect-square flex-col items-center justify-center rounded-full bg-white text-center font-bold text-brand-red"
+          class="discount-badge absolute left-1/2 top-[40%] z-10 flex aspect-square w-[clamp(5.25rem,16vw,6.75rem)] flex-col items-center justify-center gap-3 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red [translate:calc(-128%-60px)_-112%]"
         >
-          <span class="discount-label">SPAR</span>
-          <span class="discount-percent">{priceDisplay.savingsPercent}%</span>
+          <span class="text-sm">SPAR</span>
+          <span class="text-lg">{priceDisplay.savingsPercent}%</span>
         </div>
       {/if}
     </div>
@@ -96,27 +96,9 @@
   }
 
   .discount-badge {
-    left: 50%;
-    top: 40%;
-    width: clamp(5.25rem, 16vw, 6.75rem);
-    padding: 0.9rem;
-    gap: 0.8rem;
-    line-height: 0.9;
-    translate: calc(-128% - 60px) -112%;
     scale: 0;
     rotate: 8deg;
     animation: discount-badge-pop 650ms cubic-bezier(0.16, 1.25, 0.32, 1) 180ms forwards;
-  }
-
-  .discount-label {
-    font-size: clamp(1rem, 0.85rem + 0.4vw, 1.25rem);
-    translate: 0 -0.1rem;
-    text-box: trim-both cap alphabetic;
-  }
-
-  .discount-percent {
-    font-size: clamp(1.55rem, 1.25rem + 0.75vw, 2.15rem);
-    text-box: trim-both cap alphabetic;
   }
 
   @keyframes discount-badge-pop {
