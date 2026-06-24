@@ -4,6 +4,7 @@
   import { getProductPriceDisplay } from '$lib/helpers/prices'
   import { resolve } from '$app/paths'
   import { HttpTypes } from '@medusajs/types'
+  import type { Attachment } from 'svelte/attachments'
 
   const {
     currencyCode,
@@ -18,9 +19,35 @@
   } = $props()
   const { image, origin } = $derived(vermouths[product.handle as Handle])
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
+  let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
     onSelectItem?.()
+  }
+
+  const revealDiscountBadge: Attachment<HTMLDivElement> = (node) => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) {
+      isDiscountBadgeVisible = true
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return
+
+        isDiscountBadgeVisible = true
+        observer.disconnect()
+      },
+      { threshold: 0.35 },
+    )
+
+    observer.observe(node)
+
+    return () => {
+      observer.disconnect()
+    }
   }
 </script>
 
@@ -51,10 +78,16 @@
       {#if priceDisplay?.savingsPercent}
         <div
           aria-label="Spar {priceDisplay.savingsPercent}%"
-          class="discount-badge absolute left-0 top-1/2 z-10 flex size-24 -translate-x-20 -translate-y-28 flex-col items-center justify-center gap-3 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red md:size-28"
+          class:discount-badge-visible={isDiscountBadgeVisible}
+          class="absolute left-1/2 top-1/2 z-10 -translate-x-32 -translate-y-48 md:-translate-x-48 md:-translate-y-32"
+          {@attach revealDiscountBadge}
         >
-          <span class="text-sm">SPAR</span>
-          <span class="text-lg">{priceDisplay.savingsPercent}%</span>
+          <div
+            class="discount-badge flex size-24 flex-col items-center justify-center gap-1 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red md:size-28 md:gap-3"
+          >
+            <span class="text-sm">SPAR</span>
+            <span class="text-base md:text-lg">{priceDisplay.savingsPercent}%</span>
+          </div>
         </div>
       {/if}
     </div>
@@ -96,30 +129,27 @@
   }
 
   .discount-badge {
-    scale: 0;
     rotate: 8deg;
-    animation: discount-badge-pop 650ms cubic-bezier(0.16, 1.25, 0.32, 1) 180ms forwards;
   }
 
-  @keyframes discount-badge-pop {
+  .discount-badge-visible .discount-badge {
+    animation: discount-badge-rotate 420ms ease-out 140ms forwards;
+  }
+
+  @keyframes discount-badge-rotate {
     0% {
-      scale: 0;
       rotate: 8deg;
     }
-    68% {
-      scale: 1.08;
-      rotate: -7deg;
+    55% {
+      rotate: -12deg;
     }
     100% {
-      scale: 1;
       rotate: -10deg;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .discount-badge {
-      animation: none;
-      scale: 1;
       rotate: -10deg;
     }
   }
