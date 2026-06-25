@@ -2,6 +2,7 @@
   import type { PageData } from './$types'
   import { sdk } from '$lib/medusa'
   import { goto } from '$app/navigation'
+  import { resolve } from '$app/paths'
   import { onMount } from 'svelte'
   import type { HttpTypes } from '@medusajs/types'
 
@@ -43,7 +44,9 @@
 
           if (cartWithOrder.completed_at && cartWithOrder.order?.id) {
             // Success! Navigate to order page (no success state shown)
-            goto(`/orders/${cartWithOrder.order.id}`, { invalidate: ['refresh:cart'] })
+            goto(resolve('/ordrer/[id]', { id: cartWithOrder.order.id }), {
+              invalidate: ['refresh:cart'],
+            })
             return
           }
         } catch (e) {

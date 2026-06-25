@@ -25,7 +25,7 @@ export const load: PageServerLoad = async ({ cookies, url, parent }) => {
 
   if (isCompleted) {
     // Cart completed, redirect to order page
-    redirect(303, `/orders/${cartWithOrder.order!.id}`)
+    redirect(303, `/ordrer/${cartWithOrder.order!.id}`)
   } else if (hasTimedOut) {
     redirect(303, '/betaling/fejl')
   }

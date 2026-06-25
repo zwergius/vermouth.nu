@@ -8,6 +8,21 @@ const orderId = process.env.PLAYWRIGHT_ORDER_REVIEW_ORDER_ID ?? 'order_01KRQRKPP
 const expectedProductTitle = process.env.PLAYWRIGHT_ORDER_REVIEW_PRODUCT_TITLE ?? 'Sardino Rojo'
 
 test.describe('order product review page', () => {
+  test('customer can open the Danish order summary URL', async ({ page }) => {
+    await page.goto(`/ordrer/${orderId}`, { waitUntil: 'domcontentloaded' })
+
+    await expect(page).toHaveURL(new RegExp(`/ordrer/${orderId}$`))
+    await expect(page.getByRole('heading', { name: 'TAK for din handel!' })).toBeVisible()
+    await expect(page.getByText(`Ordrenummer #`)).toBeVisible()
+  })
+
+  test('English order URL redirects to the Danish order summary URL', async ({ page }) => {
+    await page.goto(`/orders/${orderId}`, { waitUntil: 'domcontentloaded' })
+
+    await expect(page).toHaveURL(new RegExp(`/ordrer/${orderId}$`))
+    await expect(page.getByRole('heading', { name: 'TAK for din handel!' })).toBeVisible()
+  })
+
   test('customer can open product review forms from an order link', async ({ page }) => {
     await page.goto(`/ordrer/${orderId}/anmeld`, { waitUntil: 'domcontentloaded' })
 
