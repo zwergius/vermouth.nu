@@ -1,11 +1,10 @@
 import type { LayoutLoad } from './$types'
 import { sdk } from '$lib/medusa'
 
-export const load: LayoutLoad = async ({ parent, params }) => {
-  const [{ order }, { locale }] = await Promise.all([sdk.store.order.retrieve(params.id), parent()])
+export const load: LayoutLoad = async ({ params }) => {
+  const { order } = await sdk.store.order.retrieve(params.id)
 
   return {
-    locale,
     order,
   }
 }

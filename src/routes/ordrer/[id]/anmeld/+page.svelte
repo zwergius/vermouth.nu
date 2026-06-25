@@ -3,6 +3,7 @@
   import type { HttpTypes } from '@medusajs/types'
   import type { PageProps } from './$types'
   import { Form, Input } from '$lib/components/form-controls'
+  import { vermouths, type Handle } from '$lib/data/products'
   import { thumbnailSrcSet } from '$lib/helpers/images'
   import type { ProductReviewSubmissionResult } from '../../../api/products/[id]/reviews/+server'
 
@@ -22,10 +23,10 @@
 
   type ReviewableOrderItem = {
     lineItemIds: string[]
+    image: string | null
     productHandle: string | null
     productId: string
     quantity: number
-    thumbnail: string | null
     title: string
     variantTitle: string | null
   }
@@ -41,6 +42,10 @@
   function getReviewerName(order: HttpTypes.StoreOrder) {
     const address = order.shipping_address ?? order.billing_address
     return [address?.first_name, address?.last_name].filter(Boolean).join(' ')
+  }
+
+  function isProductHandle(handle: string | null | undefined): handle is Handle {
+    return !!handle && handle in vermouths
   }
 
   function getReviewableItems(order: HttpTypes.StoreOrder): ReviewableOrderItem[] {
@@ -60,11 +65,11 @@
       }
 
       reviewableItems.push({
+        image: isProductHandle(item.product_handle) ? vermouths[item.product_handle].image : null,
         lineItemIds: [item.id],
         productHandle: item.product_handle,
         productId: item.product_id,
         quantity: item.quantity,
-        thumbnail: item.thumbnail,
         title: item.product_title ?? item.title,
         variantTitle: item.variant_title,
       })
@@ -124,15 +129,15 @@
       <article class="border-b border-black py-8 first:pt-0 last:border-b-0">
         <div class="grid gap-8 lg:grid-cols-[12rem_1fr] lg:gap-12">
           <div>
-            {#if item.thumbnail}
+            {#if item.image}
               <img
                 alt={item.title}
                 class="aspect-square w-full max-w-48 object-cover"
                 height="192"
                 loading="lazy"
                 sizes="(max-width: 1024px) 12rem, 12rem"
-                src="{item.thumbnail}/w=192,h=192,fit=cover"
-                srcset={thumbnailSrcSet(item.thumbnail)}
+                src="{item.image}/w=192,h=192,fit=cover"
+                srcset={thumbnailSrcSet(item.image)}
                 width="192"
               />
             {/if}
