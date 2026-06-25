@@ -326,7 +326,7 @@
                   value={discountCodeFormData?.discountCode ?? appliedPromoCodes[0] ?? ''}
                 />
                 <label
-                  class="pointer-events-none absolute left-0 top-0 text-sm duration-100 ease-linear peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-black"
+                  class="pointer-events-none absolute left-0 top-0 text-sm duration-100 ease-linear peer-placeholder-shown:top-7 peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-black"
                   for="discount-code"
                 >
                   Rabatkode
