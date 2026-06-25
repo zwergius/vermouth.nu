@@ -36,6 +36,25 @@ const productReviews = [
   },
 ]
 
+const sardinoRojoProduct = {
+  id: 'prod_test_sardino_rojo',
+  title: 'Sardino Rojo',
+  handle: 'sardino-rojo',
+  subtitle: 'Sømandens foretrukne',
+  description:
+    'Sardino slår sig selv op på at være en maritim vermouth, den kommer helt fra den Spanske vestkyst.',
+  categories: [{ id: 'pcat_test_red', handle: 'red', name: 'Red' }],
+  variants: [
+    {
+      id: 'variant_test_sardino_rojo',
+      calculated_price: {
+        calculated_amount: 195,
+        original_amount: 195,
+      },
+    },
+  ],
+}
+
 const pages = [
   { path: '/', text: 'ENDNU IKKE FAN AF VERMOUTH?' },
   { path: '/sortiment', text: 'VIL DU SMAGE FØR DU KØBER?' },
@@ -77,6 +96,15 @@ test.describe('product detail pages', () => {
 
   test('product reviews load more through URL pagination', async ({ page }) => {
     const reviewRequests: Array<{ limit: string | null; offset: string | null }> = []
+
+    await page.route('**/store/products?handle=sardino-rojo**', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          products: [sardinoRojoProduct],
+        }),
+      })
+    })
 
     await page.route('**/api/products/*/reviews**', async (route) => {
       const url = new URL(route.request().url())
