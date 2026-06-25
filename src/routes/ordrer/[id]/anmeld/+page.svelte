@@ -97,10 +97,6 @@
     return getProductFormResult(productId)?.message
   }
 
-  function getRatingPercentage(rating: number) {
-    return `${Math.max(0, Math.min(5, rating)) * 20}%`
-  }
-
   function rememberSubmittedProduct(result: ActionResult) {
     if (result.type !== 'success' || !result.data) return
 
@@ -181,7 +177,7 @@
                   <div class="grid grid-cols-5 border border-dark-blue">
                     {#each ratingOptions as rating (rating)}
                       <label
-                        class="group flex min-h-16 cursor-pointer items-center justify-center border-r border-dark-blue bg-white/40 px-2 last:border-r-0 hover:bg-white/70 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-brand-blue has-[:checked]:bg-brand-blue"
+                        class="flex min-h-16 cursor-pointer items-center justify-center border-r border-dark-blue bg-white/40 px-2 text-base font-bold text-brand-blue last:border-r-0 hover:bg-white/70 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-brand-blue has-[:checked]:bg-brand-blue has-[:checked]:text-white"
                       >
                         <input
                           checked={values.rating === String(rating)}
@@ -191,20 +187,7 @@
                           type="radio"
                           value={rating}
                         />
-                        <span
-                          class="relative inline-block text-[1.25rem]/[1.25rem] font-bold tracking-normal"
-                          aria-hidden="true"
-                        >
-                          <span class="text-brand-blue/25 group-has-[:checked]:text-white/35"
-                            >★★★★★</span
-                          >
-                          <span
-                            class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue group-has-[:checked]:text-white"
-                            style:width={getRatingPercentage(rating)}
-                          >
-                            ★★★★★
-                          </span>
-                        </span>
+                        <span aria-hidden="true">{rating}*</span>
                         <span class="sr-only">{rating} ud af 5 stjerner</span>
                       </label>
                     {/each}
