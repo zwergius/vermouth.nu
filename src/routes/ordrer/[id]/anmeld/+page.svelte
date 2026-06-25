@@ -187,7 +187,7 @@
                           type="radio"
                           value={rating}
                         />
-                        <span aria-hidden="true">{rating}*</span>
+                        <span aria-hidden="true">{rating}★</span>
                         <span class="sr-only">{rating} ud af 5 stjerner</span>
                       </label>
                     {/each}
