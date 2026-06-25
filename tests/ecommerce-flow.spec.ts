@@ -50,6 +50,31 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
   await expect(productRow).toBeHidden()
 })
 
+test('customer can apply a discount code in the cart summary', async ({ page }) => {
+  await addProductToCart(page)
+  await page.goto('/kurv', { waitUntil: 'networkidle' })
+
+  const cartSummary = page.locator('[data-testid="cart-summary"]:visible')
+  const discountCodeInput = cartSummary.getByRole('textbox', { name: 'Rabatkode' })
+  const applyDiscountButton = cartSummary.getByRole('button', { name: 'Anvend' })
+  const totals = cartSummary.getByTestId('cart-totals')
+  const totalsBoxBeforeError = await totals.boundingBox()
+
+  await discountCodeInput.fill('not-a-code')
+  await applyDiscountButton.click()
+
+  await expect(cartSummary.getByText('Rabatkoden kunne ikke anvendes.')).toBeVisible()
+
+  const totalsBoxAfterError = await totals.boundingBox()
+  expect(totalsBoxAfterError?.y).toBe(totalsBoxBeforeError?.y)
+
+  await discountCodeInput.fill('test10')
+  await applyDiscountButton.click()
+
+  await expect(cartSummary.getByText('Rabatkoden er tilføjet.')).toBeVisible()
+  await expect(totals.locator('div').filter({ hasText: 'Rabat' })).toBeVisible()
+})
+
 test('customer can continue from cart to payment', async ({ page }) => {
   await addProductToCart(page)
   await page.goto('/kurv', { waitUntil: 'networkidle' })
