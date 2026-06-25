@@ -55,30 +55,12 @@ export const GET: RequestHandler = async ({ fetch, params, url }) => {
 }
 
 export const POST: RequestHandler = async ({ fetch, params, request }) => {
-  const review = (await request.json()) as CreateProductReviewInput
-
-  const response = await fetch(getProductReviewsUrl(params.id), {
+  return fetch(getProductReviewsUrl(params.id), {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
+      'content-type': request.headers.get('content-type') ?? 'application/json',
       'x-publishable-api-key': PUBLIC_MEDUSA_PUBLISHABLE_KEY,
     },
-    body: JSON.stringify(review),
+    body: request.body,
   })
-
-  const responseBody = await response.json().catch(() => ({}))
-
-  if (!response.ok) {
-    return json(
-      {
-        message:
-          typeof responseBody.message === 'string'
-            ? responseBody.message
-            : 'Failed to submit product review',
-      },
-      { status: response.status },
-    )
-  }
-
-  return json(responseBody, { status: response.status })
 }

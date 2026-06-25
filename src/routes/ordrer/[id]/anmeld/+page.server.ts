@@ -3,11 +3,16 @@ import { error, fail } from '@sveltejs/kit'
 import type { HttpTypes } from '@medusajs/types'
 import { sdk } from '$lib/medusa'
 import type { CreateProductReviewInput } from '../../../api/products/[id]/reviews/+server'
-import { getReviewableItems, type ReviewableOrderItem } from './reviewable-items'
 
 const MAX_TITLE_LENGTH = 120
 const MAX_CONTENT_LENGTH = 5000
 const MAX_REVIEWER_NAME_LENGTH = 120
+
+type ReviewableOrderItem = {
+  lineItemIds: string[]
+  productHandle: string | null
+  productId: string
+}
 
 function getString(value: FormDataEntryValue | null) {
   return typeof value === 'string' ? value.trim() : ''
@@ -25,6 +30,29 @@ async function getOrder(orderId: string) {
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+function getReviewableItems(order: HttpTypes.StoreOrder): ReviewableOrderItem[] {
+  const itemsByProductId = new Map<string, ReviewableOrderItem>()
+
+  for (const item of order.items ?? []) {
+    if (!item.product_id) continue
+
+    const existingItem = itemsByProductId.get(item.product_id)
+
+    if (existingItem) {
+      existingItem.lineItemIds.push(item.id)
+      continue
+    }
+
+    itemsByProductId.set(item.product_id, {
+      lineItemIds: [item.id],
+      productHandle: item.product_handle,
+      productId: item.product_id,
+    })
+  }
+
+  return Array.from(itemsByProductId.values())
 }
 
 function getReviewPayload(

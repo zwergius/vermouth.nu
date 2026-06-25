@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ActionResult } from '@sveltejs/kit'
+  import type { HttpTypes } from '@medusajs/types'
   import type { PageProps } from './$types'
   import { Form, Input } from '$lib/components/form-controls'
   import { thumbnailSrcSet } from '$lib/helpers/images'
@@ -19,10 +20,58 @@
     values?: ReviewFormValues
   }
 
+  type ReviewableOrderItem = {
+    lineItemIds: string[]
+    productHandle: string | null
+    productId: string
+    quantity: number
+    thumbnail: string | null
+    title: string
+    variantTitle: string | null
+  }
+
   const ratingOptions = [1, 2, 3, 4, 5]
 
   let isReviewSubmitting = $state(false)
   let submittedProductIds = $state<string[]>([])
+
+  const reviewerName = $derived(getReviewerName(data.order))
+  const reviewableItems = $derived(getReviewableItems(data.order))
+
+  function getReviewerName(order: HttpTypes.StoreOrder) {
+    const address = order.shipping_address ?? order.billing_address
+    return [address?.first_name, address?.last_name].filter(Boolean).join(' ')
+  }
+
+  function getReviewableItems(order: HttpTypes.StoreOrder): ReviewableOrderItem[] {
+    const reviewableItems: ReviewableOrderItem[] = []
+
+    for (const item of order.items ?? []) {
+      if (!item.product_id) continue
+
+      const existingItem = reviewableItems.find(
+        (reviewableItem) => reviewableItem.productId === item.product_id,
+      )
+
+      if (existingItem) {
+        existingItem.lineItemIds.push(item.id)
+        existingItem.quantity += item.quantity
+        continue
+      }
+
+      reviewableItems.push({
+        lineItemIds: [item.id],
+        productHandle: item.product_handle,
+        productId: item.product_id,
+        quantity: item.quantity,
+        thumbnail: item.thumbnail,
+        title: item.product_title ?? item.title,
+        variantTitle: item.variant_title,
+      })
+    }
+
+    return reviewableItems
+  }
 
   function getProductFormResult(productId: string) {
     return form?.productId === productId ? (form as ReviewFormResult) : null
@@ -68,7 +117,7 @@
 
 <section class="border-b border-black px-4 py-8 lg:px-20 lg:py-16">
   <div class="mx-auto max-w-5xl">
-    {#each data.reviewableItems as item (item.productId)}
+    {#each reviewableItems as item (item.productId)}
       {@const values = getFormValues(item.productId)}
       {@const message = getProductMessage(item.productId)}
       {@const submitted = isSubmitted(item.productId)}
@@ -148,7 +197,7 @@
                     maxlength={120}
                     name="reviewer_name"
                     required
-                    value={values.reviewer_name ?? data.reviewerName}
+                    value={values.reviewer_name ?? reviewerName}
                   />
                   <Input
                     autocomplete="email"
