@@ -1,7 +1,22 @@
 import type { RequestHandler } from './$types'
 import { json } from '@sveltejs/kit'
 import { PUBLIC_MEDUSA_PUBLISHABLE_KEY, PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
-import type { CreateProductReviewInput } from '$lib/types/reviews'
+
+export type CreateProductReviewInput = {
+  rating: number
+  title?: string
+  content?: string
+  reviewer_name?: string
+  reviewer_email?: string
+  metadata?: Record<string, unknown>
+}
+
+export type ProductReviewSubmissionResult = {
+  productId: string
+  alreadyReviewed?: boolean
+  message?: string
+  success?: boolean
+}
 
 const baseUrl = PUBLIC_VITE_BACKEND_URL.replace(/\/$/, '')
 

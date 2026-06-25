@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { enhance } from '$app/forms'
-  import type { ActionResult, SubmitFunction } from '@sveltejs/kit'
+  import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
-  import Input from '$lib/components/form-controls/input.svelte'
+  import { Form, Input } from '$lib/components/form-controls'
   import { thumbnailSrcSet } from '$lib/helpers/images'
-  import type { ProductReviewSubmissionResult } from '$lib/types/reviews'
+  import type { ProductReviewSubmissionResult } from '../../../api/products/[id]/reviews/+server'
 
   const { data, form }: PageProps = $props()
 
@@ -22,7 +21,7 @@
 
   const ratingOptions = [1, 2, 3, 4, 5]
 
-  let submittingProductId = $state<string | null>(null)
+  let isReviewSubmitting = $state(false)
   let submittedProductIds = $state<string[]>([])
 
   function getProductFormResult(productId: string) {
@@ -44,20 +43,6 @@
     return getProductFormResult(productId)?.message
   }
 
-  function focusFirstInvalidField(formElement: HTMLFormElement) {
-    const elements = Array.from(formElement.elements) as HTMLInputElement[]
-    const firstInvalidField = elements.find((element) => !element.validity.valid)
-
-    if (!firstInvalidField) return
-
-    firstInvalidField.focus()
-    firstInvalidField.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    })
-  }
-
   function rememberSubmittedProduct(result: ActionResult) {
     if (result.type !== 'success' || !result.data) return
 
@@ -65,29 +50,6 @@
     if (!productId || submittedProductIds.includes(productId)) return
 
     submittedProductIds = [...submittedProductIds, productId]
-  }
-
-  function makeReviewEnhance(productId: string): SubmitFunction {
-    return ({ cancel, formElement }) => {
-      if (submittingProductId) {
-        cancel()
-        return
-      }
-
-      if (!formElement.reportValidity()) {
-        focusFirstInvalidField(formElement)
-        cancel()
-        return
-      }
-
-      submittingProductId = productId
-
-      return async ({ result, update }) => {
-        rememberSubmittedProduct(result)
-        submittingProductId = null
-        await update({ reset: result.type === 'success' })
-      }
-    }
   }
 </script>
 
@@ -147,11 +109,11 @@
                 </p>
               </div>
             {:else}
-              <form
+              <Form
                 action="?/submitReview"
-                method="POST"
-                novalidate
-                use:enhance={makeReviewEnhance(item.productId)}
+                bind:isSubmitting={isReviewSubmitting}
+                onResult={rememberSubmittedProduct}
+                reset
               >
                 <input name="product_id" type="hidden" value={item.productId} />
                 <input name="line_item_id" type="hidden" value={item.lineItemIds[0]} />
@@ -224,12 +186,12 @@
 
                 <button
                   class="btn justify-center transition-colors disabled:cursor-not-allowed disabled:bg-brand-blue/60"
-                  disabled={submittingProductId === item.productId}
+                  disabled={isReviewSubmitting}
                   type="submit"
                 >
-                  {submittingProductId === item.productId ? 'SENDER...' : 'SEND ANMELDELSE'}
+                  {isReviewSubmitting ? 'SENDER...' : 'SEND ANMELDELSE'}
                 </button>
-              </form>
+              </Form>
             {/if}
           </div>
         </div>
