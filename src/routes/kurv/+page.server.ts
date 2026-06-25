@@ -29,6 +29,50 @@ function getAddressFields(data: FormData, isBillingAddress: boolean = false) {
 }
 
 export const actions = {
+  applyDiscountCode: async ({ cookies, request }) => {
+    const cart_id = cookies.get('cart_id')
+    if (!cart_id) return fail(404, { message: 'Missing cart_id' })
+
+    const data = await request.formData()
+    const discountCode = String(data.get('discount_code') ?? '')
+      .trim()
+      .toUpperCase()
+
+    if (!discountCode) {
+      return fail(400, {
+        action: 'discountCode',
+        discountCode,
+        message: 'Indtast en rabatkode.',
+      })
+    }
+
+    try {
+      const { cart } = await sdk.store.cart.retrieve(cart_id)
+      const currentPromoCodes =
+        cart.promotions?.flatMap(({ code, is_automatic }) =>
+          code && !is_automatic ? [code] : [],
+        ) ?? []
+
+      await sdk.store.cart.update(cart_id, {
+        promo_codes: [...new Set([...currentPromoCodes, discountCode])],
+      })
+
+      return {
+        action: 'discountCode',
+        discountCode,
+        message: 'Rabatkoden er tilføjet.',
+        success: true,
+      }
+    } catch (error) {
+      console.error('Error applying discount code', error)
+
+      return fail(400, {
+        action: 'discountCode',
+        discountCode,
+        message: 'Rabatkoden kunne ikke anvendes.',
+      })
+    }
+  },
   checkout: async ({ cookies, request }) => {
     const cartId = cookies.get('cart_id')
 

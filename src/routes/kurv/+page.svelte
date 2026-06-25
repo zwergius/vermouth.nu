@@ -21,7 +21,7 @@
   import { formatPrice } from '$lib/helpers/numbers'
   import QuantitySelector from '$lib/components/form-controls/quantity-selector.svelte'
 
-  const { data }: PageProps = $props()
+  const { data, form }: PageProps = $props()
   const { cart, locale, region, shippingOptions, shippingPrices } = $derived(data)
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
   let selectedShippingMethodId = $derived(
@@ -39,13 +39,30 @@
     hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
   )
   let isSubmitting = $state(false)
+  let discountCodeMessage = $state('')
+  let discountCodeState = $state<'idle' | 'success' | 'error'>('idle')
   let hasCheckoutRedirected = $state(false)
   const checkoutState = $derived<'idle' | 'processing' | 'redirecting'>(
     hasCheckoutRedirected ? 'redirecting' : isSubmitting ? 'processing' : 'idle',
   )
   const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
+  const appliedPromoCodes = $derived(
+    cart.promotions?.flatMap(({ code, is_automatic }) => (code && !is_automatic ? [code] : [])) ??
+      [],
+  )
+  const discountCodeFormData = $derived(getDiscountCodeFormData())
+  const displayedDiscountCodeMessage = $derived(
+    discountCodeMessage || discountCodeFormData?.message || '',
+  )
+  const displayedDiscountCodeState = $derived(getDisplayedDiscountCodeState())
 
   type QuantityActionSuccess = { success: true; quantity: number }
+  type DiscountCodeActionData = {
+    action: 'discountCode'
+    discountCode?: string
+    message?: string
+    success?: true
+  }
   type CartItemAnalyticsContext = {
     cartItemId: string
     productHandle?: string
@@ -72,10 +89,37 @@
     isSubmitting = false
   }
 
+  function getDiscountCodeFormData() {
+    return form?.action === 'discountCode' ? (form as DiscountCodeActionData) : null
+  }
+
+  function getDisplayedDiscountCodeState() {
+    if (discountCodeState !== 'idle') return discountCodeState
+    if (!discountCodeFormData) return 'idle'
+    if (discountCodeFormData.success) return 'success'
+
+    return 'error'
+  }
+
+  function handleDiscountCodeResult(result: ActionResult) {
+    if (result.type !== 'success' && result.type !== 'failure') return
+
+    const resultData = result.data as DiscountCodeActionData
+    if (resultData.action !== 'discountCode') return
+
+    discountCodeMessage = resultData.message ?? ''
+    discountCodeState = result.type === 'success' ? 'success' : 'error'
+  }
+
   function formattedPrice(price: number | undefined) {
     if (price === undefined) return ''
     if (price === 0) return 'Gratis'
     return formatPrice(price, region.currency_code, locale)
+  }
+
+  function formattedDiscount(price: number | undefined) {
+    if (!price) return ''
+    return `-${formattedPrice(price)}`
   }
 
   function getShippingOptionPrice(option?: { amount?: number | null; id: string }) {
@@ -262,12 +306,64 @@
     {/each}
   </ul>
   {#if cart}
-    <div class="p-5">
-      <dl class="flex flex-col gap-5 text-sm font-bold mb-2 lg:mb-0">
+    <div class="p-5" data-testid="cart-summary">
+      <div class="border-b border-black pb-3 mb-5">
+        <Form action="?/applyDiscountCode" onResult={handleDiscountCodeResult}>
+          <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">
+              <div class="relative min-w-0 flex-1">
+                <input
+                  aria-describedby={displayedDiscountCodeMessage
+                    ? 'discount-code-message'
+                    : undefined}
+                  autocomplete="off"
+                  class="peer min-h-14 w-full border-b border-black bg-transparent pt-7 pb-2 text-sm uppercase placeholder:text-transparent focus:outline-none"
+                  id="discount-code"
+                  name="discount_code"
+                  placeholder="Rabatkode"
+                  required
+                  type="text"
+                  value={discountCodeFormData?.discountCode ?? appliedPromoCodes[0] ?? ''}
+                />
+                <label
+                  class="pointer-events-none absolute left-0 top-0 text-sm duration-100 ease-linear peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-black"
+                  for="discount-code"
+                >
+                  Rabatkode
+                </label>
+              </div>
+              <button
+                class="btn mt-auto items-center justify-center px-5 py-2 text-sm leading-none"
+                type="submit"
+              >
+                Anvend
+              </button>
+            </div>
+            <p
+              class={[
+                'min-h-3 text-xs leading-none',
+                displayedDiscountCodeMessage ? 'visible' : 'invisible',
+                displayedDiscountCodeState === 'error' ? 'text-brand-red' : 'text-brand-blue',
+              ]}
+              id="discount-code-message"
+              role={displayedDiscountCodeState === 'error' ? 'alert' : 'status'}
+            >
+              {displayedDiscountCodeMessage || 'Rabatkode status'}
+            </p>
+          </div>
+        </Form>
+      </div>
+      <dl class="flex flex-col gap-5 text-sm font-bold mb-2 lg:mb-0" data-testid="cart-totals">
         <div class="flex justify-between">
           <dt>Subtotal</dt>
           <dd>{formattedPrice(cart?.item_total)}</dd>
         </div>
+        {#if cart.discount_total}
+          <div class="flex justify-between text-brand-red">
+            <dt>Rabat</dt>
+            <dd>{formattedDiscount(cart.discount_total)}</dd>
+          </div>
+        {/if}
         <div class="flex justify-between">
           <dt>Levering</dt>
           <dd>{formattedPrice(displayedShippingTotal)}</dd>
