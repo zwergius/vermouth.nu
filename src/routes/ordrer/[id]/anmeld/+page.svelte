@@ -97,6 +97,10 @@
     return getProductFormResult(productId)?.message
   }
 
+  function shouldShowVariantTitle(item: ReviewableOrderItem) {
+    return Boolean(item.variantTitle && item.variantTitle !== item.title)
+  }
+
   function rememberSubmittedProduct(result: ActionResult) {
     if (result.type !== 'success' || !result.data) return
 
@@ -129,6 +133,7 @@
       <article class="border-b border-black py-8 first:pt-0 last:border-b-0">
         <div class="grid gap-8 lg:grid-cols-[12rem_1fr] lg:gap-12">
           <div>
+            <h2 class="mb-4 text-sm font-bold">{item.title}</h2>
             {#if item.image}
               <img
                 alt={item.title}
@@ -142,8 +147,7 @@
               />
             {/if}
             <div class="mt-4 text-sm">
-              <h2 class="font-bold">{item.title}</h2>
-              {#if item.variantTitle}
+              {#if shouldShowVariantTitle(item)}
                 <p>{item.variantTitle}</p>
               {/if}
               <p>{item.quantity} stk.</p>
