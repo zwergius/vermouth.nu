@@ -28,7 +28,6 @@
     productId: string
     quantity: number
     title: string
-    variantTitle: string | null
   }
 
   const ratingOptions = [1, 2, 3, 4, 5]
@@ -71,7 +70,6 @@
         productId: item.product_id,
         quantity: item.quantity,
         title: item.product_title ?? item.title,
-        variantTitle: item.variant_title,
       })
     }
 
@@ -95,10 +93,6 @@
 
   function getProductMessage(productId: string) {
     return getProductFormResult(productId)?.message
-  }
-
-  function shouldShowVariantTitle(item: ReviewableOrderItem) {
-    return Boolean(item.variantTitle && item.variantTitle !== item.title)
   }
 
   function rememberSubmittedProduct(result: ActionResult) {
@@ -147,9 +141,6 @@
               />
             {/if}
             <div class="mt-4 text-sm">
-              {#if shouldShowVariantTitle(item)}
-                <p>{item.variantTitle}</p>
-              {/if}
               <p>{item.quantity} stk.</p>
             </div>
           </div>
