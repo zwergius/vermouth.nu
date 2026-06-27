@@ -1,5 +1,18 @@
 <script lang="ts">
-  import CancellationRequestDialog from '$lib/components/cancellation-request-dialog.svelte'
+  import { resolve } from '$app/paths'
+  import { page } from '$app/state'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
+
+  let isCancellationRequestOpen = $state(false)
+  const locale = $derived(page.data.locale)
+
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
 </script>
 
 <section class="policy">
@@ -96,7 +109,11 @@
   </p>
 
   <div class="mb-2">
-    <CancellationRequestDialog triggerClass="font-bold underline" />
+    <a
+      class="font-bold underline"
+      href={resolve('/ordrer/fortryd')}
+      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+    >
   </div>
 
   <h3>Returnering</h3>
@@ -182,3 +199,13 @@
 
   <p>Handelsbetingelserne er senest opdateret d. 04.02.2026</p>
 </section>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm {locale} onClose={close} showDialogActions />
+  {/snippet}
+</ModalDialog>

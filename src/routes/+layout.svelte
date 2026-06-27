@@ -8,8 +8,9 @@
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import { reduced_motion } from '$lib/actions/reduced-motion'
   import { initializeAnalytics } from '$lib/helpers/analytics'
-  import CancellationRequestDialog from '$lib/components/cancellation-request-dialog.svelte'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
   import type { LayoutProps } from './$types'
   import { fade, scale } from 'svelte/transition'
 
@@ -33,11 +34,19 @@
   ] as const
 
   const { children, data }: LayoutProps = $props()
-  const { cart } = $derived(data)
+  const { cart, locale } = $derived(data)
   let topBannerIndex = $state(0)
   let isTopBannerPaused = $state(false)
+  let isCancellationRequestOpen = $state(false)
   const topBanner = $derived(topBannerMessages[topBannerIndex])
   const topBannerFadeDuration = $derived($reduced_motion ? 0 : 400)
+
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
 
   onMount(() => {
     if (!PUBLIC_GA_MEASUREMENT_ID) return
@@ -299,7 +308,11 @@
           <a class="hover:font-bold" href={resolve('/cookiepolitik')}>Cookiepolitik</a>
         </li>
         <li>
-          <CancellationRequestDialog />
+          <a
+            class="hover:font-bold"
+            href={resolve('/ordrer/fortryd')}
+            onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+          >
         </li>
       </ul>
       <figure class="mt-auto md:ml-auto overflow-visible">
@@ -311,6 +324,16 @@
     <p>© Copyright - Vermouth.nu</p>
   </div>
 </footer>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm {locale} onClose={close} showDialogActions />
+  {/snippet}
+</ModalDialog>
 
 <style lang="postcss">
   .nav-list {

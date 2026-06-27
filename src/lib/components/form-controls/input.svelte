@@ -51,7 +51,7 @@
     } else if (tooShort && minlength) {
       errorMessage = `Ugyldigt ${label}, mindst ${minlength} tegn.`
     } else if (typeMismatch && type === 'email') {
-      errorMessage = 'Indtast en gyldig e-mailadresse.'
+      errorMessage = 'Indtast en gyldig e-mail fx: navn@acme.dk'
     } else if (patternMismatch && type === 'tel') {
       errorMessage = `Ugyldigt ${label}.`
     } else if (patternMismatch && pattern === '\\d*') {

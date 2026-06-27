@@ -9,12 +9,15 @@
     type GaListItem,
     type GaPurchaseAddress,
   } from '$lib/helpers/analytics'
-  import CancellationRequestDialog from '$lib/components/cancellation-request-dialog.svelte'
+  import { resolve } from '$app/paths'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
+  let isCancellationRequestOpen = $state(false)
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
   type AddPaymentInfoMetadata = {
@@ -121,6 +124,13 @@
     }
   }
 
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
+
   onMount(() => {
     const paymentType = getPaymentType()
     const items = toGaItems()
@@ -153,16 +163,11 @@
 
   <p class="text-base">Du modtager en email med faktura og leveringsdetaljer.</p>
   <div class="mb-6 md:mb-8">
-    <CancellationRequestDialog
-      prefill={{
-        customerName: `${order.shipping_address?.first_name ?? ''} ${
-          order.shipping_address?.last_name ?? ''
-        }`.trim(),
-        email: order.email ?? '',
-        orderReference: String(order.display_id ?? order.id ?? ''),
-      }}
-      triggerClass="btn mx-auto w-fit justify-center text-sm"
-    />
+    <a
+      class="btn mx-auto w-fit justify-center text-sm"
+      href={resolve('/ordrer/fortryd')}
+      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+    >
   </div>
 
   <h2>Ordreoversigt</h2>
@@ -190,3 +195,24 @@
 
   <p>På gensyn snart :)</p>
 </section>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm
+      {locale}
+      onClose={close}
+      prefill={{
+        customerName: `${order.shipping_address?.first_name ?? ''} ${
+          order.shipping_address?.last_name ?? ''
+        }`.trim(),
+        email: order.email ?? '',
+        orderReference: String(order.display_id ?? order.id ?? ''),
+      }}
+      showDialogActions
+    />
+  {/snippet}
+</ModalDialog>
