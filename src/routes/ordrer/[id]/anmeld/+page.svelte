@@ -3,7 +3,7 @@
   import type { HttpTypes } from '@medusajs/types'
   import { fade } from 'svelte/transition'
   import type { PageProps } from './$types'
-  import { Form, Input } from '$lib/components/form-controls'
+  import { Form, Input, Textarea } from '$lib/components/form-controls'
   import { vermouths, type Handle } from '$lib/data/products'
   import { thumbnailSrcSet } from '$lib/helpers/images'
 
@@ -280,14 +280,13 @@
                   />
                 </div>
 
-                <div class="relative border border-dark-blue bg-white/40">
-                  <textarea
-                    class="min-h-40 w-full bg-transparent p-6 text-sm placeholder:text-gray-500 focus:bg-white"
-                    maxlength="5000"
-                    name="content"
-                    placeholder="Din anmeldelse">{values.content ?? ''}</textarea
-                  >
-                </div>
+                <Textarea
+                  id="review-content-{item.productId}"
+                  label="Din anmeldelse"
+                  maxlength={5000}
+                  name="content"
+                  value={values.content}
+                />
 
                 <div class="relative">
                   {#if message}
