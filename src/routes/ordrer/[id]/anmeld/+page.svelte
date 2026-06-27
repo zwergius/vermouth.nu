@@ -1,0 +1,324 @@
+<script lang="ts">
+  import type { ActionResult } from '@sveltejs/kit'
+  import type { HttpTypes } from '@medusajs/types'
+  import { fade } from 'svelte/transition'
+  import type { PageProps } from './$types'
+  import { Form, Input } from '$lib/components/form-controls'
+  import { vermouths, type Handle } from '$lib/data/products'
+  import { thumbnailSrcSet } from '$lib/helpers/images'
+
+  const { data, form }: PageProps = $props()
+
+  type ReviewFormValues = {
+    content?: string
+    rating?: string
+    reviewer_name?: string
+    title?: string
+  }
+
+  type ReviewFormResult = ProductReviewSubmissionResult & {
+    values?: ReviewFormValues
+  }
+
+  type ProductReviewSubmissionResult = {
+    productId: string
+    message?: string
+    success?: boolean
+  }
+
+  type ReviewableOrderItem = {
+    lineItemIds: string[]
+    image: string | null
+    productHandle: string | null
+    productId: string
+    quantity: number
+    title: string
+  }
+
+  const ratingOptions = [1, 2, 3, 4, 5]
+  const ratingGroupLabel = 'vurdering'
+
+  let isReviewSubmitting = $state(false)
+  let ratingErrorMessages = $state<Record<string, string>>({})
+  let touchedRatingProductIds = $state<string[]>([])
+  let submittedProductIds = $state<string[]>([])
+
+  const reviewerName = $derived(getReviewerName(data.order))
+  const reviewableItems = $derived(getReviewableItems(data.order))
+
+  function getReviewerName(order: HttpTypes.StoreOrder) {
+    const address = order.shipping_address ?? order.billing_address
+    return [address?.first_name, address?.last_name].filter(Boolean).join(' ')
+  }
+
+  function isProductHandle(handle: string | null | undefined): handle is Handle {
+    return !!handle && handle in vermouths
+  }
+
+  function getReviewableItems(order: HttpTypes.StoreOrder): ReviewableOrderItem[] {
+    const reviewableItems: ReviewableOrderItem[] = []
+
+    for (const item of order.items ?? []) {
+      if (!item.product_id) continue
+
+      const existingItem = reviewableItems.find(
+        (reviewableItem) => reviewableItem.productId === item.product_id,
+      )
+
+      if (existingItem) {
+        existingItem.lineItemIds.push(item.id)
+        existingItem.quantity += item.quantity
+        continue
+      }
+
+      reviewableItems.push({
+        image: isProductHandle(item.product_handle) ? vermouths[item.product_handle].image : null,
+        lineItemIds: [item.id],
+        productHandle: item.product_handle,
+        productId: item.product_id,
+        quantity: item.quantity,
+        title: item.product_title ?? item.title,
+      })
+    }
+
+    return reviewableItems
+  }
+
+  function getProductFormResult(productId: string) {
+    return form?.productId === productId ? (form as ReviewFormResult) : null
+  }
+
+  function getFormValues(productId: string) {
+    return getProductFormResult(productId)?.values ?? {}
+  }
+
+  function isSubmitted(productId: string) {
+    const result = getProductFormResult(productId)
+    return submittedProductIds.includes(productId) || Boolean(result?.success)
+  }
+
+  function getProductMessage(productId: string) {
+    return getProductFormResult(productId)?.message
+  }
+
+  function isRatingTouched(productId: string) {
+    return touchedRatingProductIds.includes(productId)
+  }
+
+  function touchRating(productId: string) {
+    if (isRatingTouched(productId)) return
+
+    touchedRatingProductIds = [...touchedRatingProductIds, productId]
+  }
+
+  function getRatingErrorMessage(productId: string) {
+    return ratingErrorMessages[productId] ?? ''
+  }
+
+  function setRatingErrorMessage(
+    productId: string,
+    e: Event & { currentTarget: HTMLInputElement },
+  ) {
+    const { customError, valid, valueMissing } = e.currentTarget.validity
+
+    if (valid) {
+      const nextRatingErrorMessages = { ...ratingErrorMessages }
+      delete nextRatingErrorMessages[productId]
+      ratingErrorMessages = nextRatingErrorMessages
+    } else if (customError) {
+      ratingErrorMessages = {
+        ...ratingErrorMessages,
+        [productId]: e.currentTarget.validationMessage,
+      }
+    } else if (valueMissing) {
+      ratingErrorMessages = {
+        ...ratingErrorMessages,
+        [productId]: `Vælg venligst en ${ratingGroupLabel}.`,
+      }
+    }
+  }
+
+  function handleRatingInvalid(productId: string, e: Event & { currentTarget: HTMLInputElement }) {
+    e.preventDefault()
+    touchRating(productId)
+    setRatingErrorMessage(productId, e)
+  }
+
+  function handleRatingInput(productId: string, e: Event & { currentTarget: HTMLInputElement }) {
+    if (!isRatingTouched(productId)) return
+
+    e.currentTarget.checkValidity()
+    setRatingErrorMessage(productId, e)
+  }
+
+  function rememberSubmittedProduct(result: ActionResult) {
+    if (result.type !== 'success' || !result.data) return
+
+    const { productId } = result.data as ProductReviewSubmissionResult
+    if (!productId || submittedProductIds.includes(productId)) return
+
+    submittedProductIds = [...submittedProductIds, productId]
+  }
+</script>
+
+<svelte:head>
+  <title>Anmeld ordre #{data.order.display_id} | Vermouth.nu</title>
+</svelte:head>
+
+<section class="content border-b border-black">
+  <p class="text-xs font-bold uppercase">Ordre #{data.order.display_id}</p>
+  <h1>Anmeld dine produkter</h1>
+  <p>
+    Fortæl os, hvad du synes om de flasker du har smagt. Anmeldelser bliver synlige, når de er
+    godkendt.
+  </p>
+</section>
+
+<section class="border-b border-black px-4 py-8 lg:px-20 lg:py-16">
+  <div class="mx-auto max-w-5xl">
+    {#each reviewableItems as item (item.productId)}
+      {@const values = getFormValues(item.productId)}
+      {@const message = getProductMessage(item.productId)}
+      {@const submitted = isSubmitted(item.productId)}
+      <article class="border-b border-black py-8 first:pt-0 last:border-b-0">
+        <div class="grid gap-8 lg:grid-cols-[14rem_1fr] lg:gap-12">
+          <div class="flex flex-col items-center">
+            {#if item.image}
+              <img
+                alt={item.title}
+                class="aspect-square w-full max-w-48 object-cover"
+                height="192"
+                loading="lazy"
+                sizes="(max-width: 1024px) 12rem, 12rem"
+                src="{item.image}/w=192,h=192,fit=cover"
+                srcset={thumbnailSrcSet(item.image)}
+                width="192"
+              />
+            {/if}
+          </div>
+
+          <div>
+            <h2 class="mb-2 text-center text-lg font-bold text-brand-blue lg:mb-0 lg:text-left">
+              {item.title}
+            </h2>
+            {#if submitted}
+              <div
+                class="border border-dark-blue bg-white/40 p-6 text-sm"
+                role="status"
+                aria-live="polite"
+              >
+                <p class="font-bold">{message ?? 'Tak for din anmeldelse.'}</p>
+              </div>
+            {:else}
+              <Form
+                action="?/submitReview"
+                class="grid gap-5"
+                bind:isSubmitting={isReviewSubmitting}
+                onResult={rememberSubmittedProduct}
+                reset
+              >
+                <input name="product_id" type="hidden" value={item.productId} />
+                <input name="line_item_id" type="hidden" value={item.lineItemIds[0]} />
+
+                <fieldset class="relative">
+                  <legend class="mb-3 text-sm font-bold">Din vurdering</legend>
+                  <div class="grid grid-cols-5 border border-dark-blue">
+                    {#each ratingOptions as rating (rating)}
+                      <label
+                        class="flex min-h-16 cursor-pointer items-center justify-center border-r border-dark-blue bg-white/40 px-2 text-base font-bold text-brand-blue last:border-r-0 hover:bg-white/70 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-brand-blue has-[:checked]:bg-brand-blue has-[:checked]:text-white"
+                      >
+                        <input
+                          aria-describedby={isRatingTouched(item.productId) &&
+                          getRatingErrorMessage(item.productId)
+                            ? `rating-${item.productId}-error`
+                            : undefined}
+                          checked={values.rating === String(rating)}
+                          class="sr-only"
+                          data-touched={isRatingTouched(item.productId)}
+                          name="rating"
+                          oninvalid={(event) => handleRatingInvalid(item.productId, event)}
+                          oninput={(event) => handleRatingInput(item.productId, event)}
+                          required
+                          type="radio"
+                          value={rating}
+                        />
+                        <span aria-hidden="true">{rating}★</span>
+                        <span class="sr-only">{rating} ud af 5 stjerner</span>
+                      </label>
+                    {/each}
+                  </div>
+                  {#if isRatingTouched(item.productId) && getRatingErrorMessage(item.productId)}
+                    <p
+                      id="rating-{item.productId}-error"
+                      class="absolute -bottom-4 left-0 text-xs leading-4 text-brand-red"
+                      role="alert"
+                      transition:fade
+                    >
+                      {getRatingErrorMessage(item.productId)}
+                    </p>
+                  {/if}
+                </fieldset>
+
+                <div>
+                  <Input
+                    autocomplete="name"
+                    id="reviewer-name-{item.productId}"
+                    label="Navn"
+                    maxlength={120}
+                    name="reviewer_name"
+                    value={values.reviewer_name ?? reviewerName}
+                  />
+                </div>
+
+                <div>
+                  <Input
+                    id="review-title-{item.productId}"
+                    label="Overskrift"
+                    maxlength={120}
+                    name="title"
+                    value={values.title}
+                  />
+                </div>
+
+                <div class="relative border border-dark-blue bg-white/40">
+                  <textarea
+                    class="min-h-40 w-full bg-transparent p-6 text-sm placeholder:text-gray-500 focus:bg-white"
+                    maxlength="5000"
+                    name="content"
+                    placeholder="Din anmeldelse">{values.content ?? ''}</textarea
+                  >
+                </div>
+
+                <div class="relative">
+                  {#if message}
+                    <p
+                      class="absolute -top-4 left-0 text-xs font-bold leading-4 text-brand-red"
+                      role="alert"
+                    >
+                      {message}
+                    </p>
+                  {/if}
+                </div>
+
+                <div class="text-center lg:text-left">
+                  <button
+                    class="btn justify-center transition-colors disabled:cursor-not-allowed disabled:bg-brand-blue/60"
+                    disabled={isReviewSubmitting}
+                    type="submit"
+                  >
+                    {isReviewSubmitting ? 'SENDER...' : 'SEND ANMELDELSE'}
+                  </button>
+                </div>
+              </Form>
+            {/if}
+          </div>
+        </div>
+      </article>
+    {:else}
+      <div class="mx-auto max-w-xl text-center">
+        <h2 class="mb-4 text-base font-bold">Ingen produkter at anmelde</h2>
+        <p class="text-sm">Vi kunne ikke finde produkter på ordren, der kan anmeldes.</p>
+      </div>
+    {/each}
+  </div>
+</section>

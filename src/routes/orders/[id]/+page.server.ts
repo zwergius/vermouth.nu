@@ -1,12 +1,6 @@
 import type { PageServerLoad } from './$types'
-import { sdk } from '$lib/medusa'
+import { redirect } from '@sveltejs/kit'
 
-export const load: PageServerLoad = async ({ params, locals }) => {
-  const { id } = params
-  const { order } = await sdk.store.order.retrieve(id)
-
-  return {
-    order,
-    locale: locals.locale,
-  }
+export const load: PageServerLoad = ({ params }) => {
+  redirect(308, `/ordrer/${params.id}`)
 }
