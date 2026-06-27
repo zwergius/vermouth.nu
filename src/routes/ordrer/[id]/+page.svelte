@@ -9,6 +9,7 @@
     type GaListItem,
     type GaPurchaseAddress,
   } from '$lib/helpers/analytics'
+  import CancellationRequestDialog from '$lib/components/cancellation-request-dialog.svelte'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
 
@@ -151,6 +152,18 @@
   <p>Ordrenummer #{order.display_id}</p>
 
   <p class="text-base">Du modtager en email med faktura og leveringsdetaljer.</p>
+  <div class="mb-6 md:mb-8">
+    <CancellationRequestDialog
+      prefill={{
+        customerName: `${order.shipping_address?.first_name ?? ''} ${
+          order.shipping_address?.last_name ?? ''
+        }`.trim(),
+        email: order.email ?? '',
+        orderReference: String(order.display_id ?? order.id ?? ''),
+      }}
+      triggerClass="btn mx-auto w-fit justify-center text-sm"
+    />
+  </div>
 
   <h2>Ordreoversigt</h2>
 

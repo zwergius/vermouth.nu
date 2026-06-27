@@ -1,3 +1,7 @@
+<script lang="ts">
+  import CancellationRequestDialog from '$lib/components/cancellation-request-dialog.svelte'
+</script>
+
 <section class="policy">
   <h1>Handelsbetingelser</h1>
 
@@ -86,10 +90,14 @@
   </p>
 
   <p>
-    Du skal give os besked om fortrydelse via e-mail til <a href="mailto:info@vermouth.nu"
-      >info@vermouth.nu</a
-    >
+    Du skal give os besked om fortrydelse via vores online formular eller via e-mail til <a
+      href="mailto:info@vermouth.nu">info@vermouth.nu</a
+    >.
   </p>
+
+  <div class="mb-2">
+    <CancellationRequestDialog triggerClass="font-bold underline" />
+  </div>
 
   <h3>Returnering</h3>
 

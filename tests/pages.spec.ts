@@ -64,6 +64,7 @@ const pages = [
   { path: '/om-os', text: 'VENNERNE SOM' },
   { path: '/kurv', text: 'Kontaktinformation' },
   { path: '/handelsbetingelser', text: 'Handelsbetingelser' },
+  { path: '/ordrer/fortryd', text: 'Fortryd køb' },
   { path: '/fortrolighedspolitik', text: 'Fortrolighedspolitik' },
   { path: '/betaling/fejl', text: 'Vi kunne ikke gennemføre betalingen.' },
 ]
@@ -78,6 +79,46 @@ test.describe('site pages', () => {
       await expect(page.locator('footer')).toContainText('info@vermouth.nu')
     })
   }
+})
+
+test.describe('cancellation request flow', () => {
+  test('customer can submit a cancellation request from the footer dialog', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' })
+
+    await page.locator('footer').getByRole('link', { name: 'Fortryd køb her' }).click()
+
+    const dialog = page.getByRole('dialog', { name: 'Fortryd køb' })
+    await expect(dialog).toBeVisible()
+
+    await dialog.getByRole('textbox', { name: 'Navn' }).fill('Karla Kunde')
+    await dialog.getByRole('textbox', { name: 'E-mailadresse' }).fill('kunde@example.com')
+    await dialog.getByRole('textbox', { name: 'Ordrenummer' }).fill('1001')
+    await dialog.getByRole('textbox', { name: 'Besked' }).fill('Jeg vil fortryde købet.')
+    await dialog.getByRole('button', { name: 'Bekræft fortrydelse' }).click()
+
+    await expect(dialog.getByTestId('cancellation-request-success')).toContainText(
+      'Din fortrydelse er modtaget.',
+    )
+  })
+
+  test('customer can submit a cancellation request from the fallback page', async ({ page }) => {
+    await page.goto('/ordrer/fortryd?email=kunde@example.com&orderReference=1001', {
+      waitUntil: 'networkidle',
+    })
+
+    await expect(page.getByRole('heading', { name: 'Fortryd køb' })).toBeVisible()
+    await expect(page.getByRole('textbox', { name: 'E-mailadresse' })).toHaveValue(
+      'kunde@example.com',
+    )
+    await expect(page.getByRole('textbox', { name: 'Ordrenummer' })).toHaveValue('1001')
+
+    await page.getByRole('textbox', { name: 'Navn' }).fill('Karla Kunde')
+    await page.getByRole('button', { name: 'Bekræft fortrydelse' }).click()
+
+    await expect(page.getByTestId('cancellation-request-success')).toContainText(
+      'Din fortrydelse er modtaget.',
+    )
+  })
 })
 
 test.describe('product detail pages', () => {
