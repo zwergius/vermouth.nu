@@ -44,13 +44,9 @@
   const values = $derived(result?.values ?? prefill)
   const errors = $derived(result?.errors ?? {})
 
-  function getCancellationRequestPath() {
-    return resolve('/ordrer/fortryd')
-  }
-
   function getFormAction() {
     const search = getFallbackSearch()
-    return `${getCancellationRequestPath()}?/submit${search ? `&${search.slice(1)}` : ''}`
+    return `${resolve('/ordrer/fortryd')}?/submit${search ? `&${search.slice(1)}` : ''}`
   }
 
   function getFallbackSearch() {
