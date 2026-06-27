@@ -6,7 +6,6 @@
   import { Form, Input } from '$lib/components/form-controls'
   import { vermouths, type Handle } from '$lib/data/products'
   import { thumbnailSrcSet } from '$lib/helpers/images'
-  import type { ProductReviewSubmissionResult } from '../../../api/products/[id]/reviews/+server'
 
   const { data, form }: PageProps = $props()
 
@@ -19,6 +18,12 @@
 
   type ReviewFormResult = ProductReviewSubmissionResult & {
     values?: ReviewFormValues
+  }
+
+  type ProductReviewSubmissionResult = {
+    productId: string
+    message?: string
+    success?: boolean
   }
 
   type ReviewableOrderItem = {
@@ -89,9 +94,7 @@
 
   function isSubmitted(productId: string) {
     const result = getProductFormResult(productId)
-    return (
-      submittedProductIds.includes(productId) || Boolean(result?.success || result?.alreadyReviewed)
-    )
+    return submittedProductIds.includes(productId) || Boolean(result?.success)
   }
 
   function getProductMessage(productId: string) {
@@ -205,9 +208,6 @@
                 aria-live="polite"
               >
                 <p class="font-bold">{message ?? 'Tak for din anmeldelse.'}</p>
-                <p class="mt-2">
-                  Vi gennemgår den, før den bliver vist sammen med de andre anmeldelser.
-                </p>
               </div>
             {:else}
               <Form

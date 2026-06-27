@@ -2,7 +2,15 @@ import type { Actions } from './$types'
 import { error, fail } from '@sveltejs/kit'
 import type { HttpTypes } from '@medusajs/types'
 import { sdk } from '$lib/medusa'
-import type { CreateProductReviewInput } from '../../../api/products/[id]/reviews/+server'
+
+type CreateProductReviewInput = {
+  rating: number
+  title?: string
+  content?: string
+  reviewer_name?: string
+  reviewer_email?: string
+  metadata?: Record<string, unknown>
+}
 
 const MAX_TITLE_LENGTH = 120
 const MAX_CONTENT_LENGTH = 5000
@@ -152,14 +160,6 @@ export const actions = {
       body: JSON.stringify(payload),
     })
     const responseBody = await response.json().catch(() => ({}))
-
-    if (response.status === 409) {
-      return {
-        alreadyReviewed: true,
-        message: 'Du har allerede anmeldt dette produkt.',
-        productId,
-      }
-    }
 
     if (!response.ok) {
       return fail(response.status, {
