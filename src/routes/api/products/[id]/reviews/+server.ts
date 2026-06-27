@@ -55,12 +55,14 @@ export const GET: RequestHandler = async ({ fetch, params, url }) => {
 }
 
 export const POST: RequestHandler = async ({ fetch, params, request }) => {
+  const body = await request.text()
+
   return fetch(getProductReviewsUrl(params.id), {
     method: 'POST',
     headers: {
       'content-type': request.headers.get('content-type') ?? 'application/json',
       'x-publishable-api-key': PUBLIC_MEDUSA_PUBLISHABLE_KEY,
     },
-    body: request.body,
+    body,
   })
 }

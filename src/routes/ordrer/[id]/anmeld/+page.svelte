@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ActionResult } from '@sveltejs/kit'
   import type { HttpTypes } from '@medusajs/types'
+  import { fade } from 'svelte/transition'
   import type { PageProps } from './$types'
   import { Form, Input } from '$lib/components/form-controls'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -12,7 +13,6 @@
   type ReviewFormValues = {
     content?: string
     rating?: string
-    reviewer_email?: string
     reviewer_name?: string
     title?: string
   }
@@ -31,8 +31,11 @@
   }
 
   const ratingOptions = [1, 2, 3, 4, 5]
+  const ratingGroupLabel = 'vurdering'
 
   let isReviewSubmitting = $state(false)
+  let ratingErrorMessages = $state<Record<string, string>>({})
+  let touchedRatingProductIds = $state<string[]>([])
   let submittedProductIds = $state<string[]>([])
 
   const reviewerName = $derived(getReviewerName(data.order))
@@ -95,6 +98,56 @@
     return getProductFormResult(productId)?.message
   }
 
+  function isRatingTouched(productId: string) {
+    return touchedRatingProductIds.includes(productId)
+  }
+
+  function touchRating(productId: string) {
+    if (isRatingTouched(productId)) return
+
+    touchedRatingProductIds = [...touchedRatingProductIds, productId]
+  }
+
+  function getRatingErrorMessage(productId: string) {
+    return ratingErrorMessages[productId] ?? ''
+  }
+
+  function setRatingErrorMessage(
+    productId: string,
+    e: Event & { currentTarget: HTMLInputElement },
+  ) {
+    const { customError, valid, valueMissing } = e.currentTarget.validity
+
+    if (valid) {
+      const nextRatingErrorMessages = { ...ratingErrorMessages }
+      delete nextRatingErrorMessages[productId]
+      ratingErrorMessages = nextRatingErrorMessages
+    } else if (customError) {
+      ratingErrorMessages = {
+        ...ratingErrorMessages,
+        [productId]: e.currentTarget.validationMessage,
+      }
+    } else if (valueMissing) {
+      ratingErrorMessages = {
+        ...ratingErrorMessages,
+        [productId]: `Vælg venligst en ${ratingGroupLabel}.`,
+      }
+    }
+  }
+
+  function handleRatingInvalid(productId: string, e: Event & { currentTarget: HTMLInputElement }) {
+    e.preventDefault()
+    touchRating(productId)
+    setRatingErrorMessage(productId, e)
+  }
+
+  function handleRatingInput(productId: string, e: Event & { currentTarget: HTMLInputElement }) {
+    if (!isRatingTouched(productId)) return
+
+    e.currentTarget.checkValidity()
+    setRatingErrorMessage(productId, e)
+  }
+
   function rememberSubmittedProduct(result: ActionResult) {
     if (result.type !== 'success' || !result.data) return
 
@@ -125,9 +178,8 @@
       {@const message = getProductMessage(item.productId)}
       {@const submitted = isSubmitted(item.productId)}
       <article class="border-b border-black py-8 first:pt-0 last:border-b-0">
-        <div class="grid gap-8 lg:grid-cols-[12rem_1fr] lg:gap-12">
-          <div>
-            <h2 class="mb-4 text-sm font-bold">{item.title}</h2>
+        <div class="grid gap-8 lg:grid-cols-[14rem_1fr] lg:gap-12">
+          <div class="flex flex-col items-center">
             {#if item.image}
               <img
                 alt={item.title}
@@ -140,12 +192,12 @@
                 width="192"
               />
             {/if}
-            <div class="mt-4 text-sm">
-              <p>{item.quantity} stk.</p>
-            </div>
           </div>
 
           <div>
+            <h2 class="mb-2 text-center text-lg font-bold text-brand-blue lg:mb-0 lg:text-left">
+              {item.title}
+            </h2>
             {#if submitted}
               <div
                 class="border border-dark-blue bg-white/40 p-6 text-sm"
@@ -160,6 +212,7 @@
             {:else}
               <Form
                 action="?/submitReview"
+                class="grid gap-5"
                 bind:isSubmitting={isReviewSubmitting}
                 onResult={rememberSubmittedProduct}
                 reset
@@ -167,7 +220,7 @@
                 <input name="product_id" type="hidden" value={item.productId} />
                 <input name="line_item_id" type="hidden" value={item.lineItemIds[0]} />
 
-                <fieldset class="mb-6">
+                <fieldset class="relative">
                   <legend class="mb-3 text-sm font-bold">Din vurdering</legend>
                   <div class="grid grid-cols-5 border border-dark-blue">
                     {#each ratingOptions as rating (rating)}
@@ -175,9 +228,16 @@
                         class="flex min-h-16 cursor-pointer items-center justify-center border-r border-dark-blue bg-white/40 px-2 text-base font-bold text-brand-blue last:border-r-0 hover:bg-white/70 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-4 has-[:focus-visible]:outline-brand-blue has-[:checked]:bg-brand-blue has-[:checked]:text-white"
                       >
                         <input
+                          aria-describedby={isRatingTouched(item.productId) &&
+                          getRatingErrorMessage(item.productId)
+                            ? `rating-${item.productId}-error`
+                            : undefined}
                           checked={values.rating === String(rating)}
                           class="sr-only"
+                          data-touched={isRatingTouched(item.productId)}
                           name="rating"
+                          oninvalid={(event) => handleRatingInvalid(item.productId, event)}
+                          oninput={(event) => handleRatingInput(item.productId, event)}
                           required
                           type="radio"
                           value={rating}
@@ -187,59 +247,68 @@
                       </label>
                     {/each}
                   </div>
+                  {#if isRatingTouched(item.productId) && getRatingErrorMessage(item.productId)}
+                    <p
+                      id="rating-{item.productId}-error"
+                      class="absolute -bottom-4 left-0 text-xs leading-4 text-brand-red"
+                      role="alert"
+                      transition:fade
+                    >
+                      {getRatingErrorMessage(item.productId)}
+                    </p>
+                  {/if}
                 </fieldset>
 
-                <div class="mb-4 grid gap-4 md:grid-cols-2">
+                <div>
                   <Input
                     autocomplete="name"
                     id="reviewer-name-{item.productId}"
                     label="Navn"
                     maxlength={120}
                     name="reviewer_name"
-                    required
                     value={values.reviewer_name ?? reviewerName}
-                  />
-                  <Input
-                    autocomplete="email"
-                    id="reviewer-email-{item.productId}"
-                    label="Email"
-                    name="reviewer_email"
-                    required
-                    type="email"
-                    value={values.reviewer_email ?? data.order.email}
                   />
                 </div>
 
-                <div class="mb-4">
+                <div>
                   <Input
                     id="review-title-{item.productId}"
-                    label="Overskrift (valgfrit)"
+                    label="Overskrift"
                     maxlength={120}
                     name="title"
                     value={values.title}
                   />
                 </div>
 
-                <div class="relative mb-6 border border-dark-blue bg-white/40">
+                <div class="relative border border-dark-blue bg-white/40">
                   <textarea
-                    class="min-h-40 w-full bg-transparent p-6 text-sm focus:bg-white"
+                    class="min-h-40 w-full bg-transparent p-6 text-sm placeholder:text-gray-500 focus:bg-white"
                     maxlength="5000"
                     name="content"
                     placeholder="Din anmeldelse">{values.content ?? ''}</textarea
                   >
                 </div>
 
-                {#if message}
-                  <p class="mb-4 text-xs font-bold text-brand-red" role="alert">{message}</p>
-                {/if}
+                <div class="relative">
+                  {#if message}
+                    <p
+                      class="absolute -top-4 left-0 text-xs font-bold leading-4 text-brand-red"
+                      role="alert"
+                    >
+                      {message}
+                    </p>
+                  {/if}
+                </div>
 
-                <button
-                  class="btn justify-center transition-colors disabled:cursor-not-allowed disabled:bg-brand-blue/60"
-                  disabled={isReviewSubmitting}
-                  type="submit"
-                >
-                  {isReviewSubmitting ? 'SENDER...' : 'SEND ANMELDELSE'}
-                </button>
+                <div class="text-center lg:text-left">
+                  <button
+                    class="btn justify-center transition-colors disabled:cursor-not-allowed disabled:bg-brand-blue/60"
+                    disabled={isReviewSubmitting}
+                    type="submit"
+                  >
+                    {isReviewSubmitting ? 'SENDER...' : 'SEND ANMELDELSE'}
+                  </button>
+                </div>
               </Form>
             {/if}
           </div>

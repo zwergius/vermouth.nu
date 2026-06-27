@@ -2,6 +2,7 @@
   "name": "vermouth-nu",
   "version": "0.0.1",
   "scripts": {
+    "predev": "pnpm fix",
     "dev": "vite dev --host",
     "prebuild": "npm run fix",
     "build": "vite build",

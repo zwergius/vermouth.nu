@@ -63,8 +63,8 @@ function getReviewPayload(
   const rating = Number(formData.get('rating'))
   const title = getString(formData.get('title'))
   const content = getString(formData.get('content'))
-  const reviewerName = getString(formData.get('reviewer_name'))
-  const reviewerEmail = getString(formData.get('reviewer_email'))
+  const reviewerName = getString(formData.get('reviewer_name')) || 'anonym'
+  const reviewerEmail = order.email?.trim() ?? ''
 
   const errors: string[] = []
 
@@ -80,14 +80,12 @@ function getReviewPayload(
     errors.push(`Anmeldelsen må højst være ${MAX_CONTENT_LENGTH} tegn.`)
   }
 
-  if (!reviewerName) {
-    errors.push('Skriv dit navn.')
-  } else if (reviewerName.length > MAX_REVIEWER_NAME_LENGTH) {
+  if (reviewerName.length > MAX_REVIEWER_NAME_LENGTH) {
     errors.push(`Navnet må højst være ${MAX_REVIEWER_NAME_LENGTH} tegn.`)
   }
 
   if (!reviewerEmail || !isValidEmail(reviewerEmail)) {
-    errors.push('Skriv en gyldig email.')
+    errors.push('Ordren mangler en gyldig email til anmeldelsen.')
   }
 
   const payload: CreateProductReviewInput = {
@@ -111,8 +109,7 @@ function getReviewPayload(
     values: {
       content,
       rating: Number.isInteger(rating) ? String(rating) : '',
-      reviewer_email: reviewerEmail,
-      reviewer_name: reviewerName,
+      reviewer_name: reviewerName === 'anonym' ? '' : reviewerName,
       title,
     },
   }
