@@ -33,7 +33,7 @@ type CancellationEligibility = {
   deadline: string | null
   deliveredAt: string | null
   orderId: string | null
-  status: 'notChecked' | 'periodExpired' | 'withinPeriod'
+  status: 'emailMismatch' | 'notChecked' | 'periodExpired' | 'withinPeriod'
 }
 
 async function submitCancellationRequest(
@@ -167,8 +167,8 @@ export function _getCancellationEligibility(
       deadline: null,
       deliveredAt: null,
       orderId: order.id,
-      status: 'notChecked',
-      valid: true,
+      status: 'emailMismatch',
+      valid: false,
     } as const
   }
 
@@ -267,6 +267,14 @@ async function handleCancellationRequestForm(data: FormData) {
   }
 
   const eligibility = await getOrderCancellationEligibility(values)
+
+  if (!eligibility.valid && eligibility.status === 'emailMismatch') {
+    return fail(400, {
+      action: 'cancellationRequest',
+      message: 'E-mailadressen matcher ikke ordren. Tjek oplysningerne og prøv igen.',
+      values,
+    } satisfies CancellationRequestActionData)
+  }
 
   if (!eligibility.valid && eligibility.status === 'periodExpired') {
     return fail(400, {

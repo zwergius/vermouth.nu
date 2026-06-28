@@ -152,7 +152,7 @@ describe('cancellation request eligibility', () => {
     })
   })
 
-  it('allows manual handling when the email does not match the order', () => {
+  it('rejects when the email does not match the order', () => {
     const eligibility = _getCancellationEligibility(
       getOrder(),
       'another@example.com',
@@ -163,8 +163,8 @@ describe('cancellation request eligibility', () => {
       deadline: null,
       deliveredAt: null,
       orderId: 'order_123',
-      status: 'notChecked',
-      valid: true,
+      status: 'emailMismatch',
+      valid: false,
     })
   })
 })
