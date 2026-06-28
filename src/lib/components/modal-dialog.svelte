@@ -31,7 +31,7 @@
 
 <dialog
   aria-labelledby={titleId}
-  class="modal-dialog m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto border-0 bg-brand-pink p-0 text-black sm:m-auto sm:h-auto sm:max-h-[90dvh] sm:w-11/12 sm:max-w-2xl sm:border sm:border-black"
+  class="modal-dialog m-0 h-dvh max-h-none w-full max-w-none overflow-y-auto border-0 bg-brand-pink p-0 text-black sm:m-auto sm:h-fit sm:max-h-[90dvh] sm:w-11/12 sm:max-w-2xl sm:border sm:border-black"
   onclick={handleBackdropClick}
   onclose={close}
   {@attach dialogRef}
