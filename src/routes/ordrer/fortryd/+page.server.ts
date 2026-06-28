@@ -9,7 +9,6 @@ type CancellationRequestValues = {
   customerName: string
   email: string
   message: string
-  orderId: string
   orderReference: string
 }
 
@@ -33,7 +32,8 @@ function getValue(data: FormData, name: keyof CancellationRequestValues) {
 type CancellationEligibility = {
   deadline: string | null
   deliveredAt: string | null
-  orderId: string
+  orderId: string | null
+  status: 'notChecked' | 'periodExpired' | 'withinPeriod'
 }
 
 async function submitCancellationRequest(
@@ -116,7 +116,8 @@ function getCancellationRequestEmailText(
     `Navn: ${input.customerName}`,
     `E-mail: ${input.email}`,
     `Ordrenummer: ${input.orderReference}`,
-    `Medusa ordre-id: ${input.eligibility.orderId}`,
+    `Medusa ordre-id: ${input.eligibility.orderId ?? 'Ikke fundet'}`,
+    `Fortrydelsestjek: ${input.eligibility.status}`,
     `Leveret: ${input.eligibility.deliveredAt ?? 'Ikke registreret'}`,
     `Fortrydelsesfrist: ${input.eligibility.deadline ?? 'Ikke fastlagt'}`,
     '',
@@ -163,8 +164,11 @@ export function _getCancellationEligibility(
 ) {
   if (normalizeEmail(order.email) !== normalizeEmail(email)) {
     return {
-      reason: 'orderMismatch',
-      valid: false,
+      deadline: null,
+      deliveredAt: null,
+      orderId: order.id,
+      status: 'notChecked',
+      valid: true,
     } as const
   }
 
@@ -175,6 +179,7 @@ export function _getCancellationEligibility(
       deadline: null,
       deliveredAt: null,
       orderId: order.id,
+      status: 'withinPeriod',
       valid: true,
     } as const
   }
@@ -187,7 +192,7 @@ export function _getCancellationEligibility(
       deadline: deadline.toISOString(),
       deliveredAt: deliveredAt.toISOString(),
       orderId: order.id,
-      reason: 'periodExpired',
+      status: 'periodExpired',
       valid: false,
     } as const
   }
@@ -196,15 +201,14 @@ export function _getCancellationEligibility(
     deadline: deadline.toISOString(),
     deliveredAt: deliveredAt.toISOString(),
     orderId: order.id,
+    status: 'withinPeriod',
     valid: true,
   } as const
 }
 
 async function getOrderCancellationEligibility(values: CancellationRequestValues) {
-  const orderId = values.orderId || values.orderReference
-
   try {
-    const { order } = await sdk.store.order.retrieve(orderId, {
+    const { order } = await sdk.store.order.retrieve(values.orderReference, {
       fields: 'id,email,display_id,*fulfillments',
     })
 
@@ -213,8 +217,11 @@ async function getOrderCancellationEligibility(values: CancellationRequestValues
     console.error('Error retrieving order for cancellation request', error)
 
     return {
-      reason: 'orderMismatch',
-      valid: false,
+      deadline: null,
+      deliveredAt: null,
+      orderId: null,
+      status: 'notChecked',
+      valid: true,
     } as const
   }
 }
@@ -224,7 +231,6 @@ async function handleCancellationRequestForm(data: FormData) {
     customerName: getValue(data, 'customerName'),
     email: getValue(data, 'email'),
     message: getValue(data, 'message'),
-    orderId: getValue(data, 'orderId'),
     orderReference: getValue(data, 'orderReference'),
   }
   const errors: CancellationRequestActionData['errors'] = {}
@@ -248,15 +254,7 @@ async function handleCancellationRequestForm(data: FormData) {
 
   const eligibility = await getOrderCancellationEligibility(values)
 
-  if (!eligibility.valid && eligibility.reason === 'orderMismatch') {
-    return fail(400, {
-      action: 'cancellationRequest',
-      message: 'Vi kunne ikke finde en ordre med de angivne oplysninger.',
-      values,
-    } satisfies CancellationRequestActionData)
-  }
-
-  if (!eligibility.valid && eligibility.reason === 'periodExpired') {
+  if (!eligibility.valid && eligibility.status === 'periodExpired') {
     return fail(400, {
       action: 'cancellationRequest',
       message: 'Fortrydelsesfristen på 14 dage er udløbet for denne ordre.',

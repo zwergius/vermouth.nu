@@ -210,7 +210,6 @@
           order.shipping_address?.last_name ?? ''
         }`.trim(),
         email: order.email ?? '',
-        orderId: order.id,
         orderReference: String(order.display_id ?? order.id ?? ''),
       }}
       showDialogActions

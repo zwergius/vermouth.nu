@@ -7,7 +7,6 @@
     customerName: string
     email: string
     message: string
-    orderId: string
     orderReference: string
   }
   type CancellationRequestActionData = {
@@ -143,10 +142,6 @@
     {/if}
 
     <Textarea label="Besked" maxlength={5000} name="message" value={values.message} />
-
-    {#if values.orderId}
-      <input name="orderId" type="hidden" value={values.orderId} />
-    {/if}
 
     <div class="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
       <button class="btn justify-center px-5 py-3 text-sm" disabled={isSubmitting} type="submit">

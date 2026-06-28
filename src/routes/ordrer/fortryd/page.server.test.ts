@@ -27,12 +27,12 @@ describe('cancellation request email', () => {
         customerName: 'Karla Kunde',
         email: 'kunde@example.com',
         message: 'Jeg vil fortryde købet.',
-        orderId: 'order_123',
         orderReference: '1001',
         eligibility: {
           deadline: '2026-06-28T23:59:59.999Z',
           deliveredAt: '2026-06-14T09:00:00.000Z',
           orderId: 'order_123',
+          status: 'withinPeriod',
         },
         submittedAt: '2026-06-28T07:25:00.000Z',
       },
@@ -52,6 +52,7 @@ describe('cancellation request email', () => {
         'E-mail: kunde@example.com',
         'Ordrenummer: 1001',
         'Medusa ordre-id: order_123',
+        'Fortrydelsestjek: withinPeriod',
         'Leveret: 2026-06-14T09:00:00.000Z',
         'Fortrydelsesfrist: 2026-06-28T23:59:59.999Z',
         '',
@@ -82,6 +83,7 @@ describe('cancellation request eligibility', () => {
       deadline: '2026-06-28T23:59:59.999Z',
       deliveredAt: '2026-06-14T09:00:00.000Z',
       orderId: 'order_123',
+      status: 'withinPeriod',
       valid: true,
     })
   })
@@ -104,7 +106,7 @@ describe('cancellation request eligibility', () => {
       deadline: '2026-06-27T23:59:59.999Z',
       deliveredAt: '2026-06-13T09:00:00.000Z',
       orderId: 'order_123',
-      reason: 'periodExpired',
+      status: 'periodExpired',
       valid: false,
     })
   })
@@ -128,11 +130,12 @@ describe('cancellation request eligibility', () => {
       deadline: null,
       deliveredAt: null,
       orderId: 'order_123',
+      status: 'withinPeriod',
       valid: true,
     })
   })
 
-  it('rejects when the email does not match the order', () => {
+  it('allows manual handling when the email does not match the order', () => {
     const eligibility = _getCancellationEligibility(
       getOrder(),
       'another@example.com',
@@ -140,8 +143,11 @@ describe('cancellation request eligibility', () => {
     )
 
     expect(eligibility).toEqual({
-      reason: 'orderMismatch',
-      valid: false,
+      deadline: null,
+      deliveredAt: null,
+      orderId: 'order_123',
+      status: 'notChecked',
+      valid: true,
     })
   })
 })
