@@ -36,7 +36,7 @@ export const load: PageServerLoad = async ({ fetch, parent, url }) => {
     notificationUrl: `${PUBLIC_VITE_BACKEND_URL}/webhooks/epay`,
     pointOfSaleId: PUBLIC_POINT_OF_SALE_ID,
     reference: cart.id.replace('cart_', ''),
-    successUrl: `${url.origin}/betaling/success`,
+    successUrl: `${url.origin}/betaling/success?reference=\${transaction.reference}`,
   }
 
   // Setup the fetch options
