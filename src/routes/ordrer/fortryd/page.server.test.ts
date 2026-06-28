@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { HttpTypes } from '@medusajs/types'
-import { _getCancellationEligibility, _getCancellationRequestEmailPayload } from './+page.server'
+import {
+  _getCancellationEligibility,
+  _getCancellationRequestEmailPayload,
+  _getOrderLookupReferences,
+} from './+page.server'
 
 function getOrder(overrides: Partial<HttpTypes.StoreOrder> = {}): HttpTypes.StoreOrder {
   return {
@@ -65,6 +69,19 @@ describe('cancellation request email', () => {
 })
 
 describe('cancellation request eligibility', () => {
+  it('looks up order references both as entered and as a Medusa order id', () => {
+    expect(_getOrderLookupReferences('01KPZ1MM1K8ZAV7APTNG6TB1W3')).toEqual([
+      '01KPZ1MM1K8ZAV7APTNG6TB1W3',
+      'order_01KPZ1MM1K8ZAV7APTNG6TB1W3',
+    ])
+  })
+
+  it('does not duplicate an already prefixed Medusa order id', () => {
+    expect(_getOrderLookupReferences('order_01KPZ1MM1K8ZAV7APTNG6TB1W3')).toEqual([
+      'order_01KPZ1MM1K8ZAV7APTNG6TB1W3',
+    ])
+  })
+
   it('accepts an order delivered inside the 14 day cancellation period', () => {
     const eligibility = _getCancellationEligibility(
       getOrder({

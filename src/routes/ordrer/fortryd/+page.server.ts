@@ -206,24 +206,38 @@ export function _getCancellationEligibility(
   } as const
 }
 
-async function getOrderCancellationEligibility(values: CancellationRequestValues) {
-  try {
-    const { order } = await sdk.store.order.retrieve(values.orderReference, {
-      fields: 'id,email,display_id,*fulfillments',
-    })
+export function _getOrderLookupReferences(orderReference: string) {
+  const normalizedReference = orderReference.trim()
 
-    return _getCancellationEligibility(order, values.email)
-  } catch (error) {
-    console.error('Error retrieving order for cancellation request', error)
-
-    return {
-      deadline: null,
-      deliveredAt: null,
-      orderId: null,
-      status: 'notChecked',
-      valid: true,
-    } as const
+  if (!normalizedReference || normalizedReference.startsWith('order_')) {
+    return [normalizedReference]
   }
+
+  return [normalizedReference, `order_${normalizedReference}`]
+}
+
+async function getOrderCancellationEligibility(values: CancellationRequestValues) {
+  for (const orderReference of _getOrderLookupReferences(values.orderReference)) {
+    try {
+      const { order } = await sdk.store.order.retrieve(orderReference, {
+        fields: 'id,email,display_id,*fulfillments',
+      })
+
+      return _getCancellationEligibility(order, values.email)
+    } catch {
+      continue
+    }
+  }
+
+  console.error('Error retrieving order for cancellation request', values.orderReference)
+
+  return {
+    deadline: null,
+    deliveredAt: null,
+    orderId: null,
+    status: 'notChecked',
+    valid: true,
+  } as const
 }
 
 async function handleCancellationRequestForm(data: FormData) {
