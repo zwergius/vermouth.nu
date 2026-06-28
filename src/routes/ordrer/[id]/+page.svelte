@@ -162,13 +162,6 @@
   <p>Ordrenummer #{order.display_id}</p>
 
   <p class="text-base">Du modtager en email med faktura og leveringsdetaljer.</p>
-  <div class="mb-6 md:mb-8">
-    <a
-      class="btn mx-auto w-fit justify-center text-sm"
-      href={resolve('/ordrer/fortryd')}
-      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
-    >
-  </div>
 
   <h2>Ordreoversigt</h2>
 
@@ -194,6 +187,13 @@
   </div>
 
   <p>På gensyn snart :)</p>
+  <div class="mt-6">
+    <a
+      class="btn mx-auto w-fit justify-center text-sm"
+      href={resolve('/ordrer/fortryd')}
+      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+    >
+  </div>
 </section>
 
 <ModalDialog
