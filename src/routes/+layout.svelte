@@ -2,16 +2,26 @@
   import { onMount } from 'svelte'
   import { page } from '$app/state'
   import { dev } from '$app/environment'
+  import { resolve } from '$app/paths'
   import { PUBLIC_COOKIE_YES_ID, PUBLIC_GA_MEASUREMENT_ID } from '$env/static/public'
   import '../app.css'
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import { reduced_motion } from '$lib/actions/reduced-motion'
   import { initializeAnalytics } from '$lib/helpers/analytics'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
   import type { LayoutProps } from './$types'
   import { fade, scale } from 'svelte/transition'
 
-  const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os']
+  const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os'] as const
+  const routePaths = {
+    forhandlere: '/forhandlere',
+    inspiration: '/inspiration',
+    'om-os': '/om-os',
+    smagninger: '/smagninger',
+    sortiment: '/sortiment',
+  } as const
   const topBannerMessages = [
     {
       href: '/sortiment',
@@ -24,11 +34,19 @@
   ] as const
 
   const { children, data }: LayoutProps = $props()
-  const { cart } = $derived(data)
+  const { cart, locale } = $derived(data)
   let topBannerIndex = $state(0)
   let isTopBannerPaused = $state(false)
+  let isCancellationRequestOpen = $state(false)
   const topBanner = $derived(topBannerMessages[topBannerIndex])
   const topBannerFadeDuration = $derived($reduced_motion ? 0 : 400)
+
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
 
   onMount(() => {
     if (!PUBLIC_GA_MEASUREMENT_ID) return
@@ -139,11 +157,11 @@
   {/if}
 </svelte:head>
 
-{#snippet anchor(route: string, hasCartIcon?: true)}
+{#snippet anchor(route: keyof typeof routePaths | 'kurv', hasCartIcon?: true)}
   <a
     aria-current={page.url.pathname.includes(route) ? 'page' : false}
     class="hover:font-bold aria-[current=page]:font-bold flex-1 h-full flex items-center justify-center gap-4 py-4"
-    href="/{route}"
+    href={resolve(route === 'kurv' ? '/kurv' : routePaths[route])}
   >
     {route.replace('-', ' ')}
     {#if hasCartIcon}
@@ -172,7 +190,7 @@
 <header class="sticky top-0 z-50 flex h-[--header-height] flex-col bg-brand-pink">
   <a
     class="grid overflow-hidden bg-brand-yellow py-1.5 text-center text-xs"
-    href={topBanner.href}
+    href={resolve(topBanner.href)}
     onblur={() => (isTopBannerPaused = false)}
     onfocus={() => (isTopBannerPaused = true)}
     onpointerenter={() => (isTopBannerPaused = true)}
@@ -187,7 +205,7 @@
   <nav class="flex-1 border-b border-t border-black text-sm">
     <ul class="nav-list h-full">
       <li class="col-span-2 lg:col-span-1">
-        <a class="flex h-full flex-col lg:items-center justify-center p-4" href="/"
+        <a class="flex h-full flex-col lg:items-center justify-center p-4" href={resolve('/')}
           ><img width="137" height="57" src={logo} alt="Vermouth.nu" /></a
         >
       </li>
@@ -206,16 +224,16 @@
       <li class="lg:hidden flex">
         <HamburgerMenu>
           <ul class="hamburger-nav-list">
-            <li><a href="/sortiment">Sortiment</a></li>
-            <li><a href="/smagninger">Smagninger</a></li>
-            <li><a href="/inspiration">Inspiration</a></li>
-            <li><a href="/forhandlere">Forhandlere</a></li>
-            <li><a href="/om-os">Om Os</a></li>
+            <li><a href={resolve('/sortiment')}>Sortiment</a></li>
+            <li><a href={resolve('/smagninger')}>Smagninger</a></li>
+            <li><a href={resolve('/inspiration')}>Inspiration</a></li>
+            <li><a href={resolve('/forhandlere')}>Forhandlere</a></li>
+            <li><a href={resolve('/om-os')}>Om Os</a></li>
           </ul>
         </HamburgerMenu>
         <a
           class="flex h-full flex-1 flex-col items-center justify-center py-4 border-l border-black text-brand-blue"
-          href="/kurv"
+          href={resolve('/kurv')}
         >
           {@render cartIcon()}
         </a>
@@ -245,11 +263,11 @@
     <figure class="border-y border-black py-5 pl-16 md:border-r">
       <figcaption class="font-bold">LINKS</figcaption>
       <ul>
-        {#each routes as route}
+        {#each routes as route (route)}
           <li>
             <a
               class="hover:font-bold aria-[current=page]:font-bold capitalize"
-              href="/{route}"
+              href={resolve(routePaths[route])}
               aria-current={page.url.pathname.includes(route) ? 'page' : false}
               >{route.replace('-', ' ')}</a
             >
@@ -280,13 +298,21 @@
       <figcaption class="font-bold">POLICES</figcaption>
       <ul>
         <li>
-          <a class="hover:font-bold" href="/handelsbetingelser">Handelsbetingelser</a>
+          <a class="hover:font-bold" href={resolve('/handelsbetingelser')}>Handelsbetingelser</a>
         </li>
         <li>
-          <a class="hover:font-bold" href="/fortrolighedspolitik">Fortrolighedspolitik</a>
+          <a class="hover:font-bold" href={resolve('/fortrolighedspolitik')}>Fortrolighedspolitik</a
+          >
         </li>
         <li>
-          <a class="hover:font-bold" href="/cookiepolitik">Cookiepolitik</a>
+          <a class="hover:font-bold" href={resolve('/cookiepolitik')}>Cookiepolitik</a>
+        </li>
+        <li>
+          <a
+            class="hover:font-bold"
+            href={resolve('/ordrer/fortryd')}
+            onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+          >
         </li>
       </ul>
       <figure class="mt-auto md:ml-auto overflow-visible">
@@ -298,6 +324,16 @@
     <p>© Copyright - Vermouth.nu</p>
   </div>
 </footer>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm {locale} onClose={close} showDialogActions />
+  {/snippet}
+</ModalDialog>
 
 <style lang="postcss">
   .nav-list {

@@ -25,10 +25,9 @@
     ...rest
   }: InputProps = $props()
 
-  const inputId = id ? id : name
+  const inputId = $derived(id ?? name)
 
   let errorMessage = $state('')
-  let inputElement = $state<HTMLInputElement>()
   let touched = $state(false)
 
   function handleErrorMessage(e: Event & { currentTarget: HTMLInputElement }) {
@@ -52,7 +51,7 @@
     } else if (tooShort && minlength) {
       errorMessage = `Ugyldigt ${label}, mindst ${minlength} tegn.`
     } else if (typeMismatch && type === 'email') {
-      errorMessage = `Indtast venligst en gyldig email fx: navn@acme.dk`
+      errorMessage = 'Indtast en gyldig e-mail fx: navn@acme.dk'
     } else if (patternMismatch && type === 'tel') {
       errorMessage = `Ugyldigt ${label}.`
     } else if (patternMismatch && pattern === '\\d*') {
@@ -112,7 +111,6 @@
 <div class="block relative border border-dark-blue">
   <input
     aria-invalid={touched && Boolean(errorMessage) ? true : undefined}
-    bind:this={inputElement}
     class:touched
     class="peer p-6 text-sm placeholder:text-transparent w-full bg-white/40
     focus:bg-white

@@ -1,3 +1,20 @@
+<script lang="ts">
+  import { resolve } from '$app/paths'
+  import { page } from '$app/state'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
+
+  let isCancellationRequestOpen = $state(false)
+  const locale = $derived(page.data.locale)
+
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
+</script>
+
 <section class="policy">
   <h1>Handelsbetingelser</h1>
 
@@ -86,10 +103,18 @@
   </p>
 
   <p>
-    Du skal give os besked om fortrydelse via e-mail til <a href="mailto:info@vermouth.nu"
-      >info@vermouth.nu</a
-    >
+    Du skal give os besked om fortrydelse via vores online formular eller via e-mail til <a
+      href="mailto:info@vermouth.nu">info@vermouth.nu</a
+    >.
   </p>
+
+  <div class="mb-2">
+    <a
+      class="font-bold underline"
+      href={resolve('/ordrer/fortryd')}
+      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+    >
+  </div>
 
   <h3>Returnering</h3>
 
@@ -174,3 +199,13 @@
 
   <p>Handelsbetingelserne er senest opdateret d. 04.02.2026</p>
 </section>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm {locale} onClose={close} showDialogActions />
+  {/snippet}
+</ModalDialog>
