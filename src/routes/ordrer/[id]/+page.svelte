@@ -9,11 +9,15 @@
     type GaListItem,
     type GaPurchaseAddress,
   } from '$lib/helpers/analytics'
+  import { resolve } from '$app/paths'
+  import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
+  import ModalDialog from '$lib/components/modal-dialog.svelte'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
+  let isCancellationRequestOpen = $state(false)
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
   type AddPaymentInfoMetadata = {
@@ -120,6 +124,13 @@
     }
   }
 
+  function handleCancellationRequestOpen(e: MouseEvent & { currentTarget: HTMLAnchorElement }) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    e.preventDefault()
+    isCancellationRequestOpen = true
+  }
+
   onMount(() => {
     const paymentType = getPaymentType()
     const items = toGaItems()
@@ -176,4 +187,32 @@
   </div>
 
   <p>På gensyn snart :)</p>
+  <div class="mt-6">
+    <a
+      class="btn mx-auto w-fit justify-center text-sm"
+      href={resolve('/ordrer/fortryd')}
+      onclick={handleCancellationRequestOpen}>Fortryd køb her</a
+    >
+  </div>
 </section>
+
+<ModalDialog
+  bind:open={isCancellationRequestOpen}
+  closeLabel="Luk fortrydelsesformular"
+  title="Fortryd køb"
+>
+  {#snippet children(close)}
+    <CancelRequestForm
+      {locale}
+      onClose={close}
+      prefill={{
+        customerName: `${order.shipping_address?.first_name ?? ''} ${
+          order.shipping_address?.last_name ?? ''
+        }`.trim(),
+        email: order.email ?? '',
+        orderReference: String(order.display_id ?? order.id ?? ''),
+      }}
+      showDialogActions
+    />
+  {/snippet}
+</ModalDialog>

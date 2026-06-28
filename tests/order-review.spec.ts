@@ -36,6 +36,7 @@ test.describe('order product review page', () => {
     const firstReviewForm = page.locator('form').first()
     await expect(firstReviewForm.getByRole('group', { name: 'Din vurdering' })).toBeVisible()
     await expect(firstReviewForm.getByLabel('Navn')).toBeVisible()
+    await expect(firstReviewForm.getByLabel('Din anmeldelse')).toBeVisible()
     await expect(firstReviewForm.getByLabel('Email')).toHaveCount(0)
     await expect(firstReviewForm.getByRole('button', { name: 'SEND ANMELDELSE' })).toBeVisible()
   })
