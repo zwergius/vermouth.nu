@@ -62,7 +62,7 @@ async function sendCancellationRequestEmail(
     body: JSON.stringify({
       from: sender,
       reply_to: input.email,
-      subject: `Fortrydelse af ordre ${input.orderReference}`,
+      subject: `Cancellation Request Order ${input.orderReference}`,
       text: getCancellationRequestEmailText(input),
       to: recipient,
     }),
