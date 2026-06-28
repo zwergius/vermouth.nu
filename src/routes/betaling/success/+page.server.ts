@@ -1,20 +1,33 @@
 import type { PageServerLoad } from './$types'
 import { redirect } from '@sveltejs/kit'
 import type { HttpTypes } from '@medusajs/types'
+import { sdk } from '$lib/medusa'
 
 // Extend StoreCart type to include order when fetched with *order.id fields
 type CartWithOrder = HttpTypes.StoreCart & {
   order?: { id: string }
 }
 
-export const load: PageServerLoad = async ({ cookies, url, parent }) => {
-  const cartId = cookies.get('cart_id')
+function cartIdFromPaymentReference(reference: string) {
+  return reference.startsWith('cart_') ? reference : `cart_${reference}`
+}
+
+export const load: PageServerLoad = async ({ cookies, url }) => {
+  const paymentReference = url.searchParams.get('reference')
+  const cartId = paymentReference
+    ? cartIdFromPaymentReference(paymentReference)
+    : cookies.get('cart_id')
+
   if (!cartId) {
     redirect(303, '/betaling/fejl')
   }
 
-  // Get cart from parent layout
-  const { cart } = await parent()
+  // Prefer the ePay transaction reference from the success URL so this route
+  // can find the paid cart even if the active shopping cart cookie has already
+  // been rotated by the root layout.
+  const { cart } = await sdk.store.cart.retrieve(cartId, {
+    fields: '+order.id',
+  })
   const cartWithOrder = cart as CartWithOrder
 
   // Check if cart is completed with order

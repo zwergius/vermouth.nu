@@ -10,12 +10,13 @@ const config: PlaywrightTestConfig = {
   webServer: externalBaseURL
     ? undefined
     : {
-        command: 'npm run build && npm run preview -- --port 5173',
+        command: 'npm run build && npm run preview -- --host localhost --port 5173',
         port: 5173,
         reuseExistingServer: true,
       },
   testDir: 'tests',
   testMatch: /(.+\.)?(test|spec)\.[jt]s/,
+  workers: 1,
 }
 
 export default config

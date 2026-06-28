@@ -10,6 +10,42 @@ permissions:
   pull-requests: read
 
 jobs:
+  quality:
+    name: Lint, Svelte check, and unit tests
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth=1 origin "${GITHUB_REF}"
+          git checkout --force FETCH_HEAD
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run lint checks
+        run: pnpm lint
+
+      - name: Run Svelte checks
+        run: pnpm check
+
+      - name: Run unit tests
+        run: pnpm test:unit
+
   test-preview:
     name: Playwright on Cloudflare preview
     timeout-minutes: 30

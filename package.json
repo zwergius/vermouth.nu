@@ -1,6 +1,10 @@
 {
   "name": "vermouth-nu",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22",
+    "pnpm": "^10.0.0"
+  },
   "scripts": {
     "predev": "pnpm fix",
     "dev": "vite dev --host",
