@@ -59,19 +59,27 @@ async function sendCancellationRequestEmail(
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      from: sender,
-      reply_to: input.email,
-      subject: `Cancellation Request Order ${input.orderReference}`,
-      text: getCancellationRequestEmailText(input),
-      to: recipient,
-    }),
+    body: JSON.stringify(_getCancellationRequestEmailPayload(input, sender, recipient)),
   })
 
   if (!response.ok) {
     const responseBody = await response.text().catch(() => '')
 
     throw new Error(`Resend cancellation request email failed: ${response.status} ${responseBody}`)
+  }
+}
+
+export function _getCancellationRequestEmailPayload(
+  input: CancellationRequestValues & { submittedAt: string },
+  sender: string,
+  recipient: string,
+) {
+  return {
+    from: sender,
+    reply_to: input.email,
+    subject: `Cancellation Request Order ${input.orderReference}`,
+    text: getCancellationRequestEmailText(input),
+    to: recipient,
   }
 }
 

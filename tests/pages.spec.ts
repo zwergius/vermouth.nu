@@ -1,6 +1,39 @@
 import { expect, test } from '@playwright/test'
 import { vermouths } from '../src/lib/data/products'
 
+const cancellationRequestActionData =
+  // SvelteKit serializes ActionResult data with devalue before use:enhance deserializes it.
+  '[{"action":1,"message":2,"submittedAt":3,"success":4,"values":5},"cancellationRequest","Din fortrydelse er modtaget.","2026-06-28T07:25:00.000Z",true,{"customerName":6,"email":7,"message":8,"orderReference":9},"Karla Kunde","kunde@example.com","Jeg vil fortryde købet.","1001"]'
+
+function getActionResultResponse() {
+  return JSON.stringify({
+    type: 'success',
+    status: 200,
+    data: cancellationRequestActionData,
+  })
+}
+
+async function mockCancellationRequestAction(page: import('@playwright/test').Page) {
+  await page.route('**/ordrer/fortryd?**', async (route) => {
+    const request = route.request()
+
+    if (
+      request.method() !== 'POST' ||
+      request.headers()['x-sveltekit-action'] !== 'true' ||
+      !request.url().includes('/submit')
+    ) {
+      await route.continue()
+      return
+    }
+
+    await route.fulfill({
+      body: getActionResultResponse(),
+      contentType: 'application/json',
+      status: 200,
+    })
+  })
+}
+
 const productReviews = [
   {
     id: 'review-test-4',
@@ -82,6 +115,10 @@ test.describe('site pages', () => {
 })
 
 test.describe('cancellation request flow', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockCancellationRequestAction(page)
+  })
+
   test('customer can submit a cancellation request from the footer dialog', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
 
