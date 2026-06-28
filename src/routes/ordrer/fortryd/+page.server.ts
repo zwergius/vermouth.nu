@@ -1,12 +1,15 @@
 import { dev } from '$app/environment'
 import { env } from '$env/dynamic/private'
 import { fail } from '@sveltejs/kit'
+import type { HttpTypes } from '@medusajs/types'
 import type { Actions } from './$types'
+import { sdk } from '$lib/medusa'
 
 type CancellationRequestValues = {
   customerName: string
   email: string
   message: string
+  orderId: string
   orderReference: string
 }
 
@@ -20,15 +23,26 @@ type CancellationRequestActionData = {
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const cancellationPeriodDays = 14
 const fallbackRecipient = 'info@vermouth.nu'
 
 function getValue(data: FormData, name: keyof CancellationRequestValues) {
   return String(data.get(name) ?? '').trim()
 }
 
-async function submitCancellationRequest(input: CancellationRequestValues) {
+type CancellationEligibility = {
+  deadline: string | null
+  deliveredAt: string | null
+  orderId: string
+}
+
+async function submitCancellationRequest(
+  input: CancellationRequestValues,
+  eligibility: CancellationEligibility,
+) {
   const cancellationRequest = {
     ...input,
+    eligibility,
     submittedAt: new Date().toISOString(),
   }
 
@@ -38,7 +52,10 @@ async function submitCancellationRequest(input: CancellationRequestValues) {
 }
 
 async function sendCancellationRequestEmail(
-  input: CancellationRequestValues & { submittedAt: string },
+  input: CancellationRequestValues & {
+    eligibility: CancellationEligibility
+    submittedAt: string
+  },
 ) {
   const apiKey = env.RESEND_API_KEY
   const sender = env.CANCELLATION_REQUEST_EMAIL_FROM
@@ -70,7 +87,10 @@ async function sendCancellationRequestEmail(
 }
 
 export function _getCancellationRequestEmailPayload(
-  input: CancellationRequestValues & { submittedAt: string },
+  input: CancellationRequestValues & {
+    eligibility: CancellationEligibility
+    submittedAt: string
+  },
   sender: string,
   recipient: string,
 ) {
@@ -84,7 +104,10 @@ export function _getCancellationRequestEmailPayload(
 }
 
 function getCancellationRequestEmailText(
-  input: CancellationRequestValues & { submittedAt: string },
+  input: CancellationRequestValues & {
+    eligibility: CancellationEligibility
+    submittedAt: string
+  },
 ) {
   return [
     'Ny fortrydelsesanmodning',
@@ -93,10 +116,107 @@ function getCancellationRequestEmailText(
     `Navn: ${input.customerName}`,
     `E-mail: ${input.email}`,
     `Ordrenummer: ${input.orderReference}`,
+    `Medusa ordre-id: ${input.eligibility.orderId}`,
+    `Leveret: ${input.eligibility.deliveredAt ?? 'Ikke registreret'}`,
+    `Fortrydelsesfrist: ${input.eligibility.deadline ?? 'Ikke fastlagt'}`,
     '',
     'Besked:',
     input.message || '(ingen besked)',
   ].join('\n')
+}
+
+function normalizeEmail(email: string | null | undefined) {
+  return email?.trim().toLowerCase() ?? ''
+}
+
+function parseDate(value: Date | string | null | undefined) {
+  if (!value) return null
+
+  const date = value instanceof Date ? value : new Date(value)
+
+  return Number.isNaN(date.getTime()) ? null : date
+}
+
+function getLatestDeliveryDate(order: HttpTypes.StoreOrder) {
+  const deliveredDates = (order.fulfillments ?? [])
+    .filter((fulfillment) => !fulfillment.canceled_at)
+    .map((fulfillment) => parseDate(fulfillment.delivered_at))
+    .filter((deliveredAt): deliveredAt is Date => Boolean(deliveredAt))
+    .map((deliveredAt) => deliveredAt.getTime())
+
+  if (!deliveredDates.length) return null
+
+  return new Date(Math.max(...deliveredDates))
+}
+
+function getCancellationDeadline(deliveredAt: Date) {
+  const deadline = new Date(deliveredAt)
+  deadline.setUTCDate(deadline.getUTCDate() + cancellationPeriodDays)
+  deadline.setUTCHours(23, 59, 59, 999)
+  return deadline
+}
+
+export function _getCancellationEligibility(
+  order: HttpTypes.StoreOrder,
+  email: string,
+  now = new Date(),
+) {
+  if (normalizeEmail(order.email) !== normalizeEmail(email)) {
+    return {
+      reason: 'orderMismatch',
+      valid: false,
+    } as const
+  }
+
+  const deliveredAt = getLatestDeliveryDate(order)
+
+  if (!deliveredAt) {
+    return {
+      deadline: null,
+      deliveredAt: null,
+      orderId: order.id,
+      valid: true,
+    } as const
+  }
+
+  const deadline = getCancellationDeadline(deliveredAt)
+  const isWithinCancellationPeriod = now.getTime() <= deadline.getTime()
+
+  if (!isWithinCancellationPeriod) {
+    return {
+      deadline: deadline.toISOString(),
+      deliveredAt: deliveredAt.toISOString(),
+      orderId: order.id,
+      reason: 'periodExpired',
+      valid: false,
+    } as const
+  }
+
+  return {
+    deadline: deadline.toISOString(),
+    deliveredAt: deliveredAt.toISOString(),
+    orderId: order.id,
+    valid: true,
+  } as const
+}
+
+async function getOrderCancellationEligibility(values: CancellationRequestValues) {
+  const orderId = values.orderId || values.orderReference
+
+  try {
+    const { order } = await sdk.store.order.retrieve(orderId, {
+      fields: 'id,email,display_id,*fulfillments',
+    })
+
+    return _getCancellationEligibility(order, values.email)
+  } catch (error) {
+    console.error('Error retrieving order for cancellation request', error)
+
+    return {
+      reason: 'orderMismatch',
+      valid: false,
+    } as const
+  }
 }
 
 async function handleCancellationRequestForm(data: FormData) {
@@ -104,6 +224,7 @@ async function handleCancellationRequestForm(data: FormData) {
     customerName: getValue(data, 'customerName'),
     email: getValue(data, 'email'),
     message: getValue(data, 'message'),
+    orderId: getValue(data, 'orderId'),
     orderReference: getValue(data, 'orderReference'),
   }
   const errors: CancellationRequestActionData['errors'] = {}
@@ -125,10 +246,28 @@ async function handleCancellationRequestForm(data: FormData) {
     } satisfies CancellationRequestActionData)
   }
 
+  const eligibility = await getOrderCancellationEligibility(values)
+
+  if (!eligibility.valid && eligibility.reason === 'orderMismatch') {
+    return fail(400, {
+      action: 'cancellationRequest',
+      message: 'Vi kunne ikke finde en ordre med de angivne oplysninger.',
+      values,
+    } satisfies CancellationRequestActionData)
+  }
+
+  if (!eligibility.valid && eligibility.reason === 'periodExpired') {
+    return fail(400, {
+      action: 'cancellationRequest',
+      message: 'Fortrydelsesfristen på 14 dage er udløbet for denne ordre.',
+      values,
+    } satisfies CancellationRequestActionData)
+  }
+
   let cancellationRequest: Awaited<ReturnType<typeof submitCancellationRequest>>
 
   try {
-    cancellationRequest = await submitCancellationRequest(values)
+    cancellationRequest = await submitCancellationRequest(values, eligibility)
   } catch (error) {
     console.error('Error submitting cancellation request', error)
 
