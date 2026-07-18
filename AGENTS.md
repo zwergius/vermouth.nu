@@ -37,13 +37,27 @@ You MUST use this tool whenever writing Svelte code before sending it to the use
 Generates a Svelte Playground link with the provided code.
 After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
 
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in Linear under the `vermouth-nu` team and `website` project. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The default five-role triage label vocabulary is used. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Domain documentation uses the single-context layout. See `docs/agents/domain.md`.
+
 ## Way Of Working
 
 ### Start Here: Required First Actions
 
 Before any coding or project edit, you must:
 
-1. For implementation work that changes product behavior or project scope, read [Linear](/Users/zwergius/.codex/LINEAR.md); if no issue is provided, ask whether to create one before editing.
+1. For implementation work that changes product behavior or project scope, follow `docs/agents/issue-tracker.md` and read [Linear](/Users/zwergius/.codex/LINEAR.md); if no issue is provided, ask whether to create one before editing.
 2. Read [Git](/Users/zwergius/.codex/GIT.md); confirm isolation and include the Linear ID in the branch name when present.
 3. For GitHub, PR, issue, or CI work, read [GitHub](/Users/zwergius/.codex/GITHUB.md).
 4. Confirm the branch is current with the repository default branch unless told otherwise.
