@@ -120,22 +120,7 @@
     <h1 class="mb-2 text-2xl">{productTitle}</h1>
     <p class="mb-6 text-xs font-bold">{origin}</p>
 
-    {#if prototypeKey === 'A'}
-      <div class="mb-6">
-        <RadioGroup
-          groupLabel="Vælg format"
-          name="prototype-variant-a"
-          onChange={selectVariant}
-          options={variants.map((variant) => ({
-            description: variant.description,
-            label: `${variant.packaging} · ${variant.size}`,
-            price: variant.price,
-            value: variant.sku,
-          }))}
-          selected={selectedSku}
-        />
-      </div>
-    {:else if prototypeKey === 'B'}
+    {#if prototypeKey === 'B'}
       <fieldset class="mb-6">
         <legend class="mb-4 text-sm font-bold">Vælg format</legend>
         <div class="grid gap-3 sm:grid-cols-2">
@@ -161,7 +146,7 @@
           {/each}
         </div>
       </fieldset>
-    {:else}
+    {:else if prototypeKey === 'C'}
       <fieldset
         class="mb-6 border border-black sm:grid sm:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]"
       >
@@ -205,6 +190,25 @@
         />
       {/key}
     </div>
+
+    {#if prototypeKey === 'A'}
+      <div
+        class="mb-4 mt-6 lg:[&_fieldset>ul]:grid lg:[&_fieldset>ul]:grid-cols-2 lg:[&_fieldset>ul>li]:border-b-0 lg:[&_fieldset>ul>li+li]:border-l"
+      >
+        <RadioGroup
+          groupLabel="Vælg format"
+          name="prototype-variant-a"
+          onChange={selectVariant}
+          options={variants.map((variant) => ({
+            description: variant.description,
+            label: `${variant.packaging} · ${variant.size}`,
+            price: variant.price,
+            value: variant.sku,
+          }))}
+          selected={selectedSku}
+        />
+      </div>
+    {/if}
 
     <p class="min-h-5 text-xs" aria-live="polite">{statusMessage}</p>
 
