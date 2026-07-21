@@ -21,6 +21,8 @@
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
   import { untrack } from 'svelte'
+  import { dev } from '$app/environment'
+  import VariantSelectorPrototype from './variant-selector-prototype.svelte'
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
@@ -33,6 +35,7 @@
     vermouths[product.handle as Handle],
   )
   const productDescription = $derived(product.description ?? '')
+  const prototype = $derived(dev ? page.url.searchParams.get('prototype') : null)
   const variant = $derived(product.variants?.[0])
   const priceDisplay = $derived(getProductPriceDisplay(product, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
@@ -196,102 +199,111 @@
 
 <Marquee text="{product.title} //" theme="red"></Marquee>
 
-<section class="split-content border-b border-black lg:flex-row-reverse">
-  <div class="copy">
-    {#if hasReviews}
-      <div class="mb-8 flex flex-col items-start gap-3 text-brand-blue">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <p
-            class="relative inline-block text-[1.9375rem]/[1.9375rem] font-bold tracking-normal"
-            aria-label="{formattedAverageRating} ud af 5 stjerner"
-          >
-            <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
-            <span
-              aria-hidden="true"
-              class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
-              style:width={getRatingPercentage(reviews.average_rating)}
+{#if prototype}
+  <VariantSelectorPrototype
+    baseImage={image}
+    {origin}
+    productSubtitle={product.subtitle}
+    productTitle={product.title}
+  />
+{:else}
+  <section class="split-content border-b border-black lg:flex-row-reverse">
+    <div class="copy">
+      {#if hasReviews}
+        <div class="mb-8 flex flex-col items-start gap-3 text-brand-blue">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p
+              class="relative inline-block text-[1.9375rem]/[1.9375rem] font-bold tracking-normal"
+              aria-label="{formattedAverageRating} ud af 5 stjerner"
             >
-              ★★★★★
-            </span>
+              <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
+              <span
+                aria-hidden="true"
+                class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
+                style:width={getRatingPercentage(reviews.average_rating)}
+              >
+                ★★★★★
+              </span>
+            </p>
+            <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
+          </div>
+          <a class="text-xs font-bold underline underline-offset-2" href="#product-reviews">
+            Læs {reviewCountLabel}
+          </a>
+        </div>
+      {/if}
+      <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
+      <h1 class="text-2xl mb-2">{product.title}</h1>
+      <p class="font-bold text-xs mb-4">{origin}</p>
+      {#if priceDisplay}
+        <div class="mb-6">
+          <p class="text-base font-bold">
+            {#if priceDisplay.isDiscounted}
+              <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
+              <span class="ml-2 text-sm font-normal line-through opacity-70">
+                <span class="sr-only">Normalpris </span>{priceDisplay.original}
+              </span>
+            {:else}
+              {priceDisplay.current}
+            {/if}
           </p>
-          <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
-        </div>
-        <a class="text-xs font-bold underline underline-offset-2" href="#product-reviews">
-          Læs {reviewCountLabel}
-        </a>
-      </div>
-    {/if}
-    <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
-    <h1 class="text-2xl mb-2">{product.title}</h1>
-    <p class="font-bold text-xs mb-4">{origin}</p>
-    {#if priceDisplay}
-      <div class="mb-6">
-        <p class="text-base font-bold">
-          {#if priceDisplay.isDiscounted}
-            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
-            <span class="ml-2 text-sm font-normal line-through opacity-70">
-              <span class="sr-only">Normalpris </span>{priceDisplay.original}
-            </span>
-          {:else}
-            {priceDisplay.current}
+          {#if priceDisplay.savingsPercent}
+            <p class="mt-1 text-xs font-bold text-brand-red">SPAR {priceDisplay.savingsPercent}%</p>
           {/if}
-        </p>
-        {#if priceDisplay.savingsPercent}
-          <p class="mt-1 text-xs font-bold text-brand-red">SPAR {priceDisplay.savingsPercent}%</p>
-        {/if}
-      </div>
-    {/if}
-    <div class="mb-4">
-      <Form
-        action="/kurv?/addOrUpdateItemQuantity"
-        bind:isSubmitting={isFormSubmitting}
-        onResult={handleFormResult}
-      >
-        <input name="variant_id" type="hidden" value={variant?.id} />
-        <input name="cart_item_id" type="hidden" value={cartItem?.id} />
-        <div class="flex items-center justify-between md:gap-4">
-          <button
-            class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
-            disabled={buttonState !== 'default' || isFormSubmitting}
-            type="submit"
-          >
-            {buttonText}
-          </button>
-          <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
         </div>
-      </Form>
-    </div>
-    <a
-      class="block text-xs italic
+      {/if}
+      <div class="mb-4">
+        <Form
+          action="/kurv?/addOrUpdateItemQuantity"
+          bind:isSubmitting={isFormSubmitting}
+          onResult={handleFormResult}
+        >
+          <input name="variant_id" type="hidden" value={variant?.id} />
+          <input name="cart_item_id" type="hidden" value={cartItem?.id} />
+          <div class="flex items-center justify-between md:gap-4">
+            <button
+              class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
+              disabled={buttonState !== 'default' || isFormSubmitting}
+              type="submit"
+            >
+              {buttonText}
+            </button>
+            <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
+          </div>
+        </Form>
+      </div>
+      <a
+        class="block text-xs italic
       mb-10
       hover:font-bold"
-      href={resolve('/forhandlere')}>KØB ELLER SMAG HER &#8594;</a
-    >
-    <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
-    <p class="text-sm mb-6">{productDescription}</p>
-    <h3 class="text-sm font-bold mb-4">Smag & Duft</h3>
-    <p class="text-sm mb-6">{taste}</p>
-    <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
-    <p class="text-sm">{recommendation}</p>
-  </div>
-  <div
-    class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
-  >
-    <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
-      {#key image}
-        <img
-          alt={product.title}
-          class="h-full w-full object-contain"
-          srcset={squareSrcSet(image)}
-          src="{image}/w=400,h=400,fit=cover"
-          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-          width="896"
-          height="896"
-        />
-      {/key}
+        href={resolve('/forhandlere')}>KØB ELLER SMAG HER &#8594;</a
+      >
+      <h3 class="text-sm font-bold mb-4">{product.subtitle}</h3>
+      <p class="text-sm mb-6">{productDescription}</p>
+      <h3 class="text-sm font-bold mb-4">Smag & Duft</h3>
+      <p class="text-sm mb-6">{taste}</p>
+      <h3 class="text-sm font-bold mb-4">Anbefaling</h3>
+      <p class="text-sm">{recommendation}</p>
     </div>
-  </div>
-</section>
+    <div
+      class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
+    >
+      <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
+        {#key image}
+          <img
+            alt={product.title}
+            class="h-full w-full object-contain"
+            srcset={squareSrcSet(image)}
+            src="{image}/w=400,h=400,fit=cover"
+            sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+            width="896"
+            height="896"
+          />
+        {/key}
+      </div>
+    </div>
+  </section>
+{/if}
 
 <ul class="lg:grid lg:grid-cols-3 border-b border-black overflow-visible">
   <li class="relative aspect-square">
