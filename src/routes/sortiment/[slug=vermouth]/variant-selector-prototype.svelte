@@ -198,7 +198,6 @@
           name="prototype-variant-a"
           onChange={selectVariant}
           options={variants.map((variant) => ({
-            description: variant.description,
             label: `${variant.packaging} · ${variant.size}`,
             price: variant.price,
             value: variant.sku,
