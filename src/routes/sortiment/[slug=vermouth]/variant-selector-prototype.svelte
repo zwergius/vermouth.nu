@@ -192,9 +192,7 @@
     </div>
 
     {#if prototypeKey === 'A'}
-      <div
-        class="mb-4 mt-6 lg:[&_fieldset>ul]:grid lg:[&_fieldset>ul]:grid-cols-2 lg:[&_fieldset>ul>li]:border-b-0 lg:[&_fieldset>ul>li+li]:border-l"
-      >
+      <div class="prototype-classic-options mb-4 mt-6">
         <RadioGroup
           groupLabel="Vælg format"
           name="prototype-variant-a"
@@ -291,3 +289,32 @@
     →
   </button>
 </nav>
+
+<style>
+  .prototype-classic-options :global(fieldset > ul > li label) {
+    padding-inline-end: 1rem;
+  }
+
+  .prototype-classic-options :global(fieldset > ul > li label > div > div) {
+    gap: 0.75rem;
+  }
+
+  .prototype-classic-options :global(fieldset > ul > li label > div > div > p:last-child) {
+    margin-inline-start: auto;
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .prototype-classic-options :global(fieldset > ul) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      border: 0;
+    }
+
+    .prototype-classic-options :global(fieldset > ul > li) {
+      border: 1px solid currentColor;
+    }
+  }
+</style>
