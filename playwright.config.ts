@@ -6,6 +6,9 @@ const baseURL = externalBaseURL ?? 'http://localhost:5173'
 const config: PlaywrightTestConfig = {
   use: {
     baseURL,
+    launchOptions: {
+      args: ['--host-resolver-rules=MAP static.klaviyo.com ~NOTFOUND'],
+    },
   },
   webServer: externalBaseURL
     ? undefined
