@@ -1,5 +1,6 @@
 import type { Actions } from './$types'
 import { sdk } from '$lib/medusa'
+import { getPurchasePausedActionFailure } from '$lib/server/purchase-availability'
 import { fail, redirect } from '@sveltejs/kit'
 
 function getAddressFields(data: FormData, isBillingAddress: boolean = false) {
@@ -74,6 +75,9 @@ export const actions = {
     }
   },
   checkout: async ({ cookies, request }) => {
+    const purchasePausedFailure = getPurchasePausedActionFailure()
+    if (purchasePausedFailure) return purchasePausedFailure
+
     const cartId = cookies.get('cart_id')
 
     if (!cartId) return fail(404, { message: 'Missing cart_id' })
@@ -109,6 +113,9 @@ export const actions = {
     // return { success: true }
   },
   addOrUpdateItemQuantity: async ({ cookies, request }) => {
+    const purchasePausedFailure = getPurchasePausedActionFailure()
+    if (purchasePausedFailure) return purchasePausedFailure
+
     const cart_id = cookies.get('cart_id')
     if (!cart_id) return fail(404, { message: 'Missing cart_id' })
 

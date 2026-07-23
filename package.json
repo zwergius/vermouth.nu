@@ -17,6 +17,7 @@
     "lint": "prettier --check . && eslint --max-warnings=0 .",
     "format": "prettier --write .",
     "test:integration": "playwright test",
+    "test:purchase-freeze": "PURCHASES_PAUSED=true playwright test tests/purchase-freeze.spec.ts",
     "test:unit": "vitest",
     "check:lint": "eslint --max-warnings=0",
     "check:prettier": "prettier -c",

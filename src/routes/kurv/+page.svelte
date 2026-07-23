@@ -22,7 +22,7 @@
   import QuantitySelector from '$lib/components/form-controls/quantity-selector.svelte'
 
   const { data, form }: PageProps = $props()
-  const { cart, locale, region, shippingOptions, shippingPrices } = $derived(data)
+  const { cart, locale, purchasesPaused, region, shippingOptions, shippingPrices } = $derived(data)
   let hasDifferentBillingAddress: 'yes' | 'no' = $state('no')
   let selectedShippingMethodId = $derived(
     cart.shipping_methods?.[0]?.shipping_option_id ?? shippingOptions[0]?.id ?? '',
@@ -265,13 +265,15 @@
                 unitPrice: unit_price,
               })}
             >
-              <input name="cart_item_id" type="hidden" value={id} />
-              <QuantitySelector
-                min={1}
-                name="quantity"
-                onchange={handleChangeQuantity}
-                value={quantity}
-              />
+              <fieldset disabled={purchasesPaused}>
+                <input name="cart_item_id" type="hidden" value={id} />
+                <QuantitySelector
+                  min={1}
+                  name="quantity"
+                  onchange={handleChangeQuantity}
+                  value={quantity}
+                />
+              </fieldset>
             </Form>
             <Form
               action="?/deleteItem"
@@ -479,62 +481,66 @@
   <div class="px-4 py-8 lg:copy">
     <h1 class="text-sm font-bold mb-4">Kontaktinformation</h1>
     <Form action="?/checkout" bind:isSubmitting onResult={handleCheckoutResult}>
-      <div class="flex flex-col gap-4 mb-12">
-        <Input
-          autocomplete="email"
-          label="E-mailadresse"
-          name="email"
-          required
-          type="email"
-          value={cart.email}
-        />
-        <Checkbox
-          checked={!!cart?.metadata?.accepts_newsletter}
-          label="Tilmeld dig vores nyhedsbrev"
-          name="acceptsNewsletter"
-        />
-      </div>
-      {@render formAddressFields('shipping')}
-      <div class="mb-12">
-        <RadioGroup
-          groupLabel="Faktureringsadresse"
-          name="different_billing_address"
-          options={[
-            { label: 'Samme addresse som leveringsadresse', value: 'no' },
-            { label: 'Brug en anden faktureringsadresse', value: 'yes' },
-          ]}
-          bind:selected={hasDifferentBillingAddress}
-          required
-        />
-      </div>
-      {#if hasDifferentBillingAddress === 'yes'}
-        {@render formAddressFields('billing')}
-      {/if}
-      <div class="mb-12">
-        <RadioGroup
-          groupLabel="Leveringsmetode"
-          name="shipping_method_id"
-          options={shippingOptions.map((option) => ({
-            description: option.type.description,
-            label: option.name,
-            price: formattedPrice(getShippingOptionPrice(option)),
-            value: option.id,
-          }))}
-          bind:selected={selectedShippingMethodId}
-          required
-        />
-      </div>
-      <h2 class="text-sm font-bold mb-4">Bekræft betingelser</h2>
-      <div class="flex flex-col gap-4 mb-12">
-        <Checkbox
-          checked={!!cart?.metadata?.accepts_terms}
-          label="Jeg accepterer handelsbetingelserne samt bekræfter, at jeg er over 18 år."
-          name="accepts_terms"
-          required
-          requiredErrorMessage="Du skal bekræfte handelsbetingelser for at fortsætte."
-        />
-      </div>
-      <button class="btn" type="submit">Gå til betaling</button>
+      <fieldset disabled={purchasesPaused}>
+        <div class="flex flex-col gap-4 mb-12">
+          <Input
+            autocomplete="email"
+            label="E-mailadresse"
+            name="email"
+            required
+            type="email"
+            value={cart.email}
+          />
+          <Checkbox
+            checked={!!cart?.metadata?.accepts_newsletter}
+            label="Tilmeld dig vores nyhedsbrev"
+            name="acceptsNewsletter"
+          />
+        </div>
+        {@render formAddressFields('shipping')}
+        <div class="mb-12">
+          <RadioGroup
+            groupLabel="Faktureringsadresse"
+            name="different_billing_address"
+            options={[
+              { label: 'Samme addresse som leveringsadresse', value: 'no' },
+              { label: 'Brug en anden faktureringsadresse', value: 'yes' },
+            ]}
+            bind:selected={hasDifferentBillingAddress}
+            required
+          />
+        </div>
+        {#if hasDifferentBillingAddress === 'yes'}
+          {@render formAddressFields('billing')}
+        {/if}
+        <div class="mb-12">
+          <RadioGroup
+            groupLabel="Leveringsmetode"
+            name="shipping_method_id"
+            options={shippingOptions.map((option) => ({
+              description: option.type.description,
+              label: option.name,
+              price: formattedPrice(getShippingOptionPrice(option)),
+              value: option.id,
+            }))}
+            bind:selected={selectedShippingMethodId}
+            required
+          />
+        </div>
+        <h2 class="text-sm font-bold mb-4">Bekræft betingelser</h2>
+        <div class="flex flex-col gap-4 mb-12">
+          <Checkbox
+            checked={!!cart?.metadata?.accepts_terms}
+            label="Jeg accepterer handelsbetingelserne samt bekræfter, at jeg er over 18 år."
+            name="accepts_terms"
+            required
+            requiredErrorMessage="Du skal bekræfte handelsbetingelser for at fortsætte."
+          />
+        </div>
+        <button class="btn" type="submit">
+          {purchasesPaused ? 'BETALING MIDLERTIDIGT PAUSET' : 'Gå til betaling'}
+        </button>
+      </fieldset>
     </Form>
   </div>
   <div

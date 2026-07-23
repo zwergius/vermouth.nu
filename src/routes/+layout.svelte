@@ -8,6 +8,7 @@
   import logo from '$lib/images/vermouth-nu-logo.svg'
   import { reduced_motion } from '$lib/actions/reduced-motion'
   import { initializeAnalytics } from '$lib/helpers/analytics'
+  import { PURCHASES_PAUSED_MESSAGE } from '$lib/purchase-availability'
   import CancelRequestForm from '$lib/components/cancel-request-form.svelte'
   import HamburgerMenu from '$lib/components/hamburger-menu.svelte'
   import ModalDialog from '$lib/components/modal-dialog.svelte'
@@ -34,7 +35,7 @@
   ] as const
 
   const { children, data }: LayoutProps = $props()
-  const { cart, locale } = $derived(data)
+  const { cart, locale, purchasesPaused } = $derived(data)
   let topBannerIndex = $state(0)
   let isTopBannerPaused = $state(false)
   let isCancellationRequestOpen = $state(false)
@@ -243,6 +244,15 @@
 </header>
 
 <main class="flex flex-1 flex-col">
+  {#if purchasesPaused}
+    <aside
+      aria-label="Midlertidig købspause"
+      class="border-b border-black bg-brand-blue px-4 py-3 text-center text-xs font-bold text-white"
+      data-testid="purchase-pause"
+    >
+      {PURCHASES_PAUSED_MESSAGE}
+    </aside>
+  {/if}
   {@render children()}
 </main>
 
