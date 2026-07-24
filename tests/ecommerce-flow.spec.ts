@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { expect, test } from './fixtures'
 
 const productName = 'Forzudo Rojo'
 const productPath = '/sortiment/forzudo-rojo'
@@ -31,8 +32,7 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
   await expect(productRow.locator('input[name="quantity"]')).toHaveValue('1')
 
   const selectedShippingMethod = page
-    .locator('fieldset')
-    .filter({ hasText: 'Leveringsmetode' })
+    .getByRole('group', { name: 'Leveringsmetode', exact: true })
     .locator('label')
     .filter({ has: page.locator('input:checked') })
   const selectedShippingPrice = await selectedShippingMethod.locator('p').nth(1).innerText()
@@ -52,7 +52,7 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
 
 test('customer can apply a discount code in the cart summary', async ({ page }) => {
   await addProductToCart(page)
-  await page.goto('/kurv', { waitUntil: 'networkidle' })
+  await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
 
   const cartSummary = page.locator('[data-testid="cart-summary"]:visible')
   const discountCodeInput = cartSummary.getByRole('textbox', { name: 'Rabatkode' })
@@ -77,7 +77,7 @@ test('customer can apply a discount code in the cart summary', async ({ page }) 
 
 test('customer can continue from cart to payment', async ({ page }) => {
   await addProductToCart(page)
-  await page.goto('/kurv', { waitUntil: 'networkidle' })
+  await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
 
   await expect(page.getByText(productName).first()).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Kontaktinformation' })).toBeVisible()
