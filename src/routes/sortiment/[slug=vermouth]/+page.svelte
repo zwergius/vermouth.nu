@@ -28,7 +28,7 @@
   const REVIEWS_PAGE_SIZE = 2
 
   const { red, white, other, packs } = $derived(data.categories)
-  const { cart, locale, product, region } = $derived(data)
+  const { cart, locale, product, purchasesPaused, region } = $derived(data)
   const { extraImages, image, origin, recommendation, scores, taste } = $derived(
     vermouths[product.handle as Handle],
   )
@@ -57,6 +57,7 @@
   let reviewsLoadError = $state(false)
 
   const buttonText = $derived.by(() => {
+    if (purchasesPaused) return 'KØB MIDLERTIDIGT PAUSET'
     if (isFormSubmitting && buttonState === 'default') return 'VENT...'
     if (buttonState === 'success') return cartItem ? 'OPDATERET!' : 'TILFØJET!'
     if (buttonState === 'error') return 'FEJL'
@@ -247,18 +248,20 @@
         bind:isSubmitting={isFormSubmitting}
         onResult={handleFormResult}
       >
-        <input name="variant_id" type="hidden" value={variant?.id} />
-        <input name="cart_item_id" type="hidden" value={cartItem?.id} />
-        <div class="flex items-center justify-between md:gap-4">
-          <button
-            class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
-            disabled={buttonState !== 'default' || isFormSubmitting}
-            type="submit"
-          >
-            {buttonText}
-          </button>
-          <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
-        </div>
+        <fieldset disabled={purchasesPaused}>
+          <input name="variant_id" type="hidden" value={variant?.id} />
+          <input name="cart_item_id" type="hidden" value={cartItem?.id} />
+          <div class="flex items-center justify-between md:gap-4">
+            <button
+              class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
+              disabled={buttonState !== 'default' || isFormSubmitting}
+              type="submit"
+            >
+              {buttonText}
+            </button>
+            <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
+          </div>
+        </fieldset>
       </Form>
     </div>
     <a

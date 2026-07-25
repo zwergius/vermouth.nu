@@ -1,5 +1,6 @@
 import type { LayoutServerLoad } from './$types'
 import { sdk } from '$lib/medusa'
+import { arePurchasesPaused } from '$lib/server/purchase-availability'
 import { HttpTypes } from '@medusajs/types'
 
 type CategoryHandle = 'red' | 'white' | 'other' | 'packs'
@@ -70,6 +71,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
     cart,
     categories,
     locale: locals.locale,
+    purchasesPaused: arePurchasesPaused(),
     region: regions[0],
   }
 }

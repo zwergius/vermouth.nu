@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test'
 import { vermouths } from '../src/lib/data/products'
+import { expect, test } from './fixtures'
 
 const cancellationRequestActionData =
   // SvelteKit serializes ActionResult data with devalue before use:enhance deserializes it.
@@ -120,7 +120,7 @@ test.describe('cancellation request flow', () => {
   })
 
   test('customer can submit a cancellation request from the footer dialog', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'load' })
 
     await page.locator('footer').getByRole('link', { name: 'Fortryd køb her' }).click()
 
@@ -140,7 +140,7 @@ test.describe('cancellation request flow', () => {
 
   test('customer can submit a cancellation request from the fallback page', async ({ page }) => {
     await page.goto('/ordrer/fortryd?email=kunde@example.com&orderReference=1001', {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
     })
 
     await expect(page.getByRole('heading', { name: 'Fortryd køb' })).toBeVisible()

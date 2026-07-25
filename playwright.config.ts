@@ -4,6 +4,7 @@ const externalBaseURL = process.env.PLAYWRIGHT_BASE_URL
 const baseURL = externalBaseURL ?? 'http://localhost:5173'
 
 const config: PlaywrightTestConfig = {
+  retries: externalBaseURL ? 1 : 0,
   use: {
     baseURL,
   },

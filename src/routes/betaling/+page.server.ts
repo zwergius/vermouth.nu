@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types'
 import { EPAY_API_KEY } from '$env/static/private'
 import { PUBLIC_POINT_OF_SALE_ID, PUBLIC_VITE_BACKEND_URL } from '$env/static/public'
+import { assertPurchasesAvailable } from '$lib/server/purchase-availability'
 import { redirect } from '@sveltejs/kit'
 
 interface EpayPayload {
@@ -20,6 +21,8 @@ interface EpayPayload {
 }
 
 export const load: PageServerLoad = async ({ fetch, parent, url }) => {
+  assertPurchasesAvailable()
+
   const { cart } = await parent()
 
   // Create headers for the payment request
