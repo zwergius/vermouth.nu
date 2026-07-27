@@ -80,9 +80,24 @@ const sardinoRojoProduct = {
   variants: [
     {
       id: 'variant_test_sardino_rojo',
+      sku: 'sardino-rojo-75cl-bottle',
+      title: 'Flaske',
+      variant_rank: 0,
+      options: [{ value: '75 cl', option: { title: 'Size' } }],
       calculated_price: {
         calculated_amount: 195,
         original_amount: 195,
+      },
+    },
+    {
+      id: 'variant_test_sardino_rojo_box',
+      sku: 'sardino-rojo-5l-bag-in-box',
+      title: 'Bag-in-Box',
+      variant_rank: 1,
+      options: [{ value: '5 L', option: { title: 'Size' } }],
+      calculated_price: {
+        calculated_amount: 800,
+        original_amount: 800,
       },
     },
   ],
@@ -172,6 +187,82 @@ test.describe('product detail pages', () => {
     })
   }
 
+  test('normalizes the default SKU and switches all selected-variant context', async ({ page }) => {
+    await page.route('**/store/products?handle=sardino-rojo**', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          products: [sardinoRojoProduct],
+        }),
+      })
+    })
+    await page.route('**/api/products/*/reviews**', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          reviews: [],
+          average_rating: 0,
+          review_count: 0,
+          count: 0,
+          limit: 2,
+          offset: 0,
+        }),
+      })
+    })
+
+    await page.goto('/sortiment/sardino-rojo?variant=legacy-variant-id', {
+      waitUntil: 'domcontentloaded',
+    })
+
+    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
+    const selector = page.getByRole('group', { name: 'Vælg format' })
+    await expect(selector.getByText('Flaske · 75 cl')).toBeVisible()
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue('variant_test_sardino_rojo')
+
+    await page.getByRole('radio', { name: /Bag-in-Box · 5 L/ }).check()
+
+    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-5l-bag-in-box$/)
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue(
+      'variant_test_sardino_rojo_box',
+    )
+    await expect(page.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' })).toBeVisible()
+    await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
+
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })).toBeChecked()
+  })
+
+  test('shows packaging and Size without a selector for one eligible variant', async ({ page }) => {
+    await page.route('**/store/products?handle=sardino-rojo**', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          products: [{ ...sardinoRojoProduct, variants: [sardinoRojoProduct.variants[0]] }],
+        }),
+      })
+    })
+    await page.route('**/api/products/*/reviews**', async (route) => {
+      await route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify({
+          reviews: [],
+          average_rating: 0,
+          review_count: 0,
+          count: 0,
+          limit: 2,
+          offset: 0,
+        }),
+      })
+    })
+
+    await page.goto('/sortiment/sardino-rojo', { waitUntil: 'domcontentloaded' })
+
+    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
+    await expect(page.getByText('Flaske', { exact: true }).first()).toBeVisible()
+    await expect(page.getByText('75 cl', { exact: true }).first()).toBeVisible()
+    await expect(page.getByRole('group', { name: 'Vælg format' })).toHaveCount(0)
+  })
+
   test('product reviews load more through URL pagination', async ({ page }) => {
     const reviewRequests: Array<{ limit: string | null; offset: string | null }> = []
 
@@ -207,9 +298,9 @@ test.describe('product detail pages', () => {
     })
 
     await page.goto('/sortiment', { waitUntil: 'networkidle' })
-    await page.locator('a[href="/sortiment/sardino-rojo"]').click()
+    await page.locator('a[href^="/sortiment/sardino-rojo?variant="]').click()
 
-    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo$/)
+    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
     await expect(page.locator('#product-review-list > li')).toHaveCount(2)
     await expect(page.getByText('4 anmeldelser').first()).toBeVisible()
     await expect(page.getByRole('button', { name: 'VIS FLERE (2)' })).toBeVisible()
@@ -217,7 +308,9 @@ test.describe('product detail pages', () => {
 
     await page.getByRole('button', { name: 'VIS FLERE (2)' }).click()
 
-    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?reviews_limit=4&reviews_offset=0$/)
+    await expect(page).toHaveURL(
+      /\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle&reviews_limit=4&reviews_offset=0$/,
+    )
     await expect(page.locator('#product-review-list > li')).toHaveCount(4)
     await expect(page.getByRole('button', { name: /VIS FLERE/ })).toBeHidden()
     expect(reviewRequests[1]).toEqual({ limit: '4', offset: '0' })

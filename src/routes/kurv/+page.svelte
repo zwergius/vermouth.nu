@@ -14,6 +14,7 @@
     type GaListItem,
   } from '$lib/helpers/analytics'
   import { thumbnailSrcSet } from '$lib/helpers/images'
+  import { getEligibleVariants, getLineItemVariantLabel } from '$lib/helpers/product-variants'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
   import Input from '$lib/components/form-controls/input.svelte'
@@ -67,6 +68,7 @@
     cartItemId: string
     productHandle?: string
     productTitle?: string
+    itemVariant?: string
     unitPrice: number
     previousQuantity: number
     productId?: string
@@ -157,6 +159,7 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
+      item_variant: context.itemVariant,
       quantity,
     }
   }
@@ -171,12 +174,34 @@
             productHandle: item.product_handle,
             productId: item.product_id,
             productTitle: item.product_title,
+            itemVariant: getLineItemVariantLabel({
+              optionValues: item.variant_option_values,
+              title: item.variant_title,
+            }),
             unitPrice: item.unit_price,
           },
           String(item.quantity),
         ),
       ) ?? []
     )
+  }
+
+  function getCartItemImage(productHandle?: string, variantSku?: string) {
+    if (!productHandle || !(productHandle in vermouths)) return null
+
+    const staticData = vermouths[productHandle as Handle]
+    const configuredImage = variantSku ? staticData.variantImages?.[variantSku] : undefined
+    if (configuredImage) return configuredImage
+
+    const product = Object.values(data.categories)
+      .flat()
+      .find(({ handle }) => handle === productHandle)
+    if (product && getEligibleVariants(product).length > 1) return null
+
+    return {
+      altText: product?.title ?? productHandle,
+      url: staticData.image,
+    }
   }
 
   function makeQuantityResultHandler(context: CartItemAnalyticsContext) {
@@ -231,23 +256,38 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each cart?.items as { product_id, product_handle, product_title, quantity, unit_price, id } (id)}
-      {@const { image } = vermouths[product_handle as Handle]}
+    {#each cart?.items as { product_id, product_handle, product_title, quantity, unit_price, variant_option_values, variant_sku, variant_title, id } (id)}
+      {@const itemVariant = getLineItemVariantLabel({
+        optionValues: variant_option_values,
+        title: variant_title,
+      })}
+      {@const itemImage = getCartItemImage(product_handle, variant_sku)}
       <li
         class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
       >
-        <img
-          alt={product_title}
-          class="size-20 lg:size-16 object-cover"
-          width="66"
-          height="66"
-          loading="lazy"
-          srcset={thumbnailSrcSet(image)}
-          src="{image}/w=186,h=186,fit=cover"
-        />
+        {#if itemImage}
+          <img
+            alt={itemImage.altText}
+            class="size-20 object-cover lg:size-16"
+            width="66"
+            height="66"
+            loading="lazy"
+            srcset={thumbnailSrcSet(itemImage.url)}
+            src="{itemImage.url}/w=186,h=186,fit=cover"
+          />
+        {:else}
+          <div
+            aria-label="{product_title} – {itemVariant}. Billede mangler."
+            class="grid size-20 shrink-0 place-items-center border border-black bg-white/40 p-2 text-center text-[0.625rem] font-bold lg:size-16"
+            role="img"
+          >
+            Billede mangler
+          </div>
+        {/if}
         <div class="flex flex-col flex-1 gap-0 justify-between lg:flex-row lg:gap-0">
           <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
             <p class="text-sm font-bold">{product_title}</p>
+            <p class="text-xs">{itemVariant}</p>
             <dl class="text-xs flex justify-between">
               <dt>1 stk.</dt>
               <dd>{formattedPrice(unit_price)}</dd>
@@ -262,6 +302,7 @@
                 productHandle: product_handle,
                 productId: product_id,
                 productTitle: product_title,
+                itemVariant,
                 unitPrice: unit_price,
               })}
             >
@@ -283,6 +324,7 @@
                 productHandle: product_handle,
                 productId: product_id,
                 productTitle: product_title,
+                itemVariant,
                 unitPrice: unit_price,
               })}
             >

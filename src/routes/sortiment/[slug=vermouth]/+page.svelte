@@ -10,17 +10,25 @@
     trackViewItem,
     type GaListItem,
   } from '$lib/helpers/analytics'
+  import {
+    getDefaultVariant,
+    getEligibleVariants,
+    getVariantBySku,
+    getVariantImage,
+    getVariantLabel,
+    getVariantPresentation,
+    type ProductVariant,
+  } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
-  import { getProductPriceDisplay } from '$lib/helpers/prices'
-  import { Form, QuantitySelector } from '$lib/components/form-controls'
+  import { getVariantPriceDisplay } from '$lib/helpers/prices'
+  import { Form, QuantitySelector, RadioGroup } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { goto } from '$app/navigation'
+  import { afterNavigate, goto, replaceState } from '$app/navigation'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
-  import { untrack } from 'svelte'
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
@@ -29,13 +37,34 @@
 
   const { red, white, other, packs } = $derived(data.categories)
   const { cart, locale, product, purchasesPaused, region } = $derived(data)
-  const { extraImages, image, origin, recommendation, scores, taste } = $derived(
+  const { extraImages, image, origin, recommendation, scores, taste, variantImages } = $derived(
     vermouths[product.handle as Handle],
   )
   const productDescription = $derived(product.description ?? '')
-  const variant = $derived(product.variants?.[0])
-  const priceDisplay = $derived(getProductPriceDisplay(product, region.currency_code, locale))
-  const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
+  const eligibleVariants = $derived(getEligibleVariants(product))
+  const defaultVariant = $derived(getDefaultVariant(product) ?? eligibleVariants[0]!)
+  let selectedSku = $state(page.url.searchParams.get('variant') ?? '')
+  const variant = $derived(getVariantBySku(eligibleVariants, selectedSku) ?? defaultVariant)
+  const variantPresentation = $derived(getVariantPresentation(variant))
+  const variantLabel = $derived(getVariantLabel(variant))
+  const variantImage = $derived(
+    getVariantImage({
+      fallbackImage: image,
+      productTitle: product.title,
+      variant,
+      variantCount: eligibleVariants.length,
+      variantImages,
+    }),
+  )
+  const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
+  const selectorOptions = $derived(
+    eligibleVariants.map((eligibleVariant) => ({
+      label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
+      price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
+      value: eligibleVariant.sku!,
+    })),
+  )
   const reviews = $derived(data.reviews)
   const visibleReviews = $derived(data.reviews.reviews)
   const averageRating = $derived(Math.round(reviews.average_rating * 10) / 10)
@@ -86,10 +115,10 @@
     return null
   }
 
-  function toGaItem(quantity: string): GaListItem {
+  function toGaItem(quantity: string, selectedVariant: ProductVariant = variant): GaListItem {
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
-    const price = product.variants?.[0]?.calculated_price?.calculated_amount
+    const price = selectedVariant.calculated_price?.calculated_amount
     const categoryHandle = getCategoryHandle()
 
     return {
@@ -100,8 +129,30 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
+      item_variant: getVariantLabel(selectedVariant),
       quantity,
     }
+  }
+
+  function selectVariant(event: Event & { currentTarget: HTMLInputElement }) {
+    const selectedVariant = getVariantBySku(eligibleVariants, event.currentTarget.value)
+    if (!selectedVariant) return
+
+    const nextUrl = new URL(page.url)
+    nextUrl.searchParams.set('variant', event.currentTarget.value)
+    const productSlug = slug ?? product.handle ?? ''
+    buttonState = 'default'
+    selectedSku = selectedVariant.sku ?? ''
+    replaceState(
+      resolve(
+        `/sortiment/${encodeURIComponent(productSlug)}?${nextUrl.searchParams}${nextUrl.hash}`,
+      ),
+      page.state,
+    )
+    trackViewItem({
+      currency: region.currency_code.toUpperCase(),
+      item: toGaItem('1', selectedVariant),
+    })
   }
 
   function getRatingPercentage(rating: number) {
@@ -176,14 +227,11 @@
     }
   }
 
-  $effect(() => {
-    void slug
-
-    untrack(() => {
-      trackViewItem({
-        currency: region.currency_code.toUpperCase(),
-        item: toGaItem('1'),
-      })
+  afterNavigate(() => {
+    selectedSku = page.url.searchParams.get('variant') ?? defaultVariant.sku ?? ''
+    trackViewItem({
+      currency: region.currency_code.toUpperCase(),
+      item: toGaItem('1'),
     })
   })
 </script>
@@ -191,8 +239,8 @@
 <Seo
   title={product.title}
   description={productDescription}
-  image="{image}/w=800,h=800,fit=cover"
-  imageAlt={product.title}
+  image={variantImage ? `${variantImage.url}/w=800,h=800,fit=cover` : ''}
+  imageAlt={variantImage?.altText ?? `${product.title} – ${variantLabel}`}
 />
 
 <Marquee text="{product.title} //" theme="red"></Marquee>
@@ -225,6 +273,8 @@
     <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
     <h1 class="text-2xl mb-2">{product.title}</h1>
     <p class="font-bold text-xs mb-4">{origin}</p>
+    <p class="mb-2 text-sm font-bold">{variantPresentation.packaging}</p>
+    <p class="mb-4 text-xs">{variantPresentation.size}</p>
     {#if priceDisplay}
       <div class="mb-6">
         <p class="text-base font-bold">
@@ -259,11 +309,24 @@
             >
               {buttonText}
             </button>
-            <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
+            {#key variant.id}
+              <QuantitySelector min={1} name="quantity" value={cartItem?.quantity ?? 1} />
+            {/key}
           </div>
         </fieldset>
       </Form>
     </div>
+    {#if eligibleVariants.length > 1}
+      <div class="variant-options mb-6 mt-6">
+        <RadioGroup
+          groupLabel="Vælg format"
+          name="variant"
+          onChange={selectVariant}
+          options={selectorOptions}
+          selected={variant.sku ?? ''}
+        />
+      </div>
+    {/if}
     <a
       class="block text-xs italic
       mb-10
@@ -281,16 +344,26 @@
     class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
-      {#key image}
-        <img
-          alt={product.title}
-          class="h-full w-full object-contain"
-          srcset={squareSrcSet(image)}
-          src="{image}/w=400,h=400,fit=cover"
-          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-          width="896"
-          height="896"
-        />
+      {#key variant.sku}
+        {#if variantImage}
+          <img
+            alt={variantImage.altText}
+            class="h-full w-full object-contain"
+            srcset={squareSrcSet(variantImage.url)}
+            src="{variantImage.url}/w=400,h=400,fit=cover"
+            sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+            width="896"
+            height="896"
+          />
+        {:else}
+          <div
+            class="flex h-full w-full items-center justify-center border border-black bg-white/40 p-8 text-center text-sm font-bold"
+            role="img"
+            aria-label="{product.title} – {variantLabel}. Billede mangler."
+          >
+            Billede mangler
+          </div>
+        {/if}
       {/key}
     </div>
   </div>
@@ -449,3 +522,32 @@
   <p>Op dit cocktails-game med Vermouth</p>
   <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
+
+<style>
+  .variant-options :global(fieldset > ul > li label) {
+    padding-inline-end: 1rem;
+  }
+
+  .variant-options :global(fieldset > ul > li label > div > div) {
+    gap: 0.75rem;
+  }
+
+  .variant-options :global(fieldset > ul > li label > div > div > p:last-child) {
+    margin-inline-start: auto;
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .variant-options :global(fieldset > ul) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      border: 0;
+    }
+
+    .variant-options :global(fieldset > ul > li) {
+      border: 1px solid currentColor;
+    }
+  }
+</style>

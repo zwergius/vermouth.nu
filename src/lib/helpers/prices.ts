@@ -1,7 +1,7 @@
 import { formatPrice } from '$lib/helpers/numbers'
+import { getDefaultVariant, type ProductVariant } from '$lib/helpers/product-variants'
 import type { HttpTypes } from '@medusajs/types'
 
-type ProductVariant = NonNullable<HttpTypes.StoreProduct['variants']>[number]
 type CalculatedPrice = NonNullable<ProductVariant['calculated_price']> & {
   calculated_amount?: number | null
   original_amount?: number | null
@@ -23,7 +23,16 @@ export function getProductPriceDisplay(
   currencyCode: string,
   locale: string,
 ): ProductPriceDisplay | null {
-  const price = product.variants?.[0]?.calculated_price as CalculatedPrice | undefined
+  const variant = getDefaultVariant(product)
+  return variant ? getVariantPriceDisplay(variant, currencyCode, locale) : null
+}
+
+export function getVariantPriceDisplay(
+  variant: ProductVariant,
+  currencyCode: string,
+  locale: string,
+): ProductPriceDisplay | null {
+  const price = variant.calculated_price as CalculatedPrice | undefined
   const calculatedAmount = toAmount(price?.calculated_amount)
 
   if (calculatedAmount === null) {

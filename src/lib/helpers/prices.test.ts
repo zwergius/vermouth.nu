@@ -15,6 +15,10 @@ function productWithPrice(
   return {
     variants: [
       {
+        id: 'variant-test',
+        sku: 'test-75cl-bottle',
+        title: 'Flaske',
+        variant_rank: 0,
         calculated_price: {
           calculated_amount: calculatedAmount,
           original_amount: originalAmount,

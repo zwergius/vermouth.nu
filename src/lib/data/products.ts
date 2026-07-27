@@ -14,6 +14,11 @@ export type Handle =
   | 'mix-trio'
   | 'tabira'
 
+export interface StorefrontImage {
+  altText: string
+  url: string
+}
+
 interface Vermouth {
   extraImages: Array<{ altText: string; url: string }>
   image: string
@@ -23,6 +28,7 @@ interface Vermouth {
   scores: { body: number; fruityness: number; spiciness: number; sweetness: number }
   sizeAndDegrees: string
   taste: string
+  variantImages?: Record<string, StorefrontImage>
 }
 
 export const vermouths: Record<Handle, Vermouth> = {
@@ -57,6 +63,16 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '100 cl. / 15%',
     taste:
       'Smagen er levende og koncentreret, hvor især kardemommen og de tørrede frugter er stærke, derudover er der nuancer af lakrids og vanilje. Duften er intens af søde krydderier blandet med tørret frugt som afsluttes med noter af kaffe. Dette gør sig gældende i en lang og vedvarende sødme med et perfekt bitter touch.',
+    variantImages: {
+      'forzudo-rojo-100cl-bottle': {
+        altText: 'Forzudo Rojo – Flaske, 100 cl',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/d9b17e95-18c8-4ded-a15b-182fb859c800',
+      },
+      'forzudo-rojo-3l-bag-in-box': {
+        altText: 'Forzudo Rojo – Bag-in-Box, 3 L',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/55adf4a7-8698-486d-8729-ef758858f000',
+      },
+    },
   },
   'forzudo-blanco': {
     brand: 'Forzudo',
@@ -89,6 +105,16 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '100 cl. / 15%',
     taste:
       'Forzudo Blanco giver en cremet fornemmelse med smagsnuancer af bittert æble, kandiseret citron, grønne urter og et strejf af tropiske frugter. Her fås en meget balanceret Vermouth med lige dele sødme og bitter.',
+    variantImages: {
+      'forzudo-blanco-100cl-bottle': {
+        altText: 'Forzudo Blanco – Flaske, 100 cl',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/e5eb8eb6-444c-4217-6143-e652c2a9a100',
+      },
+      'forzudo-blanco-3l-bag-in-box': {
+        altText: 'Forzudo Blanco – Bag-in-Box, 3 L',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/c147a7b3-0471-4273-b0ae-2d447731fc00',
+      },
+    },
   },
   'forzudo-combo': {
     brand: 'Forzudo',
@@ -139,6 +165,16 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'En rigtig god allround rød Vermouth som hverken er for sød, tør eller bitter - perfekt til enhver lejlighed. Noter af karamel, camille & kanel.',
+    variantImages: {
+      'sardino-rojo-75cl-bottle': {
+        altText: 'Sardino Rojo – Flaske, 75 cl',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/89f026f1-f193-45b4-bf8a-a9f9d89c3e00',
+      },
+      'sardino-rojo-5l-bag-in-box': {
+        altText: 'Sardino Rojo – Bag-in-Box, 5 L',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/82a37efe-7b03-4c8e-ca9b-65dd992ef400',
+      },
+    },
   },
   'sardino-blanco': {
     brand: 'Sardino',
@@ -160,6 +196,16 @@ export const vermouths: Record<Handle, Vermouth> = {
     sizeAndDegrees: '75 cl. / 15%',
     taste:
       'Halmgul i farven, stor harmoni og balance i smag, sødt og syrligt med friske og frugtige nuancer, meget aromatisk og med en lang smagsudholdenhed. Noter af blomster, planter og botaniske stoffer.',
+    variantImages: {
+      'sardino-blanco-75cl-bottle': {
+        altText: 'Sardino Blanco – Flaske, 75 cl',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/910a8496-b9ad-4685-f102-dea0a0e60d00',
+      },
+      'sardino-blanco-5l-bag-in-box': {
+        altText: 'Sardino Blanco – Bag-in-Box, 5 L',
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/63a8f10d-2dbd-44a9-4788-4da018b0bf00',
+      },
+    },
   },
   'sardino-combo': {
     brand: 'Sardino',

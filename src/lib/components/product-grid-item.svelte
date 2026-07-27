@@ -1,9 +1,15 @@
 <script lang="ts">
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
+  import {
+    getDefaultVariant,
+    getEligibleVariants,
+    getVariantImage,
+    getVariantPresentation,
+  } from '$lib/helpers/product-variants'
   import { getProductPriceDisplay } from '$lib/helpers/prices'
   import { resolve } from '$app/paths'
-  import { HttpTypes } from '@medusajs/types'
+  import type { HttpTypes } from '@medusajs/types'
   import type { Attachment } from 'svelte/attachments'
 
   const {
@@ -17,7 +23,21 @@
     product: HttpTypes.StoreProduct
     onSelectItem?: () => void
   } = $props()
-  const { image, origin } = $derived(vermouths[product.handle as Handle])
+  const { image, origin, variantImages } = $derived(vermouths[product.handle as Handle])
+  const defaultVariant = $derived(getDefaultVariant(product))
+  const eligibleVariantCount = $derived(getEligibleVariants(product).length)
+  const presentation = $derived(defaultVariant ? getVariantPresentation(defaultVariant) : null)
+  const storefrontImage = $derived(
+    defaultVariant
+      ? getVariantImage({
+          fallbackImage: image,
+          productTitle: product.title,
+          variant: defaultVariant,
+          variantCount: eligibleVariantCount,
+          variantImages,
+        })
+      : null,
+  )
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
 
@@ -54,7 +74,9 @@
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
   <a
     class="flex h-full flex-col items-center"
-    href={resolve(`/sortiment/${product.handle}`)}
+    href={resolve(
+      `/sortiment/${product.handle}${defaultVariant?.sku ? `?variant=${encodeURIComponent(defaultVariant.sku)}` : ''}`,
+    )}
     onclick={handleSelectItem}
   >
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">
@@ -62,16 +84,26 @@
     </h3>
     <p class="whitespace-nowrap text-xs">{origin}</p>
     <div class="relative flex flex-1 flex-col">
-      <img
-        alt={product.title}
-        class="my-auto w-auto md:max-h-44 lg:max-h-fit"
-        loading="lazy"
-        srcset={productSrcSet(image)}
-        src="{image}/w=145,h=290,fit=cover"
-        sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
-        width="290"
-        height="290"
-      />
+      {#if storefrontImage}
+        <img
+          alt={storefrontImage.altText}
+          class="my-auto w-auto md:max-h-44 lg:max-h-fit"
+          loading="lazy"
+          srcset={productSrcSet(storefrontImage.url)}
+          src="{storefrontImage.url}/w=145,h=290,fit=cover"
+          sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
+          width="290"
+          height="290"
+        />
+      {:else}
+        <div
+          aria-label="{product.title}. Billede mangler."
+          class="my-auto grid aspect-square w-full place-items-center border border-black bg-white/40 p-4 text-center text-xs font-bold"
+          role="img"
+        >
+          Billede mangler
+        </div>
+      {/if}
       <div class="overlay">
         <p class="btn whitespace-nowrap">KØB NU</p>
       </div>
@@ -93,6 +125,9 @@
     </div>
     <div class="min-h-11 text-center text-xs">
       <p>{product.subtitle}</p>
+      {#if presentation}
+        <p class="mt-1 font-bold">{presentation.packaging} · {presentation.size}</p>
+      {/if}
       {#if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}
