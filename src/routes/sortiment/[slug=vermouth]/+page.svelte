@@ -17,7 +17,7 @@
     getVariantImage,
     getVariantLabel,
     getVariantPresentation,
-    type ProductVariant,
+    type EligibleProductVariant,
   } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
   import { getVariantPriceDisplay } from '$lib/helpers/prices'
@@ -42,19 +42,24 @@
   )
   const productDescription = $derived(product.description ?? '')
   const eligibleVariants = $derived(getEligibleVariants(product))
-  const defaultVariant = $derived(getDefaultVariant(product) ?? eligibleVariants[0]!)
+  const defaultVariant = $derived(getDefaultVariant(product))
   let selectedSku = $state(page.url.searchParams.get('variant') ?? '')
   const variant = $derived(getVariantBySku(eligibleVariants, selectedSku) ?? defaultVariant)
   const variantPresentation = $derived(getVariantPresentation(variant))
   const variantLabel = $derived(getVariantLabel(variant))
   const variantImage = $derived(
     getVariantImage({
-      fallbackImage: image,
-      productTitle: product.title,
-      variant,
-      variantCount: eligibleVariants.length,
+      variantSku: variant.sku,
       variantImages,
-    }),
+    }) ??
+      (eligibleVariants.length === 1
+        ? {
+            altText: [product.title, variantPresentation.packaging, variantPresentation.size]
+              .filter(Boolean)
+              .join(' – '),
+            url: image,
+          }
+        : null),
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
@@ -62,7 +67,7 @@
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
       price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
-      value: eligibleVariant.sku!,
+      value: eligibleVariant.sku,
     })),
   )
   const reviews = $derived(data.reviews)
@@ -115,7 +120,10 @@
     return null
   }
 
-  function toGaItem(quantity: string, selectedVariant: ProductVariant = variant): GaListItem {
+  function toGaItem(
+    quantity: string,
+    selectedVariant: EligibleProductVariant = variant,
+  ): GaListItem {
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
     const price = selectedVariant.calculated_price?.calculated_amount
@@ -142,7 +150,7 @@
     nextUrl.searchParams.set('variant', event.currentTarget.value)
     const productSlug = slug ?? product.handle ?? ''
     buttonState = 'default'
-    selectedSku = selectedVariant.sku ?? ''
+    selectedSku = selectedVariant.sku
     replaceState(
       resolve(
         `/sortiment/${encodeURIComponent(productSlug)}?${nextUrl.searchParams}${nextUrl.hash}`,
@@ -228,7 +236,7 @@
   }
 
   afterNavigate(() => {
-    selectedSku = page.url.searchParams.get('variant') ?? defaultVariant.sku ?? ''
+    selectedSku = page.url.searchParams.get('variant') ?? defaultVariant.sku
     trackViewItem({
       currency: region.currency_code.toUpperCase(),
       item: toGaItem('1'),
@@ -299,7 +307,7 @@
         onResult={handleFormResult}
       >
         <fieldset disabled={purchasesPaused}>
-          <input name="variant_id" type="hidden" value={variant?.id} />
+          <input name="variant_id" type="hidden" value={variant.id} />
           <input name="cart_item_id" type="hidden" value={cartItem?.id} />
           <div class="flex items-center justify-between md:gap-4">
             <button
@@ -323,7 +331,7 @@
           name="variant"
           onChange={selectVariant}
           options={selectorOptions}
-          selected={variant.sku ?? ''}
+          selected={variant.sku}
         />
       </div>
     {/if}

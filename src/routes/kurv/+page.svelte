@@ -14,7 +14,11 @@
     type GaListItem,
   } from '$lib/helpers/analytics'
   import { thumbnailSrcSet } from '$lib/helpers/images'
-  import { getEligibleVariants, getLineItemVariantLabel } from '$lib/helpers/product-variants'
+  import {
+    getEligibleVariants,
+    getLineItemVariantLabel,
+    getVariantImage,
+  } from '$lib/helpers/product-variants'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
   import Input from '$lib/components/form-controls/input.svelte'
@@ -68,7 +72,7 @@
     cartItemId: string
     productHandle?: string
     productTitle?: string
-    itemVariant?: string
+    itemVariant: string
     unitPrice: number
     previousQuantity: number
     productId?: string
@@ -190,7 +194,12 @@
     if (!productHandle || !(productHandle in vermouths)) return null
 
     const staticData = vermouths[productHandle as Handle]
-    const configuredImage = variantSku ? staticData.variantImages?.[variantSku] : undefined
+    const configuredImage = variantSku
+      ? getVariantImage({
+          variantSku,
+          variantImages: staticData.variantImages,
+        })
+      : null
     if (configuredImage) return configuredImage
 
     const product = Object.values(data.categories)

@@ -26,17 +26,20 @@
   const { image, origin, variantImages } = $derived(vermouths[product.handle as Handle])
   const defaultVariant = $derived(getDefaultVariant(product))
   const eligibleVariantCount = $derived(getEligibleVariants(product).length)
-  const presentation = $derived(defaultVariant ? getVariantPresentation(defaultVariant) : null)
+  const presentation = $derived(getVariantPresentation(defaultVariant))
   const storefrontImage = $derived(
-    defaultVariant
-      ? getVariantImage({
-          fallbackImage: image,
-          productTitle: product.title,
-          variant: defaultVariant,
-          variantCount: eligibleVariantCount,
-          variantImages,
-        })
-      : null,
+    getVariantImage({
+      variantSku: defaultVariant.sku,
+      variantImages,
+    }) ??
+      (eligibleVariantCount === 1
+        ? {
+            altText: [product.title, presentation.packaging, presentation.size]
+              .filter(Boolean)
+              .join(' – '),
+            url: image,
+          }
+        : null),
   )
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
@@ -74,9 +77,7 @@
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
   <a
     class="flex h-full flex-col items-center"
-    href={resolve(
-      `/sortiment/${product.handle}${defaultVariant?.sku ? `?variant=${encodeURIComponent(defaultVariant.sku)}` : ''}`,
-    )}
+    href={resolve(`/sortiment/${product.handle}?variant=${encodeURIComponent(defaultVariant.sku)}`)}
     onclick={handleSelectItem}
   >
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">
@@ -125,9 +126,7 @@
     </div>
     <div class="min-h-11 text-center text-xs">
       <p>{product.subtitle}</p>
-      {#if presentation}
-        <p class="mt-1 font-bold">{presentation.packaging} · {presentation.size}</p>
-      {/if}
+      <p class="mt-1 font-bold">{presentation.packaging} · {presentation.size}</p>
       {#if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}

@@ -2,6 +2,10 @@ import type { StorefrontImage } from '$lib/data/products'
 import type { HttpTypes } from '@medusajs/types'
 
 export type ProductVariant = NonNullable<HttpTypes.StoreProduct['variants']>[number]
+export type EligibleProductVariant = ProductVariant & {
+  sku: string
+  variant_rank: number
+}
 
 export type VariantPresentation = {
   packaging: string
@@ -12,24 +16,34 @@ function hasCalculatedPrice(variant: ProductVariant) {
   return typeof variant.calculated_price?.calculated_amount === 'number'
 }
 
-function hasStableIdentity(variant: ProductVariant) {
-  return Boolean(variant.sku?.trim()) && Number.isInteger(variant.variant_rank)
+function isEligibleVariant(variant: ProductVariant): variant is EligibleProductVariant {
+  return (
+    hasCalculatedPrice(variant) &&
+    typeof variant.sku === 'string' &&
+    Boolean(variant.sku.trim()) &&
+    Number.isInteger(variant.variant_rank)
+  )
 }
 
-export function getEligibleVariants(product: HttpTypes.StoreProduct): ProductVariant[] {
+export function getEligibleVariants(product: HttpTypes.StoreProduct): EligibleProductVariant[] {
   return (product.variants ?? [])
-    .filter((variant) => hasCalculatedPrice(variant) && hasStableIdentity(variant))
-    .toSorted((left, right) => left.variant_rank! - right.variant_rank!)
+    .filter(isEligibleVariant)
+    .toSorted((left, right) => left.variant_rank - right.variant_rank)
 }
 
-export function getDefaultVariant(product: HttpTypes.StoreProduct): ProductVariant | null {
-  return getEligibleVariants(product)[0] ?? null
+export function getDefaultVariant(product: HttpTypes.StoreProduct): EligibleProductVariant {
+  const defaultVariant = getEligibleVariants(product)[0]
+  if (!defaultVariant) {
+    throw new Error(`Product ${product.handle ?? product.id ?? 'unknown'} has no eligible variant`)
+  }
+
+  return defaultVariant
 }
 
 export function getVariantBySku(
-  variants: ProductVariant[],
+  variants: EligibleProductVariant[],
   requestedSku: string | null,
-): ProductVariant | null {
+): EligibleProductVariant | null {
   if (!requestedSku) return null
   return variants.find(({ sku }) => sku === requestedSku) ?? null
 }
@@ -69,25 +83,11 @@ export function getLineItemVariantLabel({
 }
 
 export function getVariantImage({
-  fallbackImage,
-  productTitle,
-  variant,
-  variantCount,
+  variantSku,
   variantImages,
 }: {
-  fallbackImage: string
-  productTitle: string
-  variant: ProductVariant
-  variantCount: number
+  variantSku: string
   variantImages?: Record<string, StorefrontImage>
 }): StorefrontImage | null {
-  const configuredImage = variant.sku ? variantImages?.[variant.sku] : undefined
-  if (configuredImage) return configuredImage
-  if (variantCount !== 1) return null
-
-  const { packaging, size } = getVariantPresentation(variant)
-  return {
-    altText: [productTitle, packaging, size].filter(Boolean).join(' – '),
-    url: fallbackImage,
-  }
+  return variantImages?.[variantSku] ?? null
 }

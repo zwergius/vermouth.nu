@@ -14,6 +14,7 @@
   import ModalDialog from '$lib/components/modal-dialog.svelte'
   import type { PageData } from './$types'
   import { formatPrice } from '$lib/helpers/numbers'
+  import { getLineItemVariantLabel } from '$lib/helpers/product-variants'
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
@@ -61,6 +62,10 @@
         item_category: categoryHandle
           ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
           : GA_MISSING.itemCategory,
+        item_variant: getLineItemVariantLabel({
+          optionValues: item.variant_option_values,
+          title: item.variant_title,
+        }),
         quantity: String(item.quantity),
       }
     })

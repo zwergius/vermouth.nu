@@ -46,7 +46,7 @@
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
     const variant = getDefaultVariant(product)
-    const price = variant?.calculated_price?.calculated_amount
+    const price = variant.calculated_price?.calculated_amount
 
     return {
       item_id: product.id || GA_MISSING.itemId,
@@ -56,7 +56,7 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
-      item_variant: variant ? getVariantLabel(variant) : undefined,
+      item_variant: getVariantLabel(variant),
       item_list_name: categoryHandle || GA_MISSING.itemListName,
       item_list_id: categoryHandle ? categoryHandle.toUpperCase() : GA_MISSING.itemListId,
       index,

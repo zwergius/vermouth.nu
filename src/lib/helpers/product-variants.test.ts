@@ -60,6 +60,10 @@ describe('product variant selection', () => {
     expect(getDefaultVariant(product([box, bottle]))).toBe(bottle)
   })
 
+  it('rejects a product without an eligible variant', () => {
+    expect(() => getDefaultVariant(product([]))).toThrow('has no eligible variant')
+  })
+
   it('excludes a variant without an active-region calculated price', () => {
     const unavailable = {
       ...box,
@@ -91,10 +95,7 @@ describe('variant storefront images', () => {
   it('resolves the selected variant image by SKU', () => {
     expect(
       getVariantImage({
-        fallbackImage: 'legacy',
-        productTitle: 'Wine',
-        variant: box,
-        variantCount: 2,
+        variantSku: box.sku!,
         variantImages: {
           [box.sku!]: { altText: 'Wine box', url: 'box-image' },
         },
@@ -105,25 +106,19 @@ describe('variant storefront images', () => {
   it('does not show another presentation image for a multi-variant product', () => {
     expect(
       getVariantImage({
-        fallbackImage: 'legacy-bottle',
-        productTitle: 'Wine',
-        variant: box,
-        variantCount: 2,
+        variantSku: box.sku!,
       }),
     ).toBeNull()
   })
 
-  it('keeps the legacy image fallback for a single-variant product', () => {
+  it('does not resolve a missing SKU mapping', () => {
     expect(
       getVariantImage({
-        fallbackImage: 'legacy-bottle',
-        productTitle: 'Wine',
-        variant: bottle,
-        variantCount: 1,
+        variantSku: 'other-75cl-bottle',
+        variantImages: {
+          [bottle.sku!]: { altText: 'Wine bottle', url: 'bottle-image' },
+        },
       }),
-    ).toEqual({
-      altText: 'Wine – Flaske – 75 cl',
-      url: 'legacy-bottle',
-    })
+    ).toBeNull()
   })
 })

@@ -47,7 +47,9 @@ describe('getProductPriceDisplay', () => {
     })
   })
 
-  it('returns null when Medusa did not calculate a price', () => {
-    expect(getProductPriceDisplay(productWithPrice(), 'dkk', 'da-DK')).toBeNull()
+  it('rejects a product without an eligible priced variant', () => {
+    expect(() => getProductPriceDisplay(productWithPrice(), 'dkk', 'da-DK')).toThrow(
+      'has no eligible variant',
+    )
   })
 })

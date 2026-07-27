@@ -23,8 +23,7 @@ export function getProductPriceDisplay(
   currencyCode: string,
   locale: string,
 ): ProductPriceDisplay | null {
-  const variant = getDefaultVariant(product)
-  return variant ? getVariantPriceDisplay(variant, currencyCode, locale) : null
+  return getVariantPriceDisplay(getDefaultVariant(product), currencyCode, locale)
 }
 
 export function getVariantPriceDisplay(

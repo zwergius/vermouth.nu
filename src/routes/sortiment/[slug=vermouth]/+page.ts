@@ -89,8 +89,12 @@ export const load: PageLoad = async ({ fetch, params, parent, url }) => {
   if (!product) error(404, `Vermouth med id: ${params.slug} eksisterer ikke.`)
 
   const eligibleVariants = getEligibleVariants(product)
-  const defaultVariant = getDefaultVariant(product)
-  if (!defaultVariant?.sku) error(503, 'Produktet kan ikke købes lige nu.')
+  let defaultVariant
+  try {
+    defaultVariant = getDefaultVariant(product)
+  } catch {
+    error(503, 'Produktet kan ikke købes lige nu.')
+  }
 
   const requestedVariant = getVariantBySku(eligibleVariants, url.searchParams.get('variant'))
   if (!requestedVariant) {
