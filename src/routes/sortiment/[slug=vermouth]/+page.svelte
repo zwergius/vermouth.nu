@@ -326,10 +326,7 @@
     </div>
     {#if eligibleVariants.length > 1}
       <div class="mb-6 mt-6">
-        <form
-          action={resolve(`/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`)}
-          method="GET"
-        >
+        <form action={page.url.pathname} method="GET">
           {#each variantFormParams as [name, value], index (index)}
             <input type="hidden" {name} {value} />
           {/each}
