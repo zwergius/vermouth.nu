@@ -5,6 +5,7 @@
 
   interface RadioGroupProps extends HTMLInputAttributes {
     groupLabel: string
+    layout?: 'stacked' | 'responsive-grid'
     name: string
     onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
     options: Array<{ description?: string; label: string; price?: string; value: string }>
@@ -14,6 +15,7 @@
   let {
     disabled,
     groupLabel,
+    layout = 'stacked',
     name,
     onChange,
     options,
@@ -51,12 +53,12 @@
   }
 </script>
 
-<fieldset class="relative rounded" {disabled}>
+<fieldset class:responsive-grid={layout === 'responsive-grid'} class="relative rounded" {disabled}>
   <legend class="text-sm font-bold mb-4">
     <span class="">{groupLabel}</span>
   </legend>
   <ul class="border border-dark-blue">
-    {#each options as { description, label, price, value }}
+    {#each options as { description, label, price, value } (value)}
       <li class="border-b last-of-type:border-none border-dark-blue">
         <label
           class="relative pl-4 py-5 pr-24 flex items-center gap-4 bg-white/40 has-[:checked]:bg-black/20"
@@ -77,9 +79,9 @@
             {...restProps}
           />
           <div class="text-xs leading-normal flex-1">
-            <div class="flex justify-between font-semibold">
+            <div class="flex justify-between gap-3 font-semibold">
               <p>{label}</p>
-              <p>{price}</p>
+              <p class="ml-auto whitespace-nowrap text-right">{price}</p>
             </div>
             <p>{description}</p>
           </div>
@@ -107,3 +109,22 @@
     </p>
   {/if}
 </fieldset>
+
+<style>
+  fieldset.responsive-grid label {
+    padding-inline-end: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    fieldset.responsive-grid ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      border: 0;
+    }
+
+    fieldset.responsive-grid li {
+      border: 1px solid currentColor;
+    }
+  }
+</style>

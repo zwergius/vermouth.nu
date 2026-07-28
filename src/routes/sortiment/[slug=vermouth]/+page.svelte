@@ -15,12 +15,13 @@
     getEligibleVariants,
     getVariantBySku,
     getVariantImage,
+    getVariantImageAltText,
     getVariantLabel,
+    getVariantPriceDisplay,
     getVariantPresentation,
     type EligibleProductVariant,
   } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
-  import { getVariantPriceDisplay } from '$lib/helpers/prices'
   import { Form, QuantitySelector, RadioGroup } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
@@ -47,19 +48,16 @@
   const variant = $derived(getVariantBySku(eligibleVariants, selectedSku) ?? defaultVariant)
   const variantPresentation = $derived(getVariantPresentation(variant))
   const variantLabel = $derived(getVariantLabel(variant))
+  const variantImageAltText = $derived(getVariantImageAltText(product.title, variantLabel))
   const variantImage = $derived(
     getVariantImage({
+      fallbackAltText: variantImageAltText,
       variantSku: variant.sku,
       variantImages,
-    }) ??
-      (eligibleVariants.length === 1
-        ? {
-            altText: [product.title, variantPresentation.packaging, variantPresentation.size]
-              .filter(Boolean)
-              .join(' – '),
-            url: image,
-          }
-        : null),
+    }) ?? {
+      altText: variantImageAltText,
+      url: image,
+    },
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
@@ -244,11 +242,19 @@
   })
 </script>
 
+<svelte:head>
+  <link
+    rel="canonical"
+    href={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
+  />
+</svelte:head>
+
 <Seo
   title={product.title}
   description={productDescription}
-  image={variantImage ? `${variantImage.url}/w=800,h=800,fit=cover` : ''}
-  imageAlt={variantImage?.altText ?? `${product.title} – ${variantLabel}`}
+  image={`${variantImage.url}/w=800,h=800,fit=cover`}
+  imageAlt={variantImage.altText}
+  url={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
 />
 
 <Marquee text="{product.title} //" theme="red"></Marquee>
@@ -325,9 +331,10 @@
       </Form>
     </div>
     {#if eligibleVariants.length > 1}
-      <div class="variant-options mb-6 mt-6">
+      <div class="mb-6 mt-6">
         <RadioGroup
           groupLabel="Vælg format"
+          layout="responsive-grid"
           name="variant"
           onChange={selectVariant}
           options={selectorOptions}
@@ -353,25 +360,15 @@
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
       {#key variant.sku}
-        {#if variantImage}
-          <img
-            alt={variantImage.altText}
-            class="h-full w-full object-contain"
-            srcset={squareSrcSet(variantImage.url)}
-            src="{variantImage.url}/w=400,h=400,fit=cover"
-            sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-            width="896"
-            height="896"
-          />
-        {:else}
-          <div
-            class="flex h-full w-full items-center justify-center border border-black bg-white/40 p-8 text-center text-sm font-bold"
-            role="img"
-            aria-label="{product.title} – {variantLabel}. Billede mangler."
-          >
-            Billede mangler
-          </div>
-        {/if}
+        <img
+          alt={variantImage.altText}
+          class="h-full w-full object-contain"
+          srcset={squareSrcSet(variantImage.url)}
+          src="{variantImage.url}/w=400,h=400,fit=cover"
+          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+          width="896"
+          height="896"
+        />
       {/key}
     </div>
   </div>
@@ -530,32 +527,3 @@
   <p>Op dit cocktails-game med Vermouth</p>
   <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
-
-<style>
-  .variant-options :global(fieldset > ul > li label) {
-    padding-inline-end: 1rem;
-  }
-
-  .variant-options :global(fieldset > ul > li label > div > div) {
-    gap: 0.75rem;
-  }
-
-  .variant-options :global(fieldset > ul > li label > div > div > p:last-child) {
-    margin-inline-start: auto;
-    text-align: end;
-    white-space: nowrap;
-  }
-
-  @media (min-width: 1024px) {
-    .variant-options :global(fieldset > ul) {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-      border: 0;
-    }
-
-    .variant-options :global(fieldset > ul > li) {
-      border: 1px solid currentColor;
-    }
-  }
-</style>

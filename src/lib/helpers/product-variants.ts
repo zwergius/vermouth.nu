@@ -1,4 +1,5 @@
 import type { StorefrontImage } from '$lib/data/products'
+import { formatPrice } from '$lib/helpers/numbers'
 import type { HttpTypes } from '@medusajs/types'
 
 export type ProductVariant = NonNullable<HttpTypes.StoreProduct['variants']>[number]
@@ -10,6 +11,22 @@ export type EligibleProductVariant = ProductVariant & {
 export type VariantPresentation = {
   packaging: string
   size: string
+}
+
+type CalculatedPrice = NonNullable<ProductVariant['calculated_price']> & {
+  calculated_amount?: number | null
+  original_amount?: number | null
+}
+
+export type ProductPriceDisplay = {
+  current: string
+  original?: string
+  savingsPercent?: number
+  isDiscounted: boolean
+}
+
+export type ResolvedStorefrontImage = StorefrontImage & {
+  altText: string
 }
 
 function hasCalculatedPrice(variant: ProductVariant) {
@@ -26,9 +43,27 @@ function isEligibleVariant(variant: ProductVariant): variant is EligibleProductV
 }
 
 export function getEligibleVariants(product: HttpTypes.StoreProduct): EligibleProductVariant[] {
-  return (product.variants ?? [])
-    .filter(isEligibleVariant)
-    .toSorted((left, right) => left.variant_rank - right.variant_rank)
+  const eligibleVariants = (product.variants ?? []).filter(isEligibleVariant)
+  const skus = new Set<string>()
+  const ranks = new Set<number>()
+
+  for (const variant of eligibleVariants) {
+    if (skus.has(variant.sku)) {
+      throw new Error(
+        `Product ${product.handle ?? product.id ?? 'unknown'} has duplicate eligible variant SKU ${variant.sku}`,
+      )
+    }
+    if (ranks.has(variant.variant_rank)) {
+      throw new Error(
+        `Product ${product.handle ?? product.id ?? 'unknown'} has duplicate eligible variant rank ${variant.variant_rank}`,
+      )
+    }
+
+    skus.add(variant.sku)
+    ranks.add(variant.variant_rank)
+  }
+
+  return eligibleVariants.toSorted((left, right) => left.variant_rank - right.variant_rank)
 }
 
 export function getDefaultVariant(product: HttpTypes.StoreProduct): EligibleProductVariant {
@@ -65,13 +100,24 @@ export function getVariantLabel(variant: ProductVariant) {
   return size ? `${packaging} — ${size}` : packaging
 }
 
+export function getVariantImageAltText(productTitle: string, variantLabel: string) {
+  return `${productTitle} – ${variantLabel.replace(' — ', ', ')}`
+}
+
 export function getLineItemVariantLabel({
   optionValues,
+  product,
+  sku,
   title,
 }: {
   optionValues?: Record<string, unknown> | null
+  product?: HttpTypes.StoreProduct | null
+  sku?: string | null
   title?: string | null
 }) {
+  const catalogVariant = product && sku ? getVariantBySku(getEligibleVariants(product), sku) : null
+  if (catalogVariant) return getVariantLabel(catalogVariant)
+
   const sizeEntry = Object.entries(optionValues ?? {}).find(
     ([optionTitle, value]) => optionTitle.toLowerCase() === 'size' && typeof value === 'string',
   )
@@ -83,11 +129,49 @@ export function getLineItemVariantLabel({
 }
 
 export function getVariantImage({
+  fallbackAltText,
   variantSku,
   variantImages,
 }: {
+  fallbackAltText: string
   variantSku: string
   variantImages?: Record<string, StorefrontImage>
-}): StorefrontImage | null {
-  return variantImages?.[variantSku] ?? null
+}): ResolvedStorefrontImage | null {
+  const image = variantImages?.[variantSku]
+  if (!image) return null
+
+  return {
+    ...image,
+    altText: image.altText?.trim() || fallbackAltText,
+  }
+}
+
+function toAmount(amount: number | null | undefined): number | null {
+  return typeof amount === 'number' ? amount : null
+}
+
+export function getVariantPriceDisplay(
+  variant: ProductVariant,
+  currencyCode: string,
+  locale: string,
+): ProductPriceDisplay | null {
+  const price = variant.calculated_price as CalculatedPrice | undefined
+  const calculatedAmount = toAmount(price?.calculated_amount)
+
+  if (calculatedAmount === null) {
+    return null
+  }
+
+  const originalAmount = toAmount(price?.original_amount)
+  const isDiscounted = originalAmount !== null && originalAmount > calculatedAmount
+  const savingsPercent = isDiscounted
+    ? Math.round(((originalAmount - calculatedAmount) / originalAmount) * 100)
+    : undefined
+
+  return {
+    current: formatPrice(calculatedAmount, currencyCode, locale),
+    original: isDiscounted ? formatPrice(originalAmount, currencyCode, locale) : undefined,
+    savingsPercent,
+    isDiscounted,
+  }
 }

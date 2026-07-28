@@ -4,7 +4,9 @@ import {
   getLineItemVariantLabel,
   getVariantBySku,
   getVariantImage,
+  getVariantImageAltText,
   getVariantLabel,
+  getVariantPriceDisplay,
 } from '$lib/helpers/product-variants'
 import type { HttpTypes } from '@medusajs/types'
 import { describe, expect, it } from 'vitest'
@@ -64,6 +66,15 @@ describe('product variant selection', () => {
     expect(() => getDefaultVariant(product([]))).toThrow('has no eligible variant')
   })
 
+  it('rejects duplicate eligible SKUs and ranks', () => {
+    expect(() => getEligibleVariants(product([bottle, { ...box, sku: bottle.sku }]))).toThrow(
+      'duplicate eligible variant SKU',
+    )
+    expect(() =>
+      getEligibleVariants(product([bottle, { ...box, variant_rank: bottle.variant_rank }])),
+    ).toThrow('duplicate eligible variant rank')
+  })
+
   it('excludes a variant without an active-region calculated price', () => {
     const unavailable = {
       ...box,
@@ -84,6 +95,16 @@ describe('product variant selection', () => {
     expect(getVariantLabel(box)).toBe('Bag-in-Box — 5 L')
     expect(
       getLineItemVariantLabel({
+        product: product([bottle, box]),
+        sku: box.sku,
+        title: 'Bag-in-Box',
+      }),
+    ).toBe('Bag-in-Box — 5 L')
+  })
+
+  it('falls back to line-item option values when the catalog variant is unavailable', () => {
+    expect(
+      getLineItemVariantLabel({
         optionValues: { Size: '5 L' },
         title: 'Bag-in-Box',
       }),
@@ -95,6 +116,7 @@ describe('variant storefront images', () => {
   it('resolves the selected variant image by SKU', () => {
     expect(
       getVariantImage({
+        fallbackAltText: 'Wine – Bag-in-Box, 5 L',
         variantSku: box.sku!,
         variantImages: {
           [box.sku!]: { altText: 'Wine box', url: 'box-image' },
@@ -106,6 +128,7 @@ describe('variant storefront images', () => {
   it('does not show another presentation image for a multi-variant product', () => {
     expect(
       getVariantImage({
+        fallbackAltText: 'Wine – Bag-in-Box, 5 L',
         variantSku: box.sku!,
       }),
     ).toBeNull()
@@ -114,11 +137,35 @@ describe('variant storefront images', () => {
   it('does not resolve a missing SKU mapping', () => {
     expect(
       getVariantImage({
+        fallbackAltText: 'Wine – Bag-in-Box, 5 L',
         variantSku: 'other-75cl-bottle',
         variantImages: {
           [bottle.sku!]: { altText: 'Wine bottle', url: 'bottle-image' },
         },
       }),
     ).toBeNull()
+  })
+
+  it('composes alt text when the configured image has none', () => {
+    const fallbackAltText = getVariantImageAltText('Wine', getVariantLabel(box))
+
+    expect(
+      getVariantImage({
+        fallbackAltText,
+        variantSku: box.sku!,
+        variantImages: {
+          [box.sku!]: { url: 'box-image' },
+        },
+      }),
+    ).toEqual({ altText: 'Wine – Bag-in-Box, 5 L', url: 'box-image' })
+  })
+})
+
+describe('variant prices', () => {
+  it('formats the selected variant price', () => {
+    expect(getVariantPriceDisplay(box, 'dkk', 'da-DK')).toMatchObject({
+      current: expect.stringMatching(/800[,.]00/),
+      isDiscounted: false,
+    })
   })
 })

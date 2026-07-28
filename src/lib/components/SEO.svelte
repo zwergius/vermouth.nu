@@ -1,8 +1,17 @@
 <script lang="ts">
-  export let description: string
-  export let image: string
-  export let imageAlt: string
-  export let title: string
+  const {
+    description,
+    image,
+    imageAlt,
+    title,
+    url,
+  }: {
+    description: string
+    image: string
+    imageAlt: string
+    title: string
+    url?: string
+  } = $props()
 </script>
 
 <svelte:head>
@@ -17,7 +26,7 @@
   <!-- <meta name="twitter:card" content="summary_large_image" /> -->
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:url" content="website" />
+  <meta name="twitter:url" content={url ?? 'https://www.vermouth.nu'} />
   <meta name="twitter:image" content={image} />
   <meta name="twitter:image:alt" content={imageAlt} />
 
@@ -30,5 +39,5 @@
   <meta property="og:description" content={description} />
   <meta property="og:image" itemprop="image" content={image} />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.vermouth.nu" />
+  <meta property="og:url" content={url ?? 'https://www.vermouth.nu'} />
 </svelte:head>

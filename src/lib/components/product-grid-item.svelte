@@ -3,8 +3,9 @@
   import { productSrcSet } from '$lib/helpers/images'
   import {
     getDefaultVariant,
-    getEligibleVariants,
     getVariantImage,
+    getVariantImageAltText,
+    getVariantLabel,
     getVariantPresentation,
   } from '$lib/helpers/product-variants'
   import { getProductPriceDisplay } from '$lib/helpers/prices'
@@ -25,21 +26,19 @@
   } = $props()
   const { image, origin, variantImages } = $derived(vermouths[product.handle as Handle])
   const defaultVariant = $derived(getDefaultVariant(product))
-  const eligibleVariantCount = $derived(getEligibleVariants(product).length)
   const presentation = $derived(getVariantPresentation(defaultVariant))
+  const imageAltText = $derived(
+    getVariantImageAltText(product.title, getVariantLabel(defaultVariant)),
+  )
   const storefrontImage = $derived(
     getVariantImage({
+      fallbackAltText: imageAltText,
       variantSku: defaultVariant.sku,
       variantImages,
-    }) ??
-      (eligibleVariantCount === 1
-        ? {
-            altText: [product.title, presentation.packaging, presentation.size]
-              .filter(Boolean)
-              .join(' – '),
-            url: image,
-          }
-        : null),
+    }) ?? {
+      altText: imageAltText,
+      url: image,
+    },
   )
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
@@ -85,26 +84,16 @@
     </h3>
     <p class="whitespace-nowrap text-xs">{origin}</p>
     <div class="relative flex flex-1 flex-col">
-      {#if storefrontImage}
-        <img
-          alt={storefrontImage.altText}
-          class="my-auto w-auto md:max-h-44 lg:max-h-fit"
-          loading="lazy"
-          srcset={productSrcSet(storefrontImage.url)}
-          src="{storefrontImage.url}/w=145,h=290,fit=cover"
-          sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
-          width="290"
-          height="290"
-        />
-      {:else}
-        <div
-          aria-label="{product.title}. Billede mangler."
-          class="my-auto grid aspect-square w-full place-items-center border border-black bg-white/40 p-4 text-center text-xs font-bold"
-          role="img"
-        >
-          Billede mangler
-        </div>
-      {/if}
+      <img
+        alt={storefrontImage.altText}
+        class="my-auto w-auto md:max-h-44 lg:max-h-fit"
+        loading="lazy"
+        srcset={productSrcSet(storefrontImage.url)}
+        src="{storefrontImage.url}/w=145,h=290,fit=cover"
+        sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
+        width="290"
+        height="290"
+      />
       <div class="overlay">
         <p class="btn whitespace-nowrap">KØB NU</p>
       </div>

@@ -48,6 +48,16 @@
     return null
   }
 
+  function getProductByHandle(productHandle?: string | null) {
+    if (!productHandle) return null
+
+    return (
+      Object.values(data.categories)
+        .flat()
+        .find(({ handle }) => handle === productHandle) ?? null
+    )
+  }
+
   function toGaItems() {
     return order.items!.map((item): GaListItem => {
       const handle = item.product_handle as Handle | null
@@ -64,6 +74,8 @@
           : GA_MISSING.itemCategory,
         item_variant: getLineItemVariantLabel({
           optionValues: item.variant_option_values,
+          product: getProductByHandle(item.product_handle),
+          sku: item.variant_sku,
           title: item.variant_title,
         }),
         quantity: String(item.quantity),
@@ -172,8 +184,14 @@
 
   <div class="lg:max-w-[1068px] mb-6 mx-auto text-sm lg:text-base">
     {#each order.items as item (item.id)}
+      {@const itemVariant = getLineItemVariantLabel({
+        optionValues: item.variant_option_values,
+        product: getProductByHandle(item.product_handle),
+        sku: item.variant_sku,
+        title: item.variant_title,
+      })}
       <div class="flex justify-between items-center py-2 border-b border-black">
-        <span>{item.product_title} x {item.quantity}</span>
+        <span>{item.product_title} · {itemVariant} x {item.quantity}</span>
         <span>{formatPrice(item.unit_price * item.quantity, order.currency_code, locale)}</span>
       </div>
     {/each}

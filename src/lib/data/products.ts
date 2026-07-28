@@ -15,7 +15,7 @@ export type Handle =
   | 'tabira'
 
 export interface StorefrontImage {
-  altText: string
+  altText?: string
   url: string
 }
 

@@ -215,6 +215,10 @@ test.describe('product detail pages', () => {
     })
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
+    await expect(page.locator('link[rel="canonical"]').first()).toHaveAttribute(
+      'href',
+      'https://www.vermouth.nu/sortiment/sardino-rojo',
+    )
     const selector = page.getByRole('group', { name: 'Vælg format' })
     await expect(selector.getByText('Flaske · 75 cl')).toBeVisible()
     await expect(page.locator('input[name="variant_id"]')).toHaveValue('variant_test_sardino_rojo')
