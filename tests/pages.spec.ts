@@ -232,6 +232,16 @@ test.describe('product detail pages', () => {
     await expect(page.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' })).toBeVisible()
     await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
 
+    await page.getByRole('link', { name: 'KØB ELLER SMAG HER' }).click()
+    await expect(page).toHaveURL(/\/forhandlere$/)
+    await page.goBack()
+
+    await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-5l-bag-in-box$/)
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue(
+      'variant_test_sardino_rojo_box',
+    )
+    await expect(page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })).toBeChecked()
+
     await page.reload({ waitUntil: 'domcontentloaded' })
     await expect(page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })).toBeChecked()
   })

@@ -27,7 +27,7 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { afterNavigate, goto, replaceState } from '$app/navigation'
+  import { afterNavigate, goto } from '$app/navigation'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
 
@@ -44,8 +44,9 @@
   const productDescription = $derived(product.description ?? '')
   const eligibleVariants = $derived(getEligibleVariants(product))
   const defaultVariant = $derived(getDefaultVariant(product))
-  let selectedSku = $state(page.url.searchParams.get('variant') ?? '')
-  const variant = $derived(getVariantBySku(eligibleVariants, selectedSku) ?? defaultVariant)
+  const variant = $derived(
+    getVariantBySku(eligibleVariants, page.url.searchParams.get('variant')) ?? defaultVariant,
+  )
   const variantPresentation = $derived(getVariantPresentation(variant))
   const variantLabel = $derived(getVariantLabel(variant))
   const variantImageAltText = $derived(getVariantImageAltText(product.title, variantLabel))
@@ -67,6 +68,9 @@
       price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
       value: eligibleVariant.sku,
     })),
+  )
+  const variantFormParams = $derived(
+    [...page.url.searchParams.entries()].filter(([name]) => name !== 'variant'),
   )
   const reviews = $derived(data.reviews)
   const visibleReviews = $derived(data.reviews.reviews)
@@ -144,21 +148,8 @@
     const selectedVariant = getVariantBySku(eligibleVariants, event.currentTarget.value)
     if (!selectedVariant) return
 
-    const nextUrl = new URL(page.url)
-    nextUrl.searchParams.set('variant', event.currentTarget.value)
-    const productSlug = slug ?? product.handle ?? ''
     buttonState = 'default'
-    selectedSku = selectedVariant.sku
-    replaceState(
-      resolve(
-        `/sortiment/${encodeURIComponent(productSlug)}?${nextUrl.searchParams}${nextUrl.hash}`,
-      ),
-      page.state,
-    )
-    trackViewItem({
-      currency: region.currency_code.toUpperCase(),
-      item: toGaItem('1', selectedVariant),
-    })
+    event.currentTarget.form?.requestSubmit()
   }
 
   function getRatingPercentage(rating: number) {
@@ -233,8 +224,11 @@
     }
   }
 
-  afterNavigate(() => {
-    selectedSku = page.url.searchParams.get('variant') ?? defaultVariant.sku
+  afterNavigate(({ to }) => {
+    const productSlug = slug ?? product.handle ?? ''
+    const productPath = resolve(`/sortiment/${encodeURIComponent(productSlug)}`)
+    if (to?.url.pathname !== productPath) return
+
     trackViewItem({
       currency: region.currency_code.toUpperCase(),
       item: toGaItem('1'),
@@ -332,14 +326,22 @@
     </div>
     {#if eligibleVariants.length > 1}
       <div class="mb-6 mt-6">
-        <RadioGroup
-          groupLabel="Vælg format"
-          layout="responsive-grid"
-          name="variant"
-          onChange={selectVariant}
-          options={selectorOptions}
-          selected={variant.sku}
-        />
+        <form
+          action={resolve(`/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`)}
+          method="GET"
+        >
+          {#each variantFormParams as [name, value], index (index)}
+            <input type="hidden" {name} {value} />
+          {/each}
+          <RadioGroup
+            groupLabel="Vælg format"
+            layout="responsive-grid"
+            name="variant"
+            onChange={selectVariant}
+            options={selectorOptions}
+            selected={variant.sku}
+          />
+        </form>
       </div>
     {/if}
     <a
