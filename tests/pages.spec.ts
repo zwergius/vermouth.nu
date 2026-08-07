@@ -223,9 +223,16 @@ test.describe('product detail pages', () => {
     await expect(selector.getByText('Flaske · 75 cl')).toBeVisible()
     await expect(page.locator('input[name="variant_id"]')).toHaveValue('variant_test_sardino_rojo')
 
-    await page.getByRole('radio', { name: /Bag-in-Box · 5 L/ }).check()
+    const bibVariant = page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })
+    await bibVariant.scrollIntoViewIfNeeded()
+    await page.evaluate(() => window.scrollBy(0, -100))
+    const scrollPosition = await page.evaluate(() => window.scrollY)
+    expect(scrollPosition).toBeGreaterThan(0)
+
+    await bibVariant.check()
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-5l-bag-in-box$/)
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(scrollPosition)
     await expect(page.locator('input[name="variant_id"]')).toHaveValue(
       'variant_test_sardino_rojo_box',
     )
