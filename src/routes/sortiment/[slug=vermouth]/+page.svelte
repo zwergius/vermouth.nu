@@ -286,11 +286,11 @@
       </div>
     {/if}
     <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
-    <h1 class="text-2xl mb-2">{product.title}</h1>
-    <p class="font-bold text-xs mb-4">{origin}</p>
-    <p class="mb-4 text-sm font-bold">
+    <p class="mb-2 text-sm">
       {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
     </p>
+    <h1 class="text-2xl mb-2">{product.title}</h1>
+    <p class="font-bold text-xs mb-4">{origin}</p>
     {#if priceDisplay}
       <div class="mb-6">
         <p class="text-base font-bold">

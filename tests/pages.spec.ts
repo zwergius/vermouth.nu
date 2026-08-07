@@ -241,9 +241,12 @@ test.describe('product detail pages', () => {
     await expect(
       productCopy.getByText('Galicien, Nordvestkysten Spanien', { exact: true }),
     ).toBeVisible()
-    await expect(
-      productCopy.locator(':scope > p').filter({ hasText: /^Bag-in-Box · 5 L · 15%$/ }),
-    ).toBeVisible()
+    const headingAndMetadata = productCopy.locator(':scope > p, :scope > h1')
+    const variantDetails = headingAndMetadata.nth(1)
+    await expect(variantDetails).toHaveText('Bag-in-Box · 5 L · 15%')
+    await expect(variantDetails).toHaveClass(/\btext-sm\b/)
+    await expect(variantDetails).not.toHaveClass(/\bfont-bold\b/)
+    await expect(headingAndMetadata.nth(2)).toHaveText('Sardino Rojo')
     await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
 
     await page.getByRole('link', { name: 'KØB ELLER SMAG HER' }).click()
