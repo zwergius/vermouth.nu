@@ -38,9 +38,16 @@
 
   const { red, white, other, packs } = $derived(data.categories)
   const { cart, locale, product, purchasesPaused, region } = $derived(data)
-  const { extraImages, image, origin, recommendation, scores, taste, variantImages } = $derived(
-    vermouths[product.handle as Handle],
-  )
+  const {
+    alcoholPercentage,
+    extraImages,
+    image,
+    origin,
+    recommendation,
+    scores,
+    taste,
+    variantImages,
+  } = $derived(vermouths[product.handle as Handle])
   const productDescription = $derived(product.description ?? '')
   const eligibleVariants = $derived(getEligibleVariants(product))
   const defaultVariant = $derived(getDefaultVariant(product))
@@ -282,7 +289,7 @@
     <h1 class="text-2xl mb-2">{product.title}</h1>
     <p class="font-bold text-xs mb-4">{origin}</p>
     <p class="mb-4 text-sm font-bold">
-      {variantPresentation.packaging} · {variantPresentation.size}
+      {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
     </p>
     {#if priceDisplay}
       <div class="mb-6">

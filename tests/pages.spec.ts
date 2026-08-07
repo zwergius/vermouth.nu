@@ -239,10 +239,10 @@ test.describe('product detail pages', () => {
     await expect(page.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' })).toBeVisible()
     const productCopy = page.locator('section.split-content > .copy')
     await expect(
-      productCopy.getByText('Galicien, Nordvestkysten Spanien / 15%', { exact: true }),
+      productCopy.getByText('Galicien, Nordvestkysten Spanien', { exact: true }),
     ).toBeVisible()
     await expect(
-      productCopy.locator(':scope > p').filter({ hasText: /^Bag-in-Box · 5 L$/ }),
+      productCopy.locator(':scope > p').filter({ hasText: /^Bag-in-Box · 5 L · 15%$/ }),
     ).toBeVisible()
     await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
 
@@ -286,7 +286,7 @@ test.describe('product detail pages', () => {
     await page.goto('/sortiment/sardino-rojo', { waitUntil: 'domcontentloaded' })
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
-    await expect(page.getByText('Flaske · 75 cl', { exact: true }).first()).toBeVisible()
+    await expect(page.getByText('Flaske · 75 cl · 15%', { exact: true }).first()).toBeVisible()
     await expect(page.getByRole('group', { name: 'Vælg format' })).toHaveCount(0)
   })
 

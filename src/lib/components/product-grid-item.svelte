@@ -24,7 +24,9 @@
     product: HttpTypes.StoreProduct
     onSelectItem?: () => void
   } = $props()
-  const { image, origin, variantImages } = $derived(vermouths[product.handle as Handle])
+  const { alcoholPercentage, image, origin, variantImages } = $derived(
+    vermouths[product.handle as Handle],
+  )
   const defaultVariant = $derived(getDefaultVariant(product))
   const presentation = $derived(getVariantPresentation(defaultVariant))
   const imageAltText = $derived(
@@ -115,7 +117,9 @@
     </div>
     <div class="min-h-11 text-center text-xs">
       <p>{product.subtitle}</p>
-      <p class="mt-1 font-bold">{presentation.packaging} · {presentation.size}</p>
+      <p class="mt-1 font-bold">
+        {presentation.packaging} · {presentation.size} · {alcoholPercentage}
+      </p>
       {#if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}
