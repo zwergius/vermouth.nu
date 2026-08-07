@@ -263,10 +263,10 @@
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
     {#if hasReviews}
-      <div class="mb-8 flex flex-col items-start gap-3 text-brand-blue">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <div class="mb-1 text-brand-blue">
+        <div class="flex items-center gap-3">
           <p
-            class="relative inline-block text-[1.9375rem]/[1.9375rem] font-bold tracking-normal"
+            class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
             aria-label="{formattedAverageRating} ud af 5 stjerner"
           >
             <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
@@ -278,19 +278,23 @@
               ★★★★★
             </span>
           </p>
-          <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
+          <a
+            class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
+            href="#product-reviews"
+          >
+            {reviewCountLabel}
+          </a>
         </div>
-        <a class="text-xs font-bold underline underline-offset-2" href="#product-reviews">
-          Læs {reviewCountLabel}
-        </a>
       </div>
     {/if}
-    <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
-    <p class="mb-2 text-sm">
-      {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
-    </p>
-    <h1 class="text-2xl mb-2">{product.title}</h1>
-    <p class="font-bold text-xs mb-4">{origin}</p>
+    <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
+    <div class="mb-6">
+      <p class="text-sm">
+        {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
+      </p>
+      <h1 class="text-2xl">{product.title}</h1>
+      <p class="text-xs font-bold">{origin}</p>
+    </div>
     {#if priceDisplay}
       <div class="mb-6">
         <p class="text-base font-bold">

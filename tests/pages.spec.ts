@@ -241,12 +241,16 @@ test.describe('product detail pages', () => {
     await expect(
       productCopy.getByText('Galicien, Nordvestkysten Spanien', { exact: true }),
     ).toBeVisible()
-    const headingAndMetadata = productCopy.locator(':scope > p, :scope > h1')
-    const variantDetails = headingAndMetadata.nth(1)
+    const productIdentity = productCopy
+      .locator(':scope > div')
+      .filter({ has: page.getByRole('heading', { name: 'Sardino Rojo' }) })
+    const headingAndMetadata = productIdentity.locator(':scope > p, :scope > h1')
+    const variantDetails = headingAndMetadata.nth(0)
     await expect(variantDetails).toHaveText('Bag-in-Box · 5 L · 15%')
     await expect(variantDetails).toHaveClass(/\btext-sm\b/)
     await expect(variantDetails).not.toHaveClass(/\bfont-bold\b/)
-    await expect(headingAndMetadata.nth(2)).toHaveText('Sardino Rojo')
+    await expect(headingAndMetadata.nth(1)).toHaveText('Sardino Rojo')
+    await expect(headingAndMetadata.nth(2)).toHaveText('Galicien, Nordvestkysten Spanien')
     await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
 
     await page.getByRole('link', { name: 'KØB ELLER SMAG HER' }).click()
@@ -332,7 +336,11 @@ test.describe('product detail pages', () => {
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
     await expect(page.locator('#product-review-list > li')).toHaveCount(2)
-    await expect(page.getByText('4 anmeldelser').first()).toBeVisible()
+    await expect(page.getByRole('link', { name: '4 anmeldelser' })).toHaveAttribute(
+      'href',
+      '#product-reviews',
+    )
+    await expect(page.getByRole('link', { name: 'Læs 4 anmeldelser' })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'VIS FLERE (2)' })).toBeVisible()
     expect(reviewRequests[0]).toEqual({ limit: '2', offset: '0' })
 
