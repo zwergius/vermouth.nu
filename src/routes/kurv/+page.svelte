@@ -17,7 +17,6 @@
   import {
     getEligibleVariants,
     getLineItemVariantLabel,
-    getPresentationImage,
     getVariantImage,
     getVariantImageAltText,
   } from '$lib/helpers/product-variants'
@@ -221,12 +220,10 @@
     const product = getProductByHandle(productHandle)
     if (!product) return null
 
-    return getPresentationImage({
-      configuredImage,
-      fallbackAltText,
-      fallbackImage: staticData.image,
-      variantCount: getEligibleVariants(product).length,
-    })
+    if (configuredImage) return configuredImage
+    if (getEligibleVariants(product).length !== 1) return null
+
+    return { altText: fallbackAltText, url: staticData.image }
   }
 
   function makeQuantityResultHandler(context: CartItemAnalyticsContext) {
@@ -296,23 +293,15 @@
       <li
         class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
       >
-        {#if itemImage}
-          <img
-            alt={itemImage.altText}
-            class="size-20 object-cover lg:size-16"
-            width="66"
-            height="66"
-            loading="lazy"
-            srcset={thumbnailSrcSet(itemImage.url)}
-            src="{itemImage.url}/w=186,h=186,fit=cover"
-          />
-        {:else}
-          <p
-            class="flex size-20 shrink-0 items-center justify-center p-1 text-center text-[10px] lg:size-16"
-          >
-            {itemImageAltText}
-          </p>
-        {/if}
+        <img
+          alt={itemImage?.altText ?? itemImageAltText}
+          class="size-20 object-cover lg:size-16"
+          width="66"
+          height="66"
+          loading="lazy"
+          srcset={itemImage ? thumbnailSrcSet(itemImage.url) : undefined}
+          src={itemImage ? `${itemImage.url}/w=186,h=186,fit=cover` : undefined}
+        />
         <div class="flex flex-col flex-1 gap-0 justify-between lg:flex-row lg:gap-0">
           <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
             <p class="text-sm font-bold">{product_title}</p>

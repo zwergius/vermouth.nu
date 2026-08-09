@@ -146,26 +146,6 @@ export function getVariantImage({
   }
 }
 
-export function getPresentationImage({
-  configuredImage,
-  fallbackAltText,
-  fallbackImage,
-  variantCount,
-}: {
-  configuredImage: ResolvedStorefrontImage | null
-  fallbackAltText: string
-  fallbackImage: string
-  variantCount: number
-}): ResolvedStorefrontImage | null {
-  if (configuredImage) return configuredImage
-  if (variantCount !== 1) return null
-
-  return {
-    altText: fallbackAltText,
-    url: fallbackImage,
-  }
-}
-
 function toAmount(amount: number | null | undefined): number | null {
   return typeof amount === 'number' ? amount : null
 }

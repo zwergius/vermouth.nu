@@ -2,7 +2,6 @@ import {
   getDefaultVariant,
   getEligibleVariants,
   getLineItemVariantLabel,
-  getPresentationImage,
   getVariantBySku,
   getVariantImage,
   getVariantImageAltText,
@@ -159,28 +158,6 @@ describe('variant storefront images', () => {
         },
       }),
     ).toEqual({ altText: 'Wine – Bag-in-Box, 5 L', url: 'box-image' })
-  })
-
-  it('uses the legacy product image only for a single-variant product', () => {
-    expect(
-      getPresentationImage({
-        configuredImage: null,
-        fallbackAltText: 'Wine – Flaske, 75 cl',
-        fallbackImage: 'legacy-image',
-        variantCount: 1,
-      }),
-    ).toEqual({ altText: 'Wine – Flaske, 75 cl', url: 'legacy-image' })
-  })
-
-  it('preserves a missing image for an unmapped multi-variant presentation', () => {
-    expect(
-      getPresentationImage({
-        configuredImage: null,
-        fallbackAltText: 'Wine – Bag-in-Box, 5 L',
-        fallbackImage: 'bottle-image',
-        variantCount: 2,
-      }),
-    ).toBeNull()
   })
 })
 

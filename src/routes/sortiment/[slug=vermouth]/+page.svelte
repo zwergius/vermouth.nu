@@ -13,7 +13,6 @@
   import {
     getDefaultVariant,
     getEligibleVariants,
-    getPresentationImage,
     getVariantBySku,
     getVariantImage,
     getVariantImageAltText,
@@ -66,12 +65,8 @@
     }),
   )
   const variantImage = $derived(
-    getPresentationImage({
-      configuredImage: configuredVariantImage,
-      fallbackAltText: variantImageAltText,
-      fallbackImage: image,
-      variantCount: eligibleVariants.length,
-    }),
+    configuredVariantImage ??
+      (eligibleVariants.length === 1 ? { altText: variantImageAltText, url: image } : null),
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
@@ -377,21 +372,15 @@
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
       {#key variant.sku}
-        {#if variantImage}
-          <img
-            alt={variantImage.altText}
-            class="h-full w-full object-contain"
-            srcset={squareSrcSet(variantImage.url)}
-            src="{variantImage.url}/w=400,h=400,fit=cover"
-            sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-            width="896"
-            height="896"
-          />
-        {:else}
-          <p class="flex h-full items-center justify-center p-6 text-center text-sm">
-            {variantImageAltText}
-          </p>
-        {/if}
+        <img
+          alt={variantImage?.altText ?? variantImageAltText}
+          class="h-full w-full object-contain"
+          srcset={variantImage ? squareSrcSet(variantImage.url) : undefined}
+          src={variantImage ? `${variantImage.url}/w=400,h=400,fit=cover` : undefined}
+          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+          width="896"
+          height="896"
+        />
       {/key}
     </div>
   </div>
