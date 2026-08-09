@@ -13,6 +13,7 @@
   import {
     getDefaultVariant,
     getEligibleVariants,
+    getPresentationImage,
     getVariantBySku,
     getVariantImage,
     getVariantImageAltText,
@@ -57,15 +58,20 @@
   const variantPresentation = $derived(getVariantPresentation(variant))
   const variantLabel = $derived(getVariantLabel(variant))
   const variantImageAltText = $derived(getVariantImageAltText(product.title, variantLabel))
-  const variantImage = $derived(
+  const configuredVariantImage = $derived(
     getVariantImage({
       fallbackAltText: variantImageAltText,
       variantSku: variant.sku,
       variantImages,
-    }) ?? {
-      altText: variantImageAltText,
-      url: image,
-    },
+    }),
+  )
+  const variantImage = $derived(
+    getPresentationImage({
+      configuredImage: configuredVariantImage,
+      fallbackAltText: variantImageAltText,
+      fallbackImage: image,
+      variantCount: eligibleVariants.length,
+    }),
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
@@ -253,8 +259,8 @@
 <Seo
   title={product.title}
   description={productDescription}
-  image={`${variantImage.url}/w=800,h=800,fit=cover`}
-  imageAlt={variantImage.altText}
+  image={variantImage ? `${variantImage.url}/w=800,h=800,fit=cover` : undefined}
+  imageAlt={variantImage?.altText}
   url={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
 />
 
@@ -371,15 +377,21 @@
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
       {#key variant.sku}
-        <img
-          alt={variantImage.altText}
-          class="h-full w-full object-contain"
-          srcset={squareSrcSet(variantImage.url)}
-          src="{variantImage.url}/w=400,h=400,fit=cover"
-          sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
-          width="896"
-          height="896"
-        />
+        {#if variantImage}
+          <img
+            alt={variantImage.altText}
+            class="h-full w-full object-contain"
+            srcset={squareSrcSet(variantImage.url)}
+            src="{variantImage.url}/w=400,h=400,fit=cover"
+            sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
+            width="896"
+            height="896"
+          />
+        {:else}
+          <p class="flex h-full items-center justify-center p-6 text-center text-sm">
+            {variantImageAltText}
+          </p>
+        {/if}
       {/key}
     </div>
   </div>

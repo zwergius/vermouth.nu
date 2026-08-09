@@ -2,7 +2,7 @@
   import type { ActionResult } from '@sveltejs/kit'
   import { onMount } from 'svelte'
   import type { PageProps } from './$types'
-  import { vermouths, type Handle } from '$lib/data/products'
+  import { getVermouth } from '$lib/data/products'
   import {
     trackAddShippingInfo,
     trackBeginCheckout,
@@ -15,7 +15,9 @@
   } from '$lib/helpers/analytics'
   import { thumbnailSrcSet } from '$lib/helpers/images'
   import {
+    getEligibleVariants,
     getLineItemVariantLabel,
+    getPresentationImage,
     getVariantImage,
     getVariantImageAltText,
   } from '$lib/helpers/product-variants'
@@ -79,7 +81,7 @@
   }
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
-  function getProductByHandle(productHandle?: string) {
+  function getProductByHandle(productHandle?: string | null) {
     if (!productHandle) return null
 
     return (
@@ -162,7 +164,7 @@
 
   function toGaItem(context: CartItemAnalyticsContext, quantity: string): GaListItem {
     const handle = context.productHandle
-    const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
+    const staticData = getVermouth(handle)
     const categoryHandle = getCategoryHandleByProductHandle(handle)
 
     return {
@@ -203,13 +205,12 @@
   }
 
   function getCartItemImage(
-    productHandle: Handle,
-    productTitle: string,
-    itemVariant: string,
+    productHandle: string | null | undefined,
+    fallbackAltText: string,
     variantSku?: string,
   ) {
-    const staticData = vermouths[productHandle]
-    const fallbackAltText = getVariantImageAltText(productTitle, itemVariant)
+    const staticData = getVermouth(productHandle)
+    if (!staticData) return null
     const configuredImage = variantSku
       ? getVariantImage({
           fallbackAltText,
@@ -217,12 +218,15 @@
           variantImages: staticData.variantImages,
         })
       : null
-    if (configuredImage) return configuredImage
+    const product = getProductByHandle(productHandle)
+    if (!product) return null
 
-    return {
-      altText: fallbackAltText,
-      url: staticData.image,
-    }
+    return getPresentationImage({
+      configuredImage,
+      fallbackAltText,
+      fallbackImage: staticData.image,
+      variantCount: getEligibleVariants(product).length,
+    })
   }
 
   function makeQuantityResultHandler(context: CartItemAnalyticsContext) {
@@ -284,24 +288,31 @@
         sku: variant_sku,
         title: variant_title,
       })}
-      {@const itemImage = getCartItemImage(
-        product_handle as Handle,
+      {@const itemImageAltText = getVariantImageAltText(
         product_title ?? product_handle ?? 'Produkt',
         itemVariant,
-        variant_sku,
       )}
+      {@const itemImage = getCartItemImage(product_handle, itemImageAltText, variant_sku)}
       <li
         class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
       >
-        <img
-          alt={itemImage.altText}
-          class="size-20 object-cover lg:size-16"
-          width="66"
-          height="66"
-          loading="lazy"
-          srcset={thumbnailSrcSet(itemImage.url)}
-          src="{itemImage.url}/w=186,h=186,fit=cover"
-        />
+        {#if itemImage}
+          <img
+            alt={itemImage.altText}
+            class="size-20 object-cover lg:size-16"
+            width="66"
+            height="66"
+            loading="lazy"
+            srcset={thumbnailSrcSet(itemImage.url)}
+            src="{itemImage.url}/w=186,h=186,fit=cover"
+          />
+        {:else}
+          <p
+            class="flex size-20 shrink-0 items-center justify-center p-1 text-center text-[10px] lg:size-16"
+          >
+            {itemImageAltText}
+          </p>
+        {/if}
         <div class="flex flex-col flex-1 gap-0 justify-between lg:flex-row lg:gap-0">
           <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
             <p class="text-sm font-bold">{product_title}</p>

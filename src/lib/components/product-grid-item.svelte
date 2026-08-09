@@ -3,6 +3,8 @@
   import { productSrcSet } from '$lib/helpers/images'
   import {
     getDefaultVariant,
+    getEligibleVariants,
+    getPresentationImage,
     getVariantImage,
     getVariantImageAltText,
     getVariantLabel,
@@ -28,19 +30,25 @@
     vermouths[product.handle as Handle],
   )
   const defaultVariant = $derived(getDefaultVariant(product))
+  const eligibleVariantCount = $derived(getEligibleVariants(product).length)
   const presentation = $derived(getVariantPresentation(defaultVariant))
   const imageAltText = $derived(
     getVariantImageAltText(product.title, getVariantLabel(defaultVariant)),
   )
-  const storefrontImage = $derived(
+  const configuredImage = $derived(
     getVariantImage({
       fallbackAltText: imageAltText,
       variantSku: defaultVariant.sku,
       variantImages,
-    }) ?? {
-      altText: imageAltText,
-      url: image,
-    },
+    }),
+  )
+  const storefrontImage = $derived(
+    getPresentationImage({
+      configuredImage,
+      fallbackAltText: imageAltText,
+      fallbackImage: image,
+      variantCount: eligibleVariantCount,
+    }),
   )
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
@@ -86,16 +94,20 @@
     </h3>
     <p class="whitespace-nowrap text-xs">{origin}</p>
     <div class="relative flex flex-1 flex-col">
-      <img
-        alt={storefrontImage.altText}
-        class="my-auto w-auto md:max-h-44 lg:max-h-fit"
-        loading="lazy"
-        srcset={productSrcSet(storefrontImage.url)}
-        src="{storefrontImage.url}/w=145,h=290,fit=cover"
-        sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
-        width="290"
-        height="290"
-      />
+      {#if storefrontImage}
+        <img
+          alt={storefrontImage.altText}
+          class="my-auto w-auto md:max-h-44 lg:max-h-fit"
+          loading="lazy"
+          srcset={productSrcSet(storefrontImage.url)}
+          src="{storefrontImage.url}/w=145,h=290,fit=cover"
+          sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
+          width="290"
+          height="290"
+        />
+      {:else}
+        <p class="my-auto text-center text-xs">{imageAltText}</p>
+      {/if}
       <div class="overlay">
         <p class="btn whitespace-nowrap">KØB NU</p>
       </div>

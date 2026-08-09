@@ -19,7 +19,7 @@ export interface StorefrontImage {
   url: string
 }
 
-interface Vermouth {
+export interface Vermouth {
   alcoholPercentage: string
   extraImages: Array<{ altText: string; url: string }>
   image: string
@@ -398,3 +398,9 @@ export const vermouths: Record<Handle, Vermouth> = {
       'Sødlig og blød i sin smag, dens friskhed og duft af appelsin gør den nem at drikke. Eftersmagen ligger langt tilbage i munden og arbejder sig ind, igennem sine mange aromaer og krydderier. Perfekt balance mellem det søde og det friske, som gør denne vermouth meget komplet. Bør nydes kold med is og appelsinskive, og med oliven som snack.',
   },
 } as const
+
+export function getVermouth(productHandle: string | null | undefined): Vermouth | null {
+  if (!productHandle || !Object.hasOwn(vermouths, productHandle)) return null
+
+  return vermouths[productHandle as Handle]
+}

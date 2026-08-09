@@ -7,8 +7,8 @@
     url,
   }: {
     description: string
-    image: string
-    imageAlt: string
+    image?: string
+    imageAlt?: string
     title: string
     url?: string
   } = $props()
@@ -27,8 +27,10 @@
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:url" content={url ?? 'https://www.vermouth.nu'} />
-  <meta name="twitter:image" content={image} />
-  <meta name="twitter:image:alt" content={imageAlt} />
+  {#if image}
+    <meta name="twitter:image" content={image} />
+    {#if imageAlt}<meta name="twitter:image:alt" content={imageAlt} />{/if}
+  {/if}
 
   <!--  Essential META Tags -->
 
@@ -37,7 +39,7 @@
   <meta property="og:site_name" content="Vermouth.NU" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" itemprop="image" content={image} />
+  {#if image}<meta property="og:image" itemprop="image" content={image} />{/if}
   <meta property="og:type" content="website" />
   <meta property="og:url" content={url ?? 'https://www.vermouth.nu'} />
 </svelte:head>
