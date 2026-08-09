@@ -1,7 +1,7 @@
 import type { LayoutServerLoad } from './$types'
 import { sdk } from '$lib/medusa'
 import { arePurchasesPaused } from '$lib/server/purchase-availability'
-import { HttpTypes } from '@medusajs/types'
+import type { HttpTypes } from '@medusajs/types'
 
 type CategoryHandle = 'red' | 'white' | 'other' | 'packs'
 
@@ -19,7 +19,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   const [{ id: regionId }] = regions
 
   const { products } = await sdk.store.product.list({
-    fields: '*categories,*variants.calculated_price',
+    fields: '*categories,*options,*variants,*variants.options,*variants.calculated_price',
     region_id: regionId,
   })
 

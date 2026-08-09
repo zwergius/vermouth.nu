@@ -4,6 +4,7 @@ type GaListItem = {
   price?: string
   item_brand?: string
   item_category: string
+  item_variant: string
   item_list_name?: string
   item_list_id?: string
   index?: number

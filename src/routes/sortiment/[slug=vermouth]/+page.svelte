@@ -10,17 +10,26 @@
     trackViewItem,
     type GaListItem,
   } from '$lib/helpers/analytics'
+  import {
+    getDefaultVariant,
+    getEligibleVariants,
+    getVariantBySku,
+    getVariantImage,
+    getVariantImageAltText,
+    getVariantLabel,
+    getVariantPriceDisplay,
+    getVariantPresentation,
+    type EligibleProductVariant,
+  } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
-  import { getProductPriceDisplay } from '$lib/helpers/prices'
-  import { Form, QuantitySelector } from '$lib/components/form-controls'
+  import { Form, QuantitySelector, RadioGroup } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { goto } from '$app/navigation'
+  import { afterNavigate, goto } from '$app/navigation'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
-  import { untrack } from 'svelte'
 
   const { slug } = $derived(page.params)
   const { data }: PageProps = $props()
@@ -29,13 +38,48 @@
 
   const { red, white, other, packs } = $derived(data.categories)
   const { cart, locale, product, purchasesPaused, region } = $derived(data)
-  const { extraImages, image, origin, recommendation, scores, taste } = $derived(
-    vermouths[product.handle as Handle],
-  )
+  const {
+    alcoholPercentage,
+    extraImages,
+    image,
+    origin,
+    recommendation,
+    scores,
+    taste,
+    variantImages,
+  } = $derived(vermouths[product.handle as Handle])
   const productDescription = $derived(product.description ?? '')
-  const variant = $derived(product.variants?.[0])
-  const priceDisplay = $derived(getProductPriceDisplay(product, region.currency_code, locale))
-  const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant?.id))
+  const eligibleVariants = $derived(getEligibleVariants(product))
+  const defaultVariant = $derived(getDefaultVariant(product))
+  const variant = $derived(
+    getVariantBySku(eligibleVariants, page.url.searchParams.get('variant')) ?? defaultVariant,
+  )
+  const variantPresentation = $derived(getVariantPresentation(variant))
+  const variantLabel = $derived(getVariantLabel(variant))
+  const variantImageAltText = $derived(getVariantImageAltText(product.title, variantLabel))
+  const configuredVariantImage = $derived(
+    getVariantImage({
+      fallbackAltText: variantImageAltText,
+      variantSku: variant.sku,
+      variantImages,
+    }),
+  )
+  const variantImage = $derived(
+    configuredVariantImage ??
+      (eligibleVariants.length === 1 ? { altText: variantImageAltText, url: image } : null),
+  )
+  const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
+  const selectorOptions = $derived(
+    eligibleVariants.map((eligibleVariant) => ({
+      label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
+      price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
+      value: eligibleVariant.sku,
+    })),
+  )
+  const variantFormParams = $derived(
+    [...page.url.searchParams.entries()].filter(([name]) => name !== 'variant'),
+  )
   const reviews = $derived(data.reviews)
   const visibleReviews = $derived(data.reviews.reviews)
   const averageRating = $derived(Math.round(reviews.average_rating * 10) / 10)
@@ -86,10 +130,13 @@
     return null
   }
 
-  function toGaItem(quantity: string): GaListItem {
+  function toGaItem(
+    quantity: string,
+    selectedVariant: EligibleProductVariant = variant,
+  ): GaListItem {
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
-    const price = product.variants?.[0]?.calculated_price?.calculated_amount
+    const price = selectedVariant.calculated_price?.calculated_amount
     const categoryHandle = getCategoryHandle()
 
     return {
@@ -100,8 +147,17 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
+      item_variant: getVariantLabel(selectedVariant),
       quantity,
     }
+  }
+
+  function selectVariant(event: Event & { currentTarget: HTMLInputElement }) {
+    const selectedVariant = getVariantBySku(eligibleVariants, event.currentTarget.value)
+    if (!selectedVariant) return
+
+    buttonState = 'default'
+    event.currentTarget.form?.requestSubmit()
   }
 
   function getRatingPercentage(rating: number) {
@@ -176,23 +232,31 @@
     }
   }
 
-  $effect(() => {
-    void slug
+  afterNavigate(({ to }) => {
+    const productSlug = slug ?? product.handle ?? ''
+    const productPath = resolve(`/sortiment/${encodeURIComponent(productSlug)}`)
+    if (to?.url.pathname !== productPath) return
 
-    untrack(() => {
-      trackViewItem({
-        currency: region.currency_code.toUpperCase(),
-        item: toGaItem('1'),
-      })
+    trackViewItem({
+      currency: region.currency_code.toUpperCase(),
+      item: toGaItem('1'),
     })
   })
 </script>
 
+<svelte:head>
+  <link
+    rel="canonical"
+    href={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
+  />
+</svelte:head>
+
 <Seo
   title={product.title}
   description={productDescription}
-  image="{image}/w=800,h=800,fit=cover"
-  imageAlt={product.title}
+  image={variantImage ? `${variantImage.url}/w=800,h=800,fit=cover` : undefined}
+  imageAlt={variantImage?.altText}
+  url={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
 />
 
 <Marquee text="{product.title} //" theme="red"></Marquee>
@@ -200,10 +264,10 @@
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
     {#if hasReviews}
-      <div class="mb-8 flex flex-col items-start gap-3 text-brand-blue">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <div class="mb-1 text-brand-blue">
+        <div class="flex items-center gap-3">
           <p
-            class="relative inline-block text-[1.9375rem]/[1.9375rem] font-bold tracking-normal"
+            class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
             aria-label="{formattedAverageRating} ud af 5 stjerner"
           >
             <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
@@ -215,16 +279,23 @@
               ★★★★★
             </span>
           </p>
-          <p class="text-xs font-bold text-black">{reviewCountLabel}</p>
+          <a
+            class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
+            href="#product-reviews"
+          >
+            {reviewCountLabel}
+          </a>
         </div>
-        <a class="text-xs font-bold underline underline-offset-2" href="#product-reviews">
-          Læs {reviewCountLabel}
-        </a>
       </div>
     {/if}
-    <p class=" font-bold text-xs mb-4">{product.subtitle}</p>
-    <h1 class="text-2xl mb-2">{product.title}</h1>
-    <p class="font-bold text-xs mb-4">{origin}</p>
+    <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
+    <div class="mb-6">
+      <p class="text-sm">
+        {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
+      </p>
+      <h1 class="text-2xl">{product.title}</h1>
+      <p class="text-xs font-bold">{origin}</p>
+    </div>
     {#if priceDisplay}
       <div class="mb-6">
         <p class="text-base font-bold">
@@ -249,7 +320,7 @@
         onResult={handleFormResult}
       >
         <fieldset disabled={purchasesPaused}>
-          <input name="variant_id" type="hidden" value={variant?.id} />
+          <input name="variant_id" type="hidden" value={variant.id} />
           <input name="cart_item_id" type="hidden" value={cartItem?.id} />
           <div class="flex items-center justify-between md:gap-4">
             <button
@@ -259,11 +330,30 @@
             >
               {buttonText}
             </button>
-            <QuantitySelector min={1} name="quantity" value={cartItem?.quantity} />
+            {#key variant.id}
+              <QuantitySelector min={1} name="quantity" value={cartItem?.quantity ?? 1} />
+            {/key}
           </div>
         </fieldset>
       </Form>
     </div>
+    {#if eligibleVariants.length > 1}
+      <div class="mb-6 mt-6">
+        <form action={page.url.pathname} data-sveltekit-noscroll method="GET">
+          {#each variantFormParams as [name, value], index (index)}
+            <input type="hidden" {name} {value} />
+          {/each}
+          <RadioGroup
+            groupLabel="Vælg format"
+            layout="responsive-grid"
+            name="variant"
+            onChange={selectVariant}
+            options={selectorOptions}
+            selected={variant.sku}
+          />
+        </form>
+      </div>
+    {/if}
     <a
       class="block text-xs italic
       mb-10
@@ -281,12 +371,12 @@
     class="border-b border-black lg:border-0 py-10 lg:py-20 flex justify-center w-full lg:basis-1/2"
   >
     <div class="aspect-square w-full max-w-[896px] lg:mx-auto">
-      {#key image}
+      {#key variant.sku}
         <img
-          alt={product.title}
+          alt={variantImage?.altText ?? variantImageAltText}
           class="h-full w-full object-contain"
-          srcset={squareSrcSet(image)}
-          src="{image}/w=400,h=400,fit=cover"
+          srcset={variantImage ? squareSrcSet(variantImage.url) : undefined}
+          src={variantImage ? `${variantImage.url}/w=400,h=400,fit=cover` : undefined}
           sizes="(max-width: 500px) 100vw, (max-width: 1792px) 50vw, 896px"
           width="896"
           height="896"

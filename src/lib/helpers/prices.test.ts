@@ -15,6 +15,10 @@ function productWithPrice(
   return {
     variants: [
       {
+        id: 'variant-test',
+        sku: 'test-75cl-bottle',
+        title: 'Flaske',
+        variant_rank: 0,
         calculated_price: {
           calculated_amount: calculatedAmount,
           original_amount: originalAmount,
@@ -43,7 +47,9 @@ describe('getProductPriceDisplay', () => {
     })
   })
 
-  it('returns null when Medusa did not calculate a price', () => {
-    expect(getProductPriceDisplay(productWithPrice(), 'dkk', 'da-DK')).toBeNull()
+  it('rejects a product without an eligible priced variant', () => {
+    expect(() => getProductPriceDisplay(productWithPrice(), 'dkk', 'da-DK')).toThrow(
+      'has no eligible variant',
+    )
   })
 })

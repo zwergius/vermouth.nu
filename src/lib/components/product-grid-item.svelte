@@ -1,9 +1,17 @@
 <script lang="ts">
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
+  import {
+    getDefaultVariant,
+    getEligibleVariants,
+    getVariantImage,
+    getVariantImageAltText,
+    getVariantLabel,
+    getVariantPresentation,
+  } from '$lib/helpers/product-variants'
   import { getProductPriceDisplay } from '$lib/helpers/prices'
   import { resolve } from '$app/paths'
-  import { HttpTypes } from '@medusajs/types'
+  import type { HttpTypes } from '@medusajs/types'
   import type { Attachment } from 'svelte/attachments'
 
   const {
@@ -17,7 +25,25 @@
     product: HttpTypes.StoreProduct
     onSelectItem?: () => void
   } = $props()
-  const { image, origin } = $derived(vermouths[product.handle as Handle])
+  const { alcoholPercentage, image, origin, variantImages } = $derived(
+    vermouths[product.handle as Handle],
+  )
+  const defaultVariant = $derived(getDefaultVariant(product))
+  const eligibleVariantCount = $derived(getEligibleVariants(product).length)
+  const presentation = $derived(getVariantPresentation(defaultVariant))
+  const imageAltText = $derived(
+    getVariantImageAltText(product.title, getVariantLabel(defaultVariant)),
+  )
+  const configuredImage = $derived(
+    getVariantImage({
+      fallbackAltText: imageAltText,
+      variantSku: defaultVariant.sku,
+      variantImages,
+    }),
+  )
+  const storefrontImage = $derived(
+    configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
+  )
   const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
 
@@ -54,7 +80,7 @@
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
   <a
     class="flex h-full flex-col items-center"
-    href={resolve(`/sortiment/${product.handle}`)}
+    href={resolve(`/sortiment/${product.handle}?variant=${encodeURIComponent(defaultVariant.sku)}`)}
     onclick={handleSelectItem}
   >
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">
@@ -63,11 +89,11 @@
     <p class="whitespace-nowrap text-xs">{origin}</p>
     <div class="relative flex flex-1 flex-col">
       <img
-        alt={product.title}
+        alt={storefrontImage?.altText ?? imageAltText}
         class="my-auto w-auto md:max-h-44 lg:max-h-fit"
         loading="lazy"
-        srcset={productSrcSet(image)}
-        src="{image}/w=145,h=290,fit=cover"
+        srcset={storefrontImage ? productSrcSet(storefrontImage.url) : undefined}
+        src={storefrontImage ? `${storefrontImage.url}/w=145,h=290,fit=cover` : undefined}
         sizes="(max-width: 700px) 145px, (max-width: 1000px) 90px, 145px"
         width="290"
         height="290"
@@ -93,6 +119,9 @@
     </div>
     <div class="min-h-11 text-center text-xs">
       <p>{product.subtitle}</p>
+      <p class="mt-1 font-bold">
+        {presentation.packaging} · {presentation.size} · {alcoholPercentage}
+      </p>
       {#if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}

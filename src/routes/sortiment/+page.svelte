@@ -12,6 +12,7 @@
     trackViewItemList,
     type GaListItem,
   } from '$lib/helpers/analytics'
+  import { getDefaultVariant, getVariantLabel } from '$lib/helpers/product-variants'
   import { resolve } from '$app/paths'
   import type { HttpTypes } from '@medusajs/types'
 
@@ -44,7 +45,8 @@
     const categoryHandle = getCategoryHandle(product)
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
-    const price = product.variants?.[0]?.calculated_price?.calculated_amount
+    const variant = getDefaultVariant(product)
+    const price = variant.calculated_price?.calculated_amount
 
     return {
       item_id: product.id || GA_MISSING.itemId,
@@ -54,6 +56,7 @@
       item_category: categoryHandle
         ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
         : GA_MISSING.itemCategory,
+      item_variant: getVariantLabel(variant),
       item_list_name: categoryHandle || GA_MISSING.itemListName,
       item_list_id: categoryHandle ? categoryHandle.toUpperCase() : GA_MISSING.itemListId,
       index,

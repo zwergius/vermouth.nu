@@ -1,6 +1,11 @@
 import type { PageLoad } from './$types'
 import { vermouths } from '$lib/data/products'
-import { error } from '@sveltejs/kit'
+import {
+  getDefaultVariant,
+  getEligibleVariants,
+  getVariantBySku,
+} from '$lib/helpers/product-variants'
+import { error, redirect } from '@sveltejs/kit'
 import { sdk } from '$lib/medusa'
 
 type ProductReview = {
@@ -75,12 +80,29 @@ export const load: PageLoad = async ({ fetch, params, parent, url }) => {
   const { region } = await parent()
   const data = await sdk.store.product.list({
     handle: params.slug,
-    fields: '*categories,*variants.calculated_price',
+    fields: '*categories,*options,*variants,*variants.options,*variants.calculated_price',
     region_id: region.id,
   })
 
   const vermouth = vermouths[vermouthSlug]
   const product = data.products[0]
+  if (!product) error(404, `Vermouth med id: ${params.slug} eksisterer ikke.`)
+
+  const eligibleVariants = getEligibleVariants(product)
+  let defaultVariant
+  try {
+    defaultVariant = getDefaultVariant(product)
+  } catch {
+    error(503, 'Produktet kan ikke købes lige nu.')
+  }
+
+  const requestedVariant = getVariantBySku(eligibleVariants, url.searchParams.get('variant'))
+  if (!requestedVariant) {
+    const normalizedUrl = new URL(url)
+    normalizedUrl.searchParams.set('variant', defaultVariant.sku)
+    redirect(307, `${normalizedUrl.pathname}${normalizedUrl.search}${normalizedUrl.hash}`)
+  }
+
   const reviews = product?.id
     ? await getProductReviews(product.id, fetch, reviewPagination).catch((reviewsError) => {
         console.error('product reviews fetch failed with error: ', reviewsError)

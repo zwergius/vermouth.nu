@@ -29,6 +29,8 @@ test('customer can add and remove a product from the cart', async ({ page }) => 
 
   const productRow = page.locator('li').filter({ hasText: productName }).first()
   await expect(productRow).toBeVisible()
+  await expect(productRow).toContainText('Flaske — 100 cl')
+  await expect(productRow.getByRole('img', { name: 'Forzudo Rojo – Flaske, 100 cl' })).toBeVisible()
   await expect(productRow.locator('input[name="quantity"]')).toHaveValue('1')
 
   const selectedShippingMethod = page
