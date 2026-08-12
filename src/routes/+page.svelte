@@ -2,6 +2,7 @@
   import type { PageProps } from './$types'
   import viewport from '$lib/actions/use-viewport-action'
   import { squareSrcSet } from '$lib/helpers/images'
+  import { getVariantGridItems } from '$lib/helpers/product-variants'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import Seo from '$lib/components/SEO.svelte'
@@ -10,6 +11,7 @@
 
   const { data }: PageProps = $props()
   const { locale, region } = $derived(data)
+  const favoriteVariants = $derived(getVariantGridItems(data.products))
 
   const founders = [
     {
@@ -79,8 +81,8 @@
 <Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each data.products as product (product.id || product.handle)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
+  {#each favoriteVariants as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
   {/each}
 </ul>
 
@@ -134,8 +136,8 @@
         alt={name}
         class="h-full w-full object-cover opacity-0 transition-opacity"
         use:viewport
-        on:enterViewport={onEnter}
-        on:exitViewport={onExit}
+        onenterViewport={onEnter}
+        onexitViewport={onExit}
         width="400"
         height="400"
         loading="lazy"

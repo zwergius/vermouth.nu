@@ -8,6 +8,11 @@ export type EligibleProductVariant = ProductVariant & {
   variant_rank: number
 }
 
+export type VariantGridItem = {
+  product: HttpTypes.StoreProduct
+  variant: EligibleProductVariant
+}
+
 export type VariantPresentation = {
   packaging: string
   size: string
@@ -73,6 +78,12 @@ export function getDefaultVariant(product: HttpTypes.StoreProduct): EligibleProd
   }
 
   return defaultVariant
+}
+
+export function getVariantGridItems(products: HttpTypes.StoreProduct[]): VariantGridItem[] {
+  return products.flatMap((product) =>
+    getEligibleVariants(product).map((variant) => ({ product, variant })),
+  )
 }
 
 export function getVariantBySku(

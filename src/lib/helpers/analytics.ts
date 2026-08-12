@@ -1,3 +1,6 @@
+import { getVariantLabel, type EligibleProductVariant } from '$lib/helpers/product-variants'
+import type { HttpTypes } from '@medusajs/types'
+
 type GaListItem = {
   item_id: string
   item_name: string
@@ -39,6 +42,39 @@ const GA_CATEGORY_LABEL_BY_HANDLE = {
   other: 'Orange Vermouth',
   packs: 'Vermouth Bundle',
 } as const
+
+export function getProductListAnalyticsItem({
+  brand,
+  category,
+  index,
+  listId,
+  listName,
+  product,
+  variant,
+}: {
+  brand?: string
+  category?: string
+  index: number
+  listId?: string
+  listName?: string
+  product: HttpTypes.StoreProduct
+  variant: EligibleProductVariant
+}): GaListItem {
+  const price = variant.calculated_price?.calculated_amount
+
+  return {
+    item_id: product.id || GA_MISSING.itemId,
+    item_name: product.title || GA_MISSING.itemName,
+    price: price !== null && price !== undefined ? String(price) : GA_MISSING.price,
+    item_brand: brand || GA_MISSING.itemBrand,
+    item_category: category || GA_MISSING.itemCategory,
+    item_variant: getVariantLabel(variant),
+    item_list_name: listName || GA_MISSING.itemListName,
+    item_list_id: listId || GA_MISSING.itemListId,
+    index,
+    quantity: '1',
+  }
+}
 
 interface WindowWithDataLayer extends Window {
   dataLayer?: Record<string, unknown>[]

@@ -156,6 +156,29 @@ test.describe('site pages', () => {
       await expect(page.locator('footer')).toContainText('info@vermouth.nu')
     })
   }
+
+  test('sortiment renders every eligible variant as its own grid link', async ({ page }) => {
+    await page.goto('/sortiment', { waitUntil: 'domcontentloaded' })
+
+    for (const [handle, variants] of Object.entries(catalogVariants)) {
+      for (const { sku } of variants) {
+        const variantCard = page.locator(
+          `main a[href="/sortiment/${handle}?variant=${encodeURIComponent(sku)}"]`,
+        )
+
+        await expect(variantCard.first()).toBeVisible()
+      }
+    }
+
+    const sardinoBoxCard = page
+      .locator('main a[href="/sortiment/sardino-rojo?variant=sardino-rojo-5l-bag-in-box"]')
+      .first()
+    await expect(sardinoBoxCard.getByText('Bag-in-Box · 5 L · 15%', { exact: true })).toBeVisible()
+    await expect(
+      sardinoBoxCard.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' }),
+    ).toBeVisible()
+    await expect(sardinoBoxCard).toContainText(/DKK\s*800[.,]00/)
+  })
 })
 
 test.describe('cancellation request flow', () => {
@@ -293,7 +316,11 @@ test.describe('product detail pages', () => {
     await expect(page.locator('input[name="variant_id"]')).toHaveValue(
       'variant_test_sardino_rojo_box',
     )
-    await expect(page.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' })).toBeVisible()
+    await expect(
+      page
+        .locator('section.split-content')
+        .getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' }),
+    ).toBeVisible()
     const productCopy = page.locator('section.split-content > .copy')
     await expect(
       productCopy.getByText('Galicien, Nordvestkysten Spanien', { exact: true }),
@@ -389,7 +416,10 @@ test.describe('product detail pages', () => {
     })
 
     await page.goto('/sortiment', { waitUntil: 'networkidle' })
-    await page.locator('a[href^="/sortiment/sardino-rojo?variant="]').click()
+    await page
+      .locator('a[href="/sortiment/sardino-rojo?variant=sardino-rojo-75cl-bottle"]')
+      .first()
+      .click()
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
     await expect(page.locator('#product-review-list > li')).toHaveCount(2)

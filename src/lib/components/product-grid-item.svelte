@@ -2,14 +2,14 @@
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
   import {
-    getDefaultVariant,
     getEligibleVariants,
     getVariantImage,
     getVariantImageAltText,
     getVariantLabel,
+    getVariantPriceDisplay,
     getVariantPresentation,
+    type EligibleProductVariant,
   } from '$lib/helpers/product-variants'
-  import { getProductPriceDisplay } from '$lib/helpers/prices'
   import { resolve } from '$app/paths'
   import type { HttpTypes } from '@medusajs/types'
   import type { Attachment } from 'svelte/attachments'
@@ -18,33 +18,32 @@
     currencyCode,
     locale,
     product,
+    variant,
     onSelectItem,
   }: {
     currencyCode: string
     locale: string
     product: HttpTypes.StoreProduct
+    variant: EligibleProductVariant
     onSelectItem?: () => void
   } = $props()
   const { alcoholPercentage, image, origin, variantImages } = $derived(
     vermouths[product.handle as Handle],
   )
-  const defaultVariant = $derived(getDefaultVariant(product))
   const eligibleVariantCount = $derived(getEligibleVariants(product).length)
-  const presentation = $derived(getVariantPresentation(defaultVariant))
-  const imageAltText = $derived(
-    getVariantImageAltText(product.title, getVariantLabel(defaultVariant)),
-  )
+  const presentation = $derived(getVariantPresentation(variant))
+  const imageAltText = $derived(getVariantImageAltText(product.title, getVariantLabel(variant)))
   const configuredImage = $derived(
     getVariantImage({
       fallbackAltText: imageAltText,
-      variantSku: defaultVariant.sku,
+      variantSku: variant.sku,
       variantImages,
     }),
   )
   const storefrontImage = $derived(
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
-  const priceDisplay = $derived(getProductPriceDisplay(product, currencyCode, locale))
+  const priceDisplay = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -80,7 +79,7 @@
 <li class="grid-item aspect-[0.677/1] px-11 pb-7 pt-6 md:aspect-square md:py-6">
   <a
     class="flex h-full flex-col items-center"
-    href={resolve(`/sortiment/${product.handle}?variant=${encodeURIComponent(defaultVariant.sku)}`)}
+    href={resolve(`/sortiment/${product.handle}?variant=${encodeURIComponent(variant.sku)}`)}
     onclick={handleSelectItem}
   >
     <h3 class="mb-2 whitespace-nowrap text-lg font-bold text-brand-blue md:mb-4">

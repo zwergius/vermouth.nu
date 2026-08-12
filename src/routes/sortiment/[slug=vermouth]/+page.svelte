@@ -16,6 +16,7 @@
     getVariantBySku,
     getVariantImage,
     getVariantImageAltText,
+    getVariantGridItems,
     getVariantLabel,
     getVariantPriceDisplay,
     getVariantPresentation,
@@ -36,7 +37,10 @@
 
   const REVIEWS_PAGE_SIZE = 2
 
-  const { red, white, other, packs } = $derived(data.categories)
+  const red = $derived(getVariantGridItems(data.categories.red))
+  const white = $derived(getVariantGridItems(data.categories.white))
+  const other = $derived(getVariantGridItems(data.categories.other))
+  const packs = $derived(getVariantGridItems(data.categories.packs))
   const { cart, locale, product, purchasesPaused, region } = $derived(data)
   const {
     alcoholPercentage,
@@ -496,32 +500,32 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each red as product (product.id)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
+  {#each red as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
   {/each}
 </ul>
 
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each white as product (product.id)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
+  {#each white as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
   {/each}
 </ul>
 
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each other as product (product.id)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
+  {#each other as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
   {/each}
 </ul>
 
 <Marquee text="BUNDLES // PAKKER //" theme="pink"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each packs as product (product.id)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} />
+  {#each packs as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
   {/each}
 </ul>
 

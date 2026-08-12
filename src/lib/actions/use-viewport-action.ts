@@ -49,6 +49,8 @@ export default function viewport(
 }
 
 interface Attributes {
-  'on:enterViewport': (e: CustomEvent) => void
-  'on:exitViewport': (e: CustomEvent) => void
+  'on:enterViewport'?: (e: CustomEvent) => void
+  'on:exitViewport'?: (e: CustomEvent) => void
+  onenterViewport?: (e: CustomEvent) => void
+  onexitViewport?: (e: CustomEvent) => void
 }
