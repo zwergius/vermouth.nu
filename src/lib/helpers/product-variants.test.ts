@@ -7,6 +7,7 @@ import {
   getVariantImageAltText,
   getVariantLabel,
   getVariantPriceDisplay,
+  getVariantGridItems,
 } from '$lib/helpers/product-variants'
 import type { HttpTypes } from '@medusajs/types'
 import { describe, expect, it } from 'vitest'
@@ -60,6 +61,27 @@ describe('product variant selection', () => {
   it('orders eligible variants by rank rather than response order', () => {
     expect(getEligibleVariants(product([box, bottle]))).toEqual([bottle, box])
     expect(getDefaultVariant(product([box, bottle]))).toBe(bottle)
+  })
+
+  it('expands products into rank-ordered grid items without changing product order', () => {
+    const firstProduct = { id: 'first', variants: [box, bottle] } as HttpTypes.StoreProduct
+    const secondVariant = variant({
+      id: 'second-bottle',
+      rank: 0,
+      size: '75 cl',
+      sku: 'second-wine-75cl-bottle',
+      title: 'Flaske',
+    })
+    const secondProduct = {
+      id: 'second',
+      variants: [secondVariant],
+    } as HttpTypes.StoreProduct
+
+    expect(getVariantGridItems([firstProduct, secondProduct])).toEqual([
+      { product: firstProduct, variant: bottle },
+      { product: firstProduct, variant: box },
+      { product: secondProduct, variant: secondVariant },
+    ])
   })
 
   it('rejects a product without an eligible variant', () => {

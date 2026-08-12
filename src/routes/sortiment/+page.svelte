@@ -7,20 +7,20 @@
   import Seo from '$lib/components/SEO.svelte'
   import {
     GA_CATEGORY_LABEL_BY_HANDLE,
-    GA_MISSING,
+    getProductListAnalyticsItem,
     trackSelectItem,
     trackViewItemList,
     type GaListItem,
   } from '$lib/helpers/analytics'
-  import { getDefaultVariant, getVariantLabel } from '$lib/helpers/product-variants'
+  import { getVariantGridItems, type EligibleProductVariant } from '$lib/helpers/product-variants'
   import { resolve } from '$app/paths'
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
-  const red = $derived.by(() => data.categories.red)
-  const white = $derived.by(() => data.categories.white)
-  const other = $derived.by(() => data.categories.other)
-  const packs = $derived.by(() => data.categories.packs)
+  const red = $derived(getVariantGridItems(data.categories.red))
+  const white = $derived(getVariantGridItems(data.categories.white))
+  const other = $derived(getVariantGridItems(data.categories.other))
+  const packs = $derived(getVariantGridItems(data.categories.packs))
   const { locale, region } = $derived(data)
   const currency = $derived(data.region.currency_code.toUpperCase())
 
@@ -41,42 +41,42 @@
     return null
   }
 
-  function toGaItem(index: number, product: HttpTypes.StoreProduct): GaListItem {
+  function toGaItem(
+    index: number,
+    product: HttpTypes.StoreProduct,
+    variant: EligibleProductVariant,
+  ): GaListItem {
     const categoryHandle = getCategoryHandle(product)
     const handle = typeof product.handle === 'string' ? product.handle : null
     const staticData = handle && handle in vermouths ? vermouths[handle as Handle] : null
-    const variant = getDefaultVariant(product)
-    const price = variant.calculated_price?.calculated_amount
-
-    return {
-      item_id: product.id || GA_MISSING.itemId,
-      item_name: product.title || GA_MISSING.itemName,
-      price: price !== null && price !== undefined ? String(price) : GA_MISSING.price,
-      item_brand: staticData?.brand || GA_MISSING.itemBrand,
-      item_category: categoryHandle
-        ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle]
-        : GA_MISSING.itemCategory,
-      item_variant: getVariantLabel(variant),
-      item_list_name: categoryHandle || GA_MISSING.itemListName,
-      item_list_id: categoryHandle ? categoryHandle.toUpperCase() : GA_MISSING.itemListId,
+    return getProductListAnalyticsItem({
+      brand: staticData?.brand,
+      category: categoryHandle ? GA_CATEGORY_LABEL_BY_HANDLE[categoryHandle] : undefined,
       index,
-      quantity: '1',
-    }
+      listId: categoryHandle?.toUpperCase(),
+      listName: categoryHandle ?? undefined,
+      product,
+      variant,
+    })
   }
 
-  function handleSelectItem(index: number, product: HttpTypes.StoreProduct) {
+  function handleSelectItem(
+    index: number,
+    product: HttpTypes.StoreProduct,
+    variant: EligibleProductVariant,
+  ) {
     trackSelectItem({
       currency,
-      item: toGaItem(index, product),
+      item: toGaItem(index, product, variant),
     })
   }
 
   onMount(() => {
     const items = [
-      ...red.map((product, index) => toGaItem(index + 1, product)),
-      ...white.map((product, index) => toGaItem(index + 1, product)),
-      ...other.map((product, index) => toGaItem(index + 1, product)),
-      ...packs.map((product, index) => toGaItem(index + 1, product)),
+      ...red.map(({ product, variant }, index) => toGaItem(index + 1, product, variant)),
+      ...white.map(({ product, variant }, index) => toGaItem(index + 1, product, variant)),
+      ...other.map(({ product, variant }, index) => toGaItem(index + 1, product, variant)),
+      ...packs.map(({ product, variant }, index) => toGaItem(index + 1, product, variant)),
     ]
 
     trackViewItemList({
@@ -104,12 +104,13 @@
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each red as product, index (product.id || product.handle)}
+  {#each red as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
       {locale}
       {product}
-      onSelectItem={() => handleSelectItem(index + 1, product)}
+      {variant}
+      onSelectItem={() => handleSelectItem(index + 1, product, variant)}
     />
   {/each}
 </ul>
@@ -117,12 +118,13 @@
 <Marquee text="BLANCO // HVID //" theme="blue"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each white as product, index (product.id || product.handle)}
+  {#each white as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
       {locale}
       {product}
-      onSelectItem={() => handleSelectItem(index + 1, product)}
+      {variant}
+      onSelectItem={() => handleSelectItem(index + 1, product, variant)}
     />
   {/each}
 </ul>
@@ -130,12 +132,13 @@
 <Marquee text="ORANGE & ROSÉ //" theme="white"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each other as product, index (product.id || product.handle)}
+  {#each other as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
       {locale}
       {product}
-      onSelectItem={() => handleSelectItem(index + 1, product)}
+      {variant}
+      onSelectItem={() => handleSelectItem(index + 1, product, variant)}
     />
   {/each}
 </ul>
@@ -143,12 +146,13 @@
 <Marquee text="BUNDLES // PAKKER //" theme="pink"></Marquee>
 
 <ul class="grid-layout border-b border-black">
-  {#each packs as product, index (product.id || product.handle)}
+  {#each packs as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
       {locale}
       {product}
-      onSelectItem={() => handleSelectItem(index + 1, product)}
+      {variant}
+      onSelectItem={() => handleSelectItem(index + 1, product, variant)}
     />
   {/each}
 </ul>
