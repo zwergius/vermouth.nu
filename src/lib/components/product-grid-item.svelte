@@ -86,10 +86,10 @@
       {product.title}
     </h3>
     <p class="whitespace-nowrap text-xs">{origin}</p>
-    <div class="relative flex flex-1 flex-col">
+    <div class="relative min-h-0 w-full flex-1">
       <img
         alt={storefrontImage?.altText ?? imageAltText}
-        class="my-auto w-auto md:max-h-44 lg:max-h-fit"
+        class="absolute inset-0 h-full w-full object-contain"
         loading="lazy"
         srcset={storefrontImage ? productSrcSet(storefrontImage.url) : undefined}
         src={storefrontImage ? `${storefrontImage.url}/w=145,h=290,fit=cover` : undefined}
@@ -116,7 +116,7 @@
         </div>
       {/if}
     </div>
-    <div class="min-h-11 text-center text-xs">
+    <div class="min-h-11 shrink-0 text-center text-xs">
       <p>{product.subtitle}</p>
       <p class="mt-1 font-bold">
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}

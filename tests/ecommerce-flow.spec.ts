@@ -77,7 +77,12 @@ test('customer can apply a discount code in the cart summary', async ({ page }) 
   await expect(totals.locator('div').filter({ hasText: 'Rabat' })).toBeVisible()
 })
 
-test('customer can continue from cart to payment', async ({ page }) => {
+test('customer can continue from cart to payment', async ({ page }, testInfo) => {
+  test.skip(
+    !testInfo.config.metadata.ci,
+    'Temporarily CI-only: ePay rejects localhost return URLs with explicit ports.',
+  )
+
   await addProductToCart(page)
   await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
 
