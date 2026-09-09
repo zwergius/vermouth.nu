@@ -187,7 +187,8 @@ test.describe('cancellation request flow', () => {
   })
 
   test('customer can submit a cancellation request from the footer dialog', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'load' })
+    // Allow client initialization to settle before clicking the progressive-enhancement link.
+    await page.goto('/', { waitUntil: 'networkidle' })
 
     await page.locator('footer').getByRole('link', { name: 'Fortryd køb her' }).click()
 
