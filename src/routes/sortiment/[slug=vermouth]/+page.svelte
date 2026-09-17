@@ -1,4 +1,6 @@
 <script lang="ts">
+  import QuantityOffers from '$lib/components/quantity-offers.svelte'
+  import { formatQuantityPrice, quantityPrice } from '$lib/helpers/quantity-pricing'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -74,6 +76,19 @@
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
+  const quantityPricing = $derived(data.quantityOffers?.[variant.id])
+  let quantity = $derived.by(() => {
+    const variantId = variant.id
+    return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
+  })
+  const quantityPreview = $derived(
+    quantityPricing ? quantityPrice(quantityPricing, quantity) : null,
+  )
+  const quantitySavingsPercent = $derived(
+    quantityPreview?.isDiscounted
+      ? Math.round((1 - quantityPreview.total / quantityPreview.comparisonTotal) * 100)
+      : 0,
+  )
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -267,32 +282,45 @@
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
-    {#if hasReviews}
-      <div class="mb-1 text-brand-blue">
-        <div class="flex items-center gap-3">
-          <p
-            class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
-            aria-label="{formattedAverageRating} ud af 5 stjerner"
-          >
-            <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
-            <span
-              aria-hidden="true"
-              class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
-              style:width={getRatingPercentage(reviews.average_rating)}
-            >
-              ★★★★★
-            </span>
-          </p>
-          <a
-            class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
-            href="#product-reviews"
-          >
-            {reviewCountLabel}
-          </a>
+    <div class="relative min-h-20 pr-24">
+      {#if quantitySavingsPercent > 0}
+        <div
+          class="quantity-savings absolute right-0 top-0 flex size-16 flex-col items-center justify-center rounded-full bg-brand-blue text-center text-xs font-bold leading-tight text-white md:size-20"
+          data-testid="quantity-savings"
+          role="status"
+          aria-label="Spar {quantitySavingsPercent}%"
+        >
+          <span>Spar</span>
+          <span>{quantitySavingsPercent}%</span>
         </div>
-      </div>
-    {/if}
-    <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
+      {/if}
+      {#if hasReviews}
+        <div class="mb-1 text-brand-blue">
+          <div class="flex items-center gap-3">
+            <p
+              class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
+              aria-label="{formattedAverageRating} ud af 5 stjerner"
+            >
+              <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
+              <span
+                aria-hidden="true"
+                class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
+                style:width={getRatingPercentage(reviews.average_rating)}
+              >
+                ★★★★★
+              </span>
+            </p>
+            <a
+              class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
+              href="#product-reviews"
+            >
+              {reviewCountLabel}
+            </a>
+          </div>
+        </div>
+      {/if}
+      <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
+    </div>
     <div class="mb-6">
       <p class="text-sm">
         {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
@@ -300,7 +328,29 @@
       <h1 class="text-2xl">{product.title}</h1>
       <p class="text-xs font-bold">{origin}</p>
     </div>
-    {#if priceDisplay}
+    {#if quantityPricing && quantityPreview}
+      <div
+        class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="quantity-total"
+      >
+        <p class="whitespace-nowrap text-base font-bold">
+          {formatQuantityPrice(quantityPreview.total, region.currency_code, locale)}
+        </p>
+        {#if quantityPreview.isDiscounted}
+          <p class="whitespace-nowrap text-sm opacity-70">
+            <span class="sr-only">Uden mængderabat </span><s
+              >{formatQuantityPrice(
+                quantityPreview.comparisonTotal,
+                region.currency_code,
+                locale,
+              )}</s
+            >
+          </p>
+        {/if}
+      </div>
+    {:else if priceDisplay}
       <div class="mb-6">
         <p class="text-base font-bold">
           {#if priceDisplay.isDiscounted}
@@ -326,7 +376,7 @@
         <fieldset disabled={purchasesPaused}>
           <input name="variant_id" type="hidden" value={variant.id} />
           <input name="cart_item_id" type="hidden" value={cartItem?.id} />
-          <div class="flex items-center justify-between md:gap-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
             <button
               class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
               disabled={buttonState !== 'default' || isFormSubmitting}
@@ -335,9 +385,25 @@
               {buttonText}
             </button>
             {#key variant.id}
-              <QuantitySelector min={1} name="quantity" value={cartItem?.quantity ?? 1} />
+              <QuantitySelector
+                min={1}
+                name="quantity"
+                aria-label="Antal flasker"
+                bind:value={quantity}
+              />
             {/key}
           </div>
+          {#if quantityPricing}
+            <QuantityOffers
+              pricing={quantityPricing}
+              {locale}
+              {quantity}
+              disabled={purchasesPaused || isFormSubmitting}
+              onSelect={(value) => {
+                quantity = value
+              }}
+            />
+          {/if}
         </fieldset>
       </Form>
     </div>
@@ -543,3 +609,22 @@
   <p>Op dit cocktails-game med Vermouth</p>
   <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .quantity-savings {
+      animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+  }
+
+  @keyframes savings-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.65);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

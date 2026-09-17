@@ -1,4 +1,5 @@
 import type { LayoutServerLoad } from './$types'
+import { loadQuantityOffers } from '$lib/server/quantity-offers'
 import { sdk } from '$lib/medusa'
 import { arePurchasesPaused } from '$lib/server/purchase-availability'
 import type { HttpTypes } from '@medusajs/types'
@@ -70,6 +71,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   return {
     cart,
     categories,
+    quantityOffers: await loadQuantityOffers(products, regions[0]),
     locale: locals.locale,
     purchasesPaused: arePurchasesPaused(),
     region: regions[0],

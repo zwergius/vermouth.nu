@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from '$app/state'
+  import QuantityOffers from '$lib/components/quantity-offers.svelte'
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
   import {
@@ -44,6 +46,7 @@
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
+  const quantityPricing = $derived(page.data.quantityOffers?.[variant.id])
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -116,12 +119,14 @@
         </div>
       {/if}
     </div>
-    <div class="min-h-11 shrink-0 text-center text-xs">
+    <div class="min-h-11 shrink-0 self-stretch text-center text-xs">
       <p>{product.subtitle}</p>
       <p class="mt-1 font-bold">
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
-      {#if priceDisplay}
+      {#if quantityPricing}
+        <QuantityOffers pricing={quantityPricing} {locale} />
+      {:else if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}
             <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
