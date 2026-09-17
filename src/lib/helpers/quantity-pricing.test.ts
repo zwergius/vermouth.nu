@@ -1,10 +1,6 @@
+import { formatPrice } from '$lib/helpers/numbers'
 import { describe, expect, it } from 'vitest'
-import {
-  formatQuantityPrice,
-  quantityChoices,
-  quantityPrice,
-  type QuantityPricing,
-} from './quantity-pricing'
+import { quantityChoices, quantityPrice, type QuantityPricing } from './quantity-pricing'
 
 const pricing: QuantityPricing = {
   variantId: 'bottle',
@@ -60,6 +56,6 @@ describe('quantity prices', () => {
     ).toEqual([1, 3, 6])
   })
   it('uses a DKK prefix with the existing Danish amount format', () => {
-    expect(formatQuantityPrice(1500, 'dkk', 'da-DK')).toBe('DKK 1.500,00')
+    expect(formatPrice(1500, 'dkk', 'da-DK', true)).toBe('DKK 1.500,00')
   })
 })

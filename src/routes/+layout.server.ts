@@ -1,5 +1,4 @@
 import type { LayoutServerLoad } from './$types'
-import { loadQuantityOffers } from '$lib/server/quantity-offers'
 import { sdk } from '$lib/medusa'
 import { arePurchasesPaused } from '$lib/server/purchase-availability'
 import type { HttpTypes } from '@medusajs/types'
@@ -20,7 +19,8 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   const [{ id: regionId }] = regions
 
   const { products } = await sdk.store.product.list({
-    fields: '*categories,*options,*variants,*variants.options,*variants.calculated_price',
+    fields:
+      '*categories,*options,*variants,*variants.options,*variants.calculated_price,*variants.prices',
     region_id: regionId,
   })
 
@@ -71,7 +71,6 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   return {
     cart,
     categories,
-    quantityOffers: await loadQuantityOffers(products, regions[0]),
     locale: locals.locale,
     purchasesPaused: arePurchasesPaused(),
     region: regions[0],

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { page } from '$app/state'
-  import QuantityOffers from '$lib/components/quantity-offers.svelte'
+  import { quantityChoices } from '$lib/helpers/quantity-pricing'
+  import { formatPrice } from '$lib/helpers/numbers'
+  import { readVariantQuantityPricing } from '$lib/medusa/quantity-pricing'
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
   import {
@@ -46,7 +47,8 @@
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
-  const quantityPricing = $derived(page.data.quantityOffers?.[variant.id])
+  const quantityPricing = $derived(readVariantQuantityPricing(variant, currencyCode))
+  const offers = $derived(quantityPricing ? quantityChoices(quantityPricing) : [])
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -125,7 +127,22 @@
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
       {#if quantityPricing}
-        <QuantityOffers pricing={quantityPricing} {locale} />
+        <ul class="quantity-offers" aria-label="Priser efter antal">
+          {#each offers as offer (offer.quantity)}
+            <li>
+              <span class="block text-xs"
+                >{offer.quantity} {offer.quantity === 1 ? 'flaske' : 'flasker'}</span
+              >
+              <span class="block whitespace-nowrap font-bold"
+                >{formatPrice(offer.total, currencyCode, locale, true)}</span
+              >
+              {#if offer.isDiscounted}<span class="sr-only">Uden mængderabat </span><s
+                  class="block whitespace-nowrap text-xs opacity-70"
+                  >{formatPrice(offer.comparisonTotal, currencyCode, locale, true)}</s
+                >{/if}
+            </li>
+          {/each}
+        </ul>
       {:else if priceDisplay}
         <p class="mt-2 font-bold">
           {#if priceDisplay.isDiscounted}
@@ -143,6 +160,28 @@
 </li>
 
 <style lang="postcss">
+  .quantity-offers {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-top: 0.75rem;
+    gap: 0.75rem;
+    margin-inline: -1.5rem;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    justify-content: safe center;
+  }
+  .quantity-offers > li {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .quantity-offers > li + li::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -0.375rem;
+    border-inline-start: 1px solid #0b10ac40;
+  }
+
   li.grid-item {
     --rotation-duration: 500ms;
     --filter-delay: 200ms;

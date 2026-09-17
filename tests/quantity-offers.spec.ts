@@ -1,16 +1,10 @@
 import { expect, test } from './fixtures'
 
-declare const process: { env: Record<string, string | undefined> }
-
 test.use({ locale: 'da-DK' })
 
 test('verified Forzudo tiers preview total quantities and stay isolated by size', async ({
   page,
 }) => {
-  test.skip(
-    !process.env.QUANTITY_OFFER_VARIANT_IDS,
-    'Requires the verified test variant enabled on the server',
-  )
   await page.goto('/sortiment/forzudo-rojo')
   const choices = page
     .getByRole('list', { name: 'Priser efter antal' })
@@ -68,10 +62,6 @@ test('verified Forzudo tiers preview total quantities and stay isolated by size'
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
-  test.skip(
-    !process.env.QUANTITY_OFFER_VARIANT_IDS,
-    'Requires the verified test variant enabled on the server',
-  )
   await page.goto('/sortiment')
   const card = page
     .locator('li.grid-item')

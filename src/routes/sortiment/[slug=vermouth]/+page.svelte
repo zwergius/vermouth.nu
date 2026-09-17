@@ -1,6 +1,8 @@
 <script lang="ts">
-  import QuantityOffers from '$lib/components/quantity-offers.svelte'
-  import { formatQuantityPrice, quantityPrice } from '$lib/helpers/quantity-pricing'
+  import { onMount } from 'svelte'
+  import { formatPrice } from '$lib/helpers/numbers'
+  import { readVariantQuantityPricing } from '$lib/medusa/quantity-pricing'
+  import { quantityChoices, quantityPrice } from '$lib/helpers/quantity-pricing'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -76,7 +78,14 @@
   )
   const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
-  const quantityPricing = $derived(data.quantityOffers?.[variant.id])
+  const quantityPricing = $derived(readVariantQuantityPricing(variant, region.currency_code))
+  const offers = $derived(
+    quantityPricing ? quantityChoices(quantityPricing).filter((offer) => offer.quantity > 1) : [],
+  )
+  let tierButtonsReady = $state(false)
+  onMount(() => {
+    tierButtonsReady = true
+  })
   let quantity = $derived.by(() => {
     const variantId = variant.id
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
@@ -336,16 +345,12 @@
         data-testid="quantity-total"
       >
         <p class="whitespace-nowrap text-base font-bold">
-          {formatQuantityPrice(quantityPreview.total, region.currency_code, locale)}
+          {formatPrice(quantityPreview.total, region.currency_code, locale, true)}
         </p>
         {#if quantityPreview.isDiscounted}
           <p class="whitespace-nowrap text-sm opacity-70">
             <span class="sr-only">Uden mængderabat </span><s
-              >{formatQuantityPrice(
-                quantityPreview.comparisonTotal,
-                region.currency_code,
-                locale,
-              )}</s
+              >{formatPrice(quantityPreview.comparisonTotal, region.currency_code, locale, true)}</s
             >
           </p>
         {/if}
@@ -393,16 +398,29 @@
               />
             {/key}
           </div>
-          {#if quantityPricing}
-            <QuantityOffers
-              pricing={quantityPricing}
-              {locale}
-              {quantity}
-              disabled={purchasesPaused || isFormSubmitting}
-              onSelect={(value) => {
-                quantity = value
-              }}
-            />
+          {#if offers.length}
+            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
+              {#each offers as offer (offer.quantity)}
+                <li>
+                  <button
+                    type="button"
+                    class="tier-button"
+                    aria-pressed={quantity === offer.quantity}
+                    disabled={purchasesPaused || isFormSubmitting || !tierButtonsReady}
+                    onclick={() => {
+                      quantity = offer.quantity
+                    }}
+                  >
+                    Køb {offer.quantity} for {formatPrice(
+                      offer.unitAmount,
+                      region.currency_code,
+                      locale,
+                      true,
+                    )}/stk
+                  </button>
+                </li>
+              {/each}
+            </ul>
           {/if}
         </fieldset>
       </Form>
@@ -611,6 +629,35 @@
 </section>
 
 <style>
+  .tier-button {
+    border: 1px solid black;
+    color: black;
+    border-radius: 999px;
+    padding: 0.375rem 0.625rem;
+    min-height: 34px;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+  .tier-button[aria-pressed='true'] {
+    background: theme('colors.brand-blue');
+    border-color: theme('colors.brand-blue');
+    color: white;
+  }
+  @media (pointer: coarse) {
+    .tier-button {
+      min-height: 44px;
+    }
+  }
+  .tier-button:focus-visible {
+    outline: 2px solid theme('colors.brand-blue');
+    outline-offset: 3px;
+  }
+  .tier-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .quantity-savings {
       animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;

@@ -1,5 +1,3 @@
-import { formatPrice } from '$lib/helpers/numbers'
-
 /** Shopper-context prices supplied by a verified source, independent of Medusa transport. */
 export type QuantityPricing = {
   variantId: string
@@ -29,10 +27,4 @@ export function quantityChoices(pricing: QuantityPricing) {
       (price): price is NonNullable<typeof price> =>
         price !== null && (price.quantity === 1 || price.isDiscounted),
     )
-}
-
-export function formatQuantityPrice(amount: number, currency: string, locale: string) {
-  // Retain the existing formatter's amount/locale rules, with the agreed currency prefix.
-  const code = currency.toUpperCase()
-  return `${code} ${formatPrice(amount, currency, locale).replace(code, '').trim()}`
 }

@@ -4,9 +4,7 @@ import type { QuantityPricing } from '$lib/helpers/quantity-pricing'
 const record = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
 
-/** Temporary adapter for explicitly verified copies of ordinary variant prices.
- * Raw price-list eligibility cannot be inferred here. Callers must opt variants in.
- */
+/** Read supported ordinary variant tiers from the Store product response. */
 export function readVariantQuantityPricing(
   variant: ProductVariant,
   currencyCode: string,
