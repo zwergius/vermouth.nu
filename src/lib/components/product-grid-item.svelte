@@ -138,12 +138,8 @@
               {/if}
               {price.current}
               {#if price.isDiscounted}
-                <s
-                  class="font-normal opacity-70"
-                  class:block={priceDisplays.length > 1}
-                  class:ml-1={priceDisplays.length === 1}
-                  ><span class="sr-only">Normalpris </span>{price.original}</s
-                >
+                <span class="sr-only">Normalpris </span>
+                <s class="block font-normal opacity-70">{price.original}</s>
               {/if}
             </p>
           </li>

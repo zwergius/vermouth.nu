@@ -210,39 +210,35 @@ export function getVariantPriceDisplay(
       ? [...new Set([1, ...tiers.map((tier) => tier.min_quantity!)])].sort((a, b) => a - b)
       : [quantity]
 
-  return quantities
-    .filter((count) => Number.isSafeInteger(count) && count > 0)
-    .flatMap((count) => {
-      const unitAmount = Math.min(
-        calculatedAmount,
-        ...tiers
-          .filter(
-            (tier) =>
-              count >= tier.min_quantity! &&
-              (tier.max_quantity === null ||
-                tier.max_quantity === undefined ||
-                count <= tier.max_quantity),
-          )
-          .map((tier) => tier.amount),
-      )
-      // Compare volume savings with today's single price, including any current sale.
-      const originalAmount =
-        unitAmount < calculatedAmount ? calculatedAmount : toAmount(price?.original_amount)
-      const isDiscounted = originalAmount !== null && originalAmount > unitAmount
-      if (quantity === undefined && count > 1 && unitAmount >= calculatedAmount) return []
-      return [
-        {
-          quantity: count,
-          unit: formatPrice(unitAmount, currencyCode, locale),
-          current: formatPrice(unitAmount * count, currencyCode, locale),
-          original: isDiscounted
-            ? formatPrice(originalAmount * count, currencyCode, locale)
-            : undefined,
-          savingsPercent: isDiscounted
-            ? Math.round((1 - unitAmount / originalAmount) * 100)
-            : undefined,
-          isDiscounted,
-        },
-      ]
+  const displays: ProductPriceDisplay[] = []
+  for (const count of quantities) {
+    if (!Number.isSafeInteger(count) || count < 1) continue
+
+    let unitAmount = calculatedAmount
+    for (const tier of tiers) {
+      const min = tier.min_quantity ?? 1
+      const max = tier.max_quantity ?? Infinity
+      if (count >= min && count <= max) unitAmount = Math.min(unitAmount, tier.amount)
+    }
+
+    const hasVolumeDiscount = unitAmount < calculatedAmount
+    if (quantity === undefined && count > 1 && !hasVolumeDiscount) continue
+
+    // Compare volume savings with today's single price, including any current sale.
+    const originalAmount = hasVolumeDiscount ? calculatedAmount : toAmount(price?.original_amount)
+    const isDiscounted = originalAmount !== null && originalAmount > unitAmount
+    displays.push({
+      quantity: count,
+      unit: formatPrice(unitAmount, currencyCode, locale),
+      current: formatPrice(unitAmount * count, currencyCode, locale),
+      original: isDiscounted
+        ? formatPrice(originalAmount * count, currencyCode, locale)
+        : undefined,
+      savingsPercent: isDiscounted
+        ? Math.round((1 - unitAmount / originalAmount) * 100)
+        : undefined,
+      isDiscounted,
     })
+  }
+  return displays
 }
