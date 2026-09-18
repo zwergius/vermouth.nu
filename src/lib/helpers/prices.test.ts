@@ -31,6 +31,8 @@ function productWithPrice(
 describe('getProductPriceDisplay', () => {
   it('returns the sale price, original price, and savings percentage', () => {
     expect(getProductPriceDisplay(productWithPrice(160, 200), 'dkk', 'da-DK')).toEqual({
+      quantity: 1,
+      unit: formatDkk(160),
       current: formatDkk(160),
       original: formatDkk(200),
       savingsPercent: 20,
@@ -40,6 +42,8 @@ describe('getProductPriceDisplay', () => {
 
   it('does not mark equal prices as discounted', () => {
     expect(getProductPriceDisplay(productWithPrice(200, 200), 'dkk', 'da-DK')).toEqual({
+      quantity: 1,
+      unit: formatDkk(200),
       current: formatDkk(200),
       original: undefined,
       savingsPercent: undefined,

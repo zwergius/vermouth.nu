@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { formatPrice } from '$lib/helpers/numbers'
-  import { readVariantQuantityPricing } from '$lib/medusa/quantity-pricing'
-  import { quantityChoices, quantityPrice } from '$lib/helpers/quantity-pricing'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -76,32 +72,22 @@
     configuredVariantImage ??
       (eligibleVariants.length === 1 ? { altText: variantImageAltText, url: image } : null),
   )
-  const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const offers = $derived(priceDisplays.slice(1))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
-  const quantityPricing = $derived(readVariantQuantityPricing(variant, region.currency_code))
-  const offers = $derived(
-    quantityPricing ? quantityChoices(quantityPricing).filter((offer) => offer.quantity > 1) : [],
-  )
   let tierButtonsReady = $state(false)
-  onMount(() => {
-    tierButtonsReady = true
-  })
   let quantity = $derived.by(() => {
     const variantId = variant.id
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
   })
-  const quantityPreview = $derived(
-    quantityPricing ? quantityPrice(quantityPricing, quantity) : null,
-  )
-  const quantitySavingsPercent = $derived(
-    quantityPreview?.isDiscounted
-      ? Math.round((1 - quantityPreview.total / quantityPreview.comparisonTotal) * 100)
-      : 0,
+  const priceDisplay = $derived(
+    getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
   )
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
-      price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
+      price:
+        getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)[0]?.current ?? '',
       value: eligibleVariant.sku,
     })),
   )
@@ -261,6 +247,7 @@
   }
 
   afterNavigate(({ to }) => {
+    tierButtonsReady = true
     const productSlug = slug ?? product.handle ?? ''
     const productPath = resolve(`/sortiment/${encodeURIComponent(productSlug)}`)
     if (to?.url.pathname !== productPath) return
@@ -292,15 +279,15 @@
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
     <div class="relative min-h-20 pr-24">
-      {#if quantitySavingsPercent > 0}
+      {#if priceDisplay?.savingsPercent}
         <div
           class="quantity-savings absolute right-0 top-0 flex size-16 flex-col items-center justify-center rounded-full bg-brand-blue text-center text-xs font-bold leading-tight text-white md:size-20"
           data-testid="quantity-savings"
           role="status"
-          aria-label="Spar {quantitySavingsPercent}%"
+          aria-label="Spar {priceDisplay.savingsPercent}%"
         >
           <span>Spar</span>
-          <span>{quantitySavingsPercent}%</span>
+          <span>{priceDisplay.savingsPercent}%</span>
         </div>
       {/if}
       {#if hasReviews}
@@ -337,39 +324,17 @@
       <h1 class="text-2xl">{product.title}</h1>
       <p class="text-xs font-bold">{origin}</p>
     </div>
-    {#if quantityPricing && quantityPreview}
+    {#if priceDisplay}
       <div
         class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1"
         aria-live="polite"
         aria-atomic="true"
         data-testid="quantity-total"
       >
-        <p class="whitespace-nowrap text-base font-bold">
-          {formatPrice(quantityPreview.total, region.currency_code, locale, true)}
-        </p>
-        {#if quantityPreview.isDiscounted}
-          <p class="whitespace-nowrap text-sm opacity-70">
-            <span class="sr-only">Uden mængderabat </span><s
-              >{formatPrice(quantityPreview.comparisonTotal, region.currency_code, locale, true)}</s
-            >
-          </p>
-        {/if}
-      </div>
-    {:else if priceDisplay}
-      <div class="mb-6">
-        <p class="text-base font-bold">
-          {#if priceDisplay.isDiscounted}
-            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
-            <span class="ml-2 text-sm font-normal line-through opacity-70">
-              <span class="sr-only">Normalpris </span>{priceDisplay.original}
-            </span>
-          {:else}
-            {priceDisplay.current}
-          {/if}
-        </p>
-        {#if priceDisplay.savingsPercent}
-          <p class="mt-1 text-xs font-bold text-brand-red">SPAR {priceDisplay.savingsPercent}%</p>
-        {/if}
+        <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
+        {#if priceDisplay.isDiscounted}<p class="whitespace-nowrap text-sm opacity-70">
+            <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>
+          </p>{/if}
       </div>
     {/if}
     <div class="mb-4">
@@ -404,19 +369,14 @@
                 <li>
                   <button
                     type="button"
-                    class="tier-button"
+                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
                     aria-pressed={quantity === offer.quantity}
                     disabled={purchasesPaused || isFormSubmitting || !tierButtonsReady}
                     onclick={() => {
                       quantity = offer.quantity
                     }}
                   >
-                    Køb {offer.quantity} for {formatPrice(
-                      offer.unitAmount,
-                      region.currency_code,
-                      locale,
-                      true,
-                    )}/stk
+                    Køb {offer.quantity} for {offer.unit}/stk
                   </button>
                 </li>
               {/each}
@@ -629,35 +589,6 @@
 </section>
 
 <style>
-  .tier-button {
-    border: 1px solid black;
-    color: black;
-    border-radius: 999px;
-    padding: 0.375rem 0.625rem;
-    min-height: 34px;
-    font-size: 0.75rem;
-    line-height: 1.25;
-    font-weight: 700;
-  }
-  .tier-button[aria-pressed='true'] {
-    background: theme('colors.brand-blue');
-    border-color: theme('colors.brand-blue');
-    color: white;
-  }
-  @media (pointer: coarse) {
-    .tier-button {
-      min-height: 44px;
-    }
-  }
-  .tier-button:focus-visible {
-    outline: 2px solid theme('colors.brand-blue');
-    outline-offset: 3px;
-  }
-  .tier-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
   @media (prefers-reduced-motion: no-preference) {
     .quantity-savings {
       animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;

@@ -2,9 +2,9 @@
 
 The existing product requests include `*variants.prices` alongside calculated prices. Grid cards and product details read ordinary tiers from their own selected variant. There is no separate offer request, server map, or per-variant environment configuration.
 
-The adapter accepts currency-matching, rule-free ordinary prices and a tax-inclusive calculated price. Unsupported rules/tax treatment, malformed data and missing tiers hide offers; ordinary product pricing remains available. Region/currency/tax policy remains owned by the existing storefront and Medusa.
+The existing variant helper accepts currency-matching, rule-free ordinary prices and a tax-inclusive calculated price. Unsupported rules/tax treatment, malformed data and missing tiers hide offers; ordinary product pricing remains available. Region/currency/tax policy remains owned by the existing storefront and Medusa.
 
-Grid markup and product-detail buttons live directly in their respective views. Both reuse the quantity calculations and the existing `formatPrice` helper (with an optional currency-first format). Each preview uses the lowest applicable ordinary unit amount capped by the current single-bottle price; only positive incremental savings produce comparison totals. Cart and checkout continue to use Medusa and existing actions.
+Grid markup and product-detail buttons live directly in their respective views. Both use `getVariantPriceDisplay`, which now returns one display for a base price and additional displays for configured tiers. Passing a quantity resolves its total through the same helper. The existing `formatPrice` helper is unchanged. Each preview uses the lowest applicable ordinary unit amount capped by the current single-bottle price; only positive incremental savings produce comparison totals. Cart and checkout continue to use Medusa and existing actions.
 
 Forzudo Rojo in staging has ordinary tier copies for development. Volume Discount remains the administrative source of truth, but copies are not automatically synchronized. A workflow-based synchronizer is only a recorded idea, not implemented. Reverify copies against the Price List and cart after configuration changes.
 

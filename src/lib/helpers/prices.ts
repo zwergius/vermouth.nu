@@ -10,5 +10,5 @@ export function getProductPriceDisplay(
   currencyCode: string,
   locale: string,
 ): ProductPriceDisplay | null {
-  return getVariantPriceDisplay(getDefaultVariant(product), currencyCode, locale)
+  return getVariantPriceDisplay(getDefaultVariant(product), currencyCode, locale)[0] ?? null
 }

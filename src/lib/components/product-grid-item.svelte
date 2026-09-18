@@ -1,7 +1,4 @@
 <script lang="ts">
-  import { quantityChoices } from '$lib/helpers/quantity-pricing'
-  import { formatPrice } from '$lib/helpers/numbers'
-  import { readVariantQuantityPricing } from '$lib/medusa/quantity-pricing'
   import { vermouths, type Handle } from '$lib/data/products'
   import { productSrcSet } from '$lib/helpers/images'
   import {
@@ -46,9 +43,8 @@
   const storefrontImage = $derived(
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
-  const priceDisplay = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
-  const quantityPricing = $derived(readVariantQuantityPricing(variant, currencyCode))
-  const offers = $derived(quantityPricing ? quantityChoices(quantityPricing) : [])
+  const priceDisplays = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
+  const priceDisplay = $derived(priceDisplays[0])
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -126,62 +122,35 @@
       <p class="mt-1 font-bold">
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
-      {#if quantityPricing}
-        <ul class="quantity-offers" aria-label="Priser efter antal">
-          {#each offers as offer (offer.quantity)}
-            <li>
-              <span class="block text-xs"
-                >{offer.quantity} {offer.quantity === 1 ? 'flaske' : 'flasker'}</span
-              >
-              <span class="block whitespace-nowrap font-bold"
-                >{formatPrice(offer.total, currencyCode, locale, true)}</span
-              >
-              {#if offer.isDiscounted}<span class="sr-only">Uden mængderabat </span><s
-                  class="block whitespace-nowrap text-xs opacity-70"
-                  >{formatPrice(offer.comparisonTotal, currencyCode, locale, true)}</s
+      <ul
+        class="quantity-offers mt-2 flex flex-nowrap gap-3 overflow-x-auto [justify-content:safe_center]"
+        class:-mx-6={priceDisplays.length > 1}
+        aria-label="Priser efter antal"
+      >
+        {#each priceDisplays as price (price.quantity)}
+          <li
+            class="relative shrink-0 [&+li]:before:absolute [&+li]:before:inset-y-0 [&+li]:before:-left-1.5 [&+li]:before:border-l [&+li]:before:border-brand-blue/25 [&+li]:before:content-['']"
+          >
+            {#if priceDisplays.length > 1}<span class="block"
+                >{price.quantity} {price.quantity === 1 ? 'flaske' : 'flasker'}</span
+              >{/if}
+            <p class="whitespace-nowrap font-bold">
+              {#if price.isDiscounted}<span class="sr-only">Tilbudspris </span>{/if}{price.current}
+              {#if price.isDiscounted}<s
+                  class="font-normal opacity-70"
+                  class:block={priceDisplays.length > 1}
+                  class:ml-1={priceDisplays.length === 1}
+                  ><span class="sr-only">Normalpris </span>{price.original}</s
                 >{/if}
-            </li>
-          {/each}
-        </ul>
-      {:else if priceDisplay}
-        <p class="mt-2 font-bold">
-          {#if priceDisplay.isDiscounted}
-            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
-            <span class="ml-1 font-normal line-through opacity-70">
-              <span class="sr-only">Normalpris </span>{priceDisplay.original}
-            </span>
-          {:else}
-            {priceDisplay.current}
-          {/if}
-        </p>
-      {/if}
+            </p>
+          </li>
+        {/each}
+      </ul>
     </div>
   </a>
 </li>
 
 <style lang="postcss">
-  .quantity-offers {
-    display: flex;
-    flex-wrap: nowrap;
-    margin-top: 0.75rem;
-    gap: 0.75rem;
-    margin-inline: -1.5rem;
-    font-size: 0.75rem;
-    overflow-x: auto;
-    justify-content: safe center;
-  }
-  .quantity-offers > li {
-    position: relative;
-    flex-shrink: 0;
-  }
-  .quantity-offers > li + li::before {
-    content: '';
-    position: absolute;
-    inset-block: 0;
-    inset-inline-start: -0.375rem;
-    border-inline-start: 1px solid #0b10ac40;
-  }
-
   li.grid-item {
     --rotation-duration: 500ms;
     --filter-delay: 200ms;
