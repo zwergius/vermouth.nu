@@ -182,22 +182,16 @@ function getVariantTiers(variant: ProductVariant, currency: string): VariantPric
   const prices = (variant as ProductVariant & { prices?: VariantPrice[] }).prices
   if (!Array.isArray(prices)) return []
   const matching = prices.filter((price) => price?.currency_code === currency)
-  if (
-    matching.some(
-      (price) =>
-        !Number.isFinite(price.amount) ||
-        price.amount < 0 ||
-        price.price_list_id ||
-        price.rules_count !== 0 ||
-        !Number.isSafeInteger(price.min_quantity ?? 1) ||
-        (price.min_quantity ?? 1) < 1 ||
-        (price.max_quantity !== null &&
-          price.max_quantity !== undefined &&
-          (!Number.isSafeInteger(price.max_quantity) ||
-            price.max_quantity < (price.min_quantity ?? 1))),
-    )
-  )
-    return []
+  for (const price of matching) {
+    const min = price.min_quantity ?? 1
+    const max = price.max_quantity ?? min
+    const validAmount = Number.isFinite(price.amount) && price.amount >= 0
+    const validMin = Number.isSafeInteger(min) && min >= 1
+    const validMax = Number.isSafeInteger(max) && max >= min
+    const hasRules = Boolean(price.price_list_id) || price.rules_count !== 0
+
+    if (!validAmount || !validMin || !validMax || hasRules) return []
+  }
   return matching.filter((price) => (price.min_quantity ?? 1) > 1)
 }
 

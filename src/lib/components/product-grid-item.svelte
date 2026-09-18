@@ -123,25 +123,28 @@
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
       <ul
-        class="quantity-offers mt-2 flex flex-nowrap gap-3 overflow-x-auto [justify-content:safe_center]"
+        class="quantity-offers mt-2 flex flex-nowrap justify-center divide-x divide-brand-blue/25 overflow-x-auto"
         class:-mx-6={priceDisplays.length > 1}
         aria-label="Priser efter antal"
       >
         {#each priceDisplays as price (price.quantity)}
-          <li
-            class="relative shrink-0 [&+li]:before:absolute [&+li]:before:inset-y-0 [&+li]:before:-left-1.5 [&+li]:before:border-l [&+li]:before:border-brand-blue/25 [&+li]:before:content-['']"
-          >
-            {#if priceDisplays.length > 1}<span class="block"
-                >{price.quantity} {price.quantity === 1 ? 'flaske' : 'flasker'}</span
-              >{/if}
+          <li class="shrink-0 px-1.5 first:pl-0 last:pr-0">
+            {#if priceDisplays.length > 1}
+              <div>{price.quantity} {price.quantity === 1 ? 'flaske' : 'flasker'}</div>
+            {/if}
             <p class="whitespace-nowrap font-bold">
-              {#if price.isDiscounted}<span class="sr-only">Tilbudspris </span>{/if}{price.current}
-              {#if price.isDiscounted}<s
+              {#if price.isDiscounted}
+                <span class="sr-only">Tilbudspris </span>
+              {/if}
+              {price.current}
+              {#if price.isDiscounted}
+                <s
                   class="font-normal opacity-70"
                   class:block={priceDisplays.length > 1}
                   class:ml-1={priceDisplays.length === 1}
                   ><span class="sr-only">Normalpris </span>{price.original}</s
-                >{/if}
+                >
+              {/if}
             </p>
           </li>
         {/each}

@@ -75,7 +75,6 @@
   const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const offers = $derived(priceDisplays.slice(1))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
-  let tierButtonsReady = $state(false)
   let quantity = $derived.by(() => {
     const variantId = variant.id
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
@@ -247,7 +246,6 @@
   }
 
   afterNavigate(({ to }) => {
-    tierButtonsReady = true
     const productSlug = slug ?? product.handle ?? ''
     const productPath = resolve(`/sortiment/${encodeURIComponent(productSlug)}`)
     if (to?.url.pathname !== productPath) return
@@ -278,10 +276,10 @@
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
-    <div class="relative min-h-20 pr-24">
+    <div class="float-right ml-4 h-20 w-20">
       {#if priceDisplay?.savingsPercent}
         <div
-          class="quantity-savings absolute right-0 top-0 flex size-16 flex-col items-center justify-center rounded-full bg-brand-blue text-center text-xs font-bold leading-tight text-white md:size-20"
+          class="quantity-savings flex size-16 flex-col items-center justify-center rounded-full bg-brand-blue text-center text-xs font-bold leading-tight text-white md:size-20"
           data-testid="quantity-savings"
           role="status"
           aria-label="Spar {priceDisplay.savingsPercent}%"
@@ -290,33 +288,33 @@
           <span>{priceDisplay.savingsPercent}%</span>
         </div>
       {/if}
-      {#if hasReviews}
-        <div class="mb-1 text-brand-blue">
-          <div class="flex items-center gap-3">
-            <p
-              class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
-              aria-label="{formattedAverageRating} ud af 5 stjerner"
-            >
-              <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
-              <span
-                aria-hidden="true"
-                class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
-                style:width={getRatingPercentage(reviews.average_rating)}
-              >
-                ★★★★★
-              </span>
-            </p>
-            <a
-              class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
-              href="#product-reviews"
-            >
-              {reviewCountLabel}
-            </a>
-          </div>
-        </div>
-      {/if}
-      <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
     </div>
+    {#if hasReviews}
+      <div class="mb-1 text-brand-blue">
+        <div class="flex items-center gap-3">
+          <p
+            class="relative inline-block shrink-0 text-base font-bold leading-none tracking-normal"
+            aria-label="{formattedAverageRating} ud af 5 stjerner"
+          >
+            <span aria-hidden="true" class="text-brand-blue/25">★★★★★</span>
+            <span
+              aria-hidden="true"
+              class="absolute inset-y-0 left-0 overflow-hidden whitespace-nowrap text-brand-blue"
+              style:width={getRatingPercentage(reviews.average_rating)}
+            >
+              ★★★★★
+            </span>
+          </p>
+          <a
+            class="whitespace-nowrap text-xs font-bold text-brand-blue underline underline-offset-2"
+            href="#product-reviews"
+          >
+            {reviewCountLabel}
+          </a>
+        </div>
+      </div>
+    {/if}
+    <p class="mb-6 text-xs font-bold">{product.subtitle}</p>
     <div class="mb-6">
       <p class="text-sm">
         {variantPresentation.packaging} · {variantPresentation.size} · {alcoholPercentage}
@@ -332,9 +330,11 @@
         data-testid="quantity-total"
       >
         <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
-        {#if priceDisplay.isDiscounted}<p class="whitespace-nowrap text-sm opacity-70">
+        {#if priceDisplay.isDiscounted}
+          <p class="whitespace-nowrap text-sm opacity-70">
             <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>
-          </p>{/if}
+          </p>
+        {/if}
       </div>
     {/if}
     <div class="mb-4">
@@ -371,7 +371,7 @@
                     type="button"
                     class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
                     aria-pressed={quantity === offer.quantity}
-                    disabled={purchasesPaused || isFormSubmitting || !tierButtonsReady}
+                    disabled={purchasesPaused || isFormSubmitting}
                     onclick={() => {
                       quantity = offer.quantity
                     }}
