@@ -24,6 +24,8 @@ type CalculatedPrice = NonNullable<ProductVariant['calculated_price']> & {
 }
 
 export type ProductPriceDisplay = {
+  quantity: number
+  unit: string
   current: string
   original?: string
   savingsPercent?: number
@@ -161,28 +163,82 @@ function toAmount(amount: number | null | undefined): number | null {
   return typeof amount === 'number' ? amount : null
 }
 
+// Ordinary prices are exposed on the variant; Price List tiers are not yet exposed by Medusa.
+type VariantPrice = {
+  amount: number
+  currency_code: string
+  min_quantity?: number | null
+  max_quantity?: number | null
+  rules_count?: number
+  price_list_id?: string | null
+}
+
+function getVariantTiers(variant: ProductVariant, currency: string): VariantPrice[] {
+  if (
+    variant.calculated_price?.currency_code !== currency ||
+    !variant.calculated_price.is_calculated_price_tax_inclusive
+  )
+    return []
+  const prices = (variant as ProductVariant & { prices?: VariantPrice[] }).prices
+  if (!Array.isArray(prices)) return []
+  const matching = prices.filter((price) => price?.currency_code === currency)
+  for (const price of matching) {
+    const min = price.min_quantity ?? 1
+    const max = price.max_quantity ?? min
+    const validAmount = Number.isFinite(price.amount) && price.amount >= 0
+    const validMin = Number.isSafeInteger(min) && min >= 1
+    const validMax = Number.isSafeInteger(max) && max >= min
+    const hasRules = Boolean(price.price_list_id) || price.rules_count !== 0
+
+    if (!validAmount || !validMin || !validMax || hasRules) return []
+  }
+  return matching.filter((price) => (price.min_quantity ?? 1) > 1)
+}
+
 export function getVariantPriceDisplay(
   variant: ProductVariant,
   currencyCode: string,
   locale: string,
-): ProductPriceDisplay | null {
+  quantity?: number,
+): ProductPriceDisplay[] {
   const price = variant.calculated_price as CalculatedPrice | undefined
   const calculatedAmount = toAmount(price?.calculated_amount)
+  if (calculatedAmount === null || !Number.isFinite(calculatedAmount)) return []
+  const tiers = getVariantTiers(variant, currencyCode)
+  const quantities =
+    quantity === undefined
+      ? [...new Set([1, ...tiers.map((tier) => tier.min_quantity!)])].sort((a, b) => a - b)
+      : [quantity]
 
-  if (calculatedAmount === null) {
-    return null
+  const displays: ProductPriceDisplay[] = []
+  for (const count of quantities) {
+    if (!Number.isSafeInteger(count) || count < 1) continue
+
+    let unitAmount = calculatedAmount
+    for (const tier of tiers) {
+      const min = tier.min_quantity ?? 1
+      const max = tier.max_quantity ?? Infinity
+      if (count >= min && count <= max) unitAmount = Math.min(unitAmount, tier.amount)
+    }
+
+    const hasVolumeDiscount = unitAmount < calculatedAmount
+    if (quantity === undefined && count > 1 && !hasVolumeDiscount) continue
+
+    // Compare volume savings with today's single price, including any current sale.
+    const originalAmount = hasVolumeDiscount ? calculatedAmount : toAmount(price?.original_amount)
+    const isDiscounted = originalAmount !== null && originalAmount > unitAmount
+    displays.push({
+      quantity: count,
+      unit: formatPrice(unitAmount, currencyCode, locale),
+      current: formatPrice(unitAmount * count, currencyCode, locale),
+      original: isDiscounted
+        ? formatPrice(originalAmount * count, currencyCode, locale)
+        : undefined,
+      savingsPercent: isDiscounted
+        ? Math.round((1 - unitAmount / originalAmount) * 100)
+        : undefined,
+      isDiscounted,
+    })
   }
-
-  const originalAmount = toAmount(price?.original_amount)
-  const isDiscounted = originalAmount !== null && originalAmount > calculatedAmount
-  const savingsPercent = isDiscounted
-    ? Math.round(((originalAmount - calculatedAmount) / originalAmount) * 100)
-    : undefined
-
-  return {
-    current: formatPrice(calculatedAmount, currencyCode, locale),
-    original: isDiscounted ? formatPrice(originalAmount, currencyCode, locale) : undefined,
-    savingsPercent,
-    isDiscounted,
-  }
+  return displays
 }

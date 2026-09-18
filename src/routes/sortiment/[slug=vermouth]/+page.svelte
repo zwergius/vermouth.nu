@@ -72,12 +72,21 @@
     configuredVariantImage ??
       (eligibleVariants.length === 1 ? { altText: variantImageAltText, url: image } : null),
   )
-  const priceDisplay = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const offers = $derived(priceDisplays.slice(1))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
+  let quantity = $derived.by(() => {
+    const variantId = variant.id
+    return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
+  })
+  const priceDisplay = $derived(
+    getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
+  )
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
-      price: getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)?.current ?? '',
+      price:
+        getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)[0]?.current ?? '',
       value: eligibleVariant.sku,
     })),
   )
@@ -267,6 +276,19 @@
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
   <div class="copy">
+    <div class="float-right ml-4 h-20 w-20">
+      {#if priceDisplay?.savingsPercent}
+        <div
+          class="quantity-savings flex size-16 flex-col items-center justify-center rounded-full bg-brand-blue text-center text-xs font-bold leading-tight text-white md:size-20"
+          data-testid="quantity-savings"
+          role="status"
+          aria-label="Spar {priceDisplay.savingsPercent}%"
+        >
+          <span>Spar</span>
+          <span>{priceDisplay.savingsPercent}%</span>
+        </div>
+      {/if}
+    </div>
     {#if hasReviews}
       <div class="mb-1 text-brand-blue">
         <div class="flex items-center gap-3">
@@ -301,19 +323,17 @@
       <p class="text-xs font-bold">{origin}</p>
     </div>
     {#if priceDisplay}
-      <div class="mb-6">
-        <p class="text-base font-bold">
-          {#if priceDisplay.isDiscounted}
-            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
-            <span class="ml-2 text-sm font-normal line-through opacity-70">
-              <span class="sr-only">Normalpris </span>{priceDisplay.original}
-            </span>
-          {:else}
-            {priceDisplay.current}
-          {/if}
-        </p>
-        {#if priceDisplay.savingsPercent}
-          <p class="mt-1 text-xs font-bold text-brand-red">SPAR {priceDisplay.savingsPercent}%</p>
+      <div
+        class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1"
+        aria-live="polite"
+        aria-atomic="true"
+        data-testid="quantity-total"
+      >
+        <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
+        {#if priceDisplay.isDiscounted}
+          <p class="whitespace-nowrap text-sm opacity-70">
+            <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>
+          </p>
         {/if}
       </div>
     {/if}
@@ -326,7 +346,7 @@
         <fieldset disabled={purchasesPaused}>
           <input name="variant_id" type="hidden" value={variant.id} />
           <input name="cart_item_id" type="hidden" value={cartItem?.id} />
-          <div class="flex items-center justify-between md:gap-4">
+          <div class="flex flex-wrap items-center justify-between gap-4">
             <button
               class="btn transition-colors duration-300 min-w-48 justify-center {buttonColorClass}"
               disabled={buttonState !== 'default' || isFormSubmitting}
@@ -335,9 +355,33 @@
               {buttonText}
             </button>
             {#key variant.id}
-              <QuantitySelector min={1} name="quantity" value={cartItem?.quantity ?? 1} />
+              <QuantitySelector
+                min={1}
+                name="quantity"
+                aria-label="Antal flasker"
+                bind:value={quantity}
+              />
             {/key}
           </div>
+          {#if offers.length}
+            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
+              {#each offers as offer (offer.quantity)}
+                <li>
+                  <button
+                    type="button"
+                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-pressed={quantity === offer.quantity}
+                    disabled={purchasesPaused || isFormSubmitting}
+                    onclick={() => {
+                      quantity = offer.quantity
+                    }}
+                  >
+                    Køb {offer.quantity} for {offer.unit}/stk
+                  </button>
+                </li>
+              {/each}
+            </ul>
+          {/if}
         </fieldset>
       </Form>
     </div>
@@ -543,3 +587,22 @@
   <p>Op dit cocktails-game med Vermouth</p>
   <a class="btn" href={resolve('/inspiration')}>DYK NED I VORES MANGE DRINKSOPSKRIFTER</a>
 </section>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .quantity-savings {
+      animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+  }
+
+  @keyframes savings-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.65);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

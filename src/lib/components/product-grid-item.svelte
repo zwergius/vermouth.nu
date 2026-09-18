@@ -43,7 +43,8 @@
   const storefrontImage = $derived(
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
-  const priceDisplay = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
+  const priceDisplays = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
+  const priceDisplay = $derived(priceDisplays[0])
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -116,23 +117,34 @@
         </div>
       {/if}
     </div>
-    <div class="min-h-11 shrink-0 text-center text-xs">
+    <div class="min-h-11 shrink-0 self-stretch text-center text-xs">
       <p>{product.subtitle}</p>
       <p class="mt-1 font-bold">
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
-      {#if priceDisplay}
-        <p class="mt-2 font-bold">
-          {#if priceDisplay.isDiscounted}
-            <span class="sr-only">Tilbudspris </span>{priceDisplay.current}
-            <span class="ml-1 font-normal line-through opacity-70">
-              <span class="sr-only">Normalpris </span>{priceDisplay.original}
-            </span>
-          {:else}
-            {priceDisplay.current}
-          {/if}
-        </p>
-      {/if}
+      <ul
+        class="quantity-offers mt-2 flex flex-nowrap justify-center divide-x divide-brand-blue/25 overflow-x-auto"
+        class:-mx-6={priceDisplays.length > 1}
+        aria-label="Priser efter antal"
+      >
+        {#each priceDisplays as price (price.quantity)}
+          <li class="shrink-0 px-1.5 first:pl-0 last:pr-0">
+            {#if priceDisplays.length > 1}
+              <div>{price.quantity} {price.quantity === 1 ? 'flaske' : 'flasker'}</div>
+            {/if}
+            <p class="whitespace-nowrap font-bold">
+              {#if price.isDiscounted}
+                <span class="sr-only">Tilbudspris </span>
+              {/if}
+              {price.current}
+              {#if price.isDiscounted}
+                <span class="sr-only">Normalpris </span>
+                <s class="block font-normal opacity-70">{price.original}</s>
+              {/if}
+            </p>
+          </li>
+        {/each}
+      </ul>
     </div>
   </a>
 </li>
