@@ -88,7 +88,10 @@
           {/each}
         </ul>
       {:else}
-        <p class="text-xs">Vi har i øjeblikket ingen kommende smagninger.</p>
+        <p class="text-xs">
+          Vi har i øjeblikket ingen kommende smagninger. Hold øje med siden – nye datoer kommer
+          snart.
+        </p>
       {/if}
     </div>
     {#if data.tastings.length > 0}

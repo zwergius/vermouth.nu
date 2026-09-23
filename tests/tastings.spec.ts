@@ -50,7 +50,11 @@ test('shows server-provided dates and the venue link', async ({ page }) => {
   )
   await expect(page.getByText('kl. 20.00–22.00', { exact: false })).toHaveCount(2)
   await expect(page.getByRole('link', { name: 'BOOK NU', exact: true })).toBeVisible()
-  await expect(page.getByText('Vi har i øjeblikket ingen kommende smagninger.')).toHaveCount(0)
+  await expect(
+    page.getByText(
+      'Vi har i øjeblikket ingen kommende smagninger. Hold øje med siden – nye datoer kommer snart.',
+    ),
+  ).toHaveCount(0)
 })
 
 test('shows an empty message and hides booking when there are no upcoming tastings', async ({
@@ -58,6 +62,10 @@ test('shows an empty message and hides booking when there are no upcoming tastin
 }) => {
   await visitTastings(page, true)
   await expect(page.getByText('Kommende smagninger for private', { exact: false })).toHaveCount(0)
-  await expect(page.getByText('Vi har i øjeblikket ingen kommende smagninger.')).toBeVisible()
+  await expect(
+    page.getByText(
+      'Vi har i øjeblikket ingen kommende smagninger. Hold øje med siden – nye datoer kommer snart.',
+    ),
+  ).toBeVisible()
   await expect(page.getByRole('link', { name: 'BOOK NU', exact: true })).toHaveCount(0)
 })
