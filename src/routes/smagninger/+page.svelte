@@ -66,7 +66,7 @@
     <h2 class="text-2xl mb-6">Vermouth Smagning</h2>
     <p class="text-xs">Priser fra 450 DKK pr. person</p>
     <div class="mb-6">
-      {#if data.tastings.length > 0}
+      {#if data.tastings.length}
         <p class="text-xs">
           Kommende smagninger for private i <a
             class="underline"
@@ -77,11 +77,9 @@
         <ul class="text-xs">
           {#each data.tastings as tasting (tasting.id)}
             <li>
-              <b
-                ><time datetime={tasting.start_time}
-                  >{dateFormat.format(new Date(tasting.start_time))}</time
-                ></b
-              >, kl. {timeFormat.format(new Date(tasting.start_time))}–{timeFormat.format(
+              <time class="font-bold" datetime={tasting.start_time}>
+                {dateFormat.format(new Date(tasting.start_time))}
+              </time>, kl. {timeFormat.format(new Date(tasting.start_time))}–{timeFormat.format(
                 new Date(tasting.end_time),
               )}
             </li>
@@ -94,7 +92,7 @@
         </p>
       {/if}
     </div>
-    {#if data.tastings.length > 0}
+    {#if data.tastings.length}
       <a
         class="btn mb-12 2xl:mb-24"
         href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
