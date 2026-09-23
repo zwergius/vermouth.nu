@@ -19,7 +19,8 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
   const [{ id: regionId }] = regions
 
   const { products } = await sdk.store.product.list({
-    fields: '*categories,*options,*variants,*variants.options,*variants.calculated_price',
+    fields:
+      '*categories,*options,*variants,*variants.options,*variants.calculated_price,*variants.prices',
     region_id: regionId,
   })
 
