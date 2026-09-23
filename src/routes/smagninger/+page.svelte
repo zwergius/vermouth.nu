@@ -87,13 +87,17 @@
             </li>
           {/each}
         </ul>
+      {:else}
+        <p class="text-xs">Vi har i øjeblikket ingen kommende smagninger.</p>
       {/if}
     </div>
-    <a
-      class="btn mb-12 2xl:mb-24"
-      href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
-      rel="external">BOOK NU</a
-    >
+    {#if data.tastings.length > 0}
+      <a
+        class="btn mb-12 2xl:mb-24"
+        href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
+        rel="external">BOOK NU</a
+      >
+    {/if}
     <h3 class="text-sm font-bold mb-4">En typisk smagning</h3>
     <p class="text-sm">
       Hos Vermouth.nu inviterer vi til en smagsoplevelse, der forfører dine smagsløg med spansk

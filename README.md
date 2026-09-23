@@ -43,7 +43,7 @@ The `/smagninger` page reads public, active events for the existing Vermouth tas
 experience from Understory. It lists sessions at Bunker526, using the local times returned
 by Understory and Danish date formatting. On each server page load, Understory is queried for events starting from the
 current Danish time. Only public, active events are shown. There is no browser timer or application cache. If Understory is
-unavailable, the dates are hidden and the booking link remains available.
+unavailable or returns no upcoming tastings, the page shows an empty-state message and hides the booking button.
 
 Create an internal integration key with `event.read` access in Understory's
 Company settings → Integrations. Configure these private environment variables:

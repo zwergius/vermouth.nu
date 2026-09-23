@@ -49,10 +49,15 @@ test('shows server-provided dates and the venue link', async ({ page }) => {
     'https://www.bunker526.nu',
   )
   await expect(page.getByText('kl. 20.00–22.00', { exact: false })).toHaveCount(2)
+  await expect(page.getByRole('link', { name: 'BOOK NU', exact: true })).toBeVisible()
+  await expect(page.getByText('Vi har i øjeblikket ingen kommende smagninger.')).toHaveCount(0)
 })
 
-test('hides the dates block when the server returns no upcoming tastings', async ({ page }) => {
+test('shows an empty message and hides booking when there are no upcoming tastings', async ({
+  page,
+}) => {
   await visitTastings(page, true)
-  await expect(page.getByText('Kommende smagninger', { exact: false })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'BOOK NU', exact: true })).toBeVisible()
+  await expect(page.getByText('Kommende smagninger for private', { exact: false })).toHaveCount(0)
+  await expect(page.getByText('Vi har i øjeblikket ingen kommende smagninger.')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'BOOK NU', exact: true })).toHaveCount(0)
 })
