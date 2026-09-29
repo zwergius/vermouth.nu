@@ -202,6 +202,7 @@ describe('variant price displays', () => {
       is_calculated_price_tax_inclusive: true,
     },
     prices: [
+      { amount: 295, currency_code: 'dkk', rules_count: 0 },
       { amount: 273, min_quantity: 3, max_quantity: 5, currency_code: 'dkk', rules_count: 0 },
       { amount: 250, min_quantity: 6, max_quantity: null, currency_code: 'dkk', rules_count: 0 },
     ],
@@ -240,6 +241,13 @@ describe('variant price displays', () => {
       ...tiered,
       calculated_price: {
         ...tiered.calculated_price!,
+        calculated_price: {
+          id: 'sale',
+          price_list_id: 'sale-list',
+          price_list_type: 'sale',
+          min_quantity: null,
+          max_quantity: null,
+        },
         calculated_amount: 260,
         original_amount: 295,
       },
@@ -249,6 +257,48 @@ describe('variant price displays', () => {
     expect(displays[0].isDiscounted).toBe(true)
     expect(displays[1].original).toBe('DKK\u00a01,560.00')
   })
+  it('respects bounded ordinary prices when a discount expires', () => {
+    const bounded = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 100,
+        original_amount: 100,
+      },
+      prices: [
+        { amount: 100, min_quantity: 1, max_quantity: 2, currency_code: 'dkk', rules_count: 0 },
+        { amount: 90, min_quantity: 3, max_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+        { amount: 110, min_quantity: 6, currency_code: 'dkk', rules_count: 0 },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(bounded, 'dkk', 'en-GB', 3)[0].current).toBe('DKK\u00a0270.00')
+    expect(getVariantPriceDisplay(bounded, 'dkk', 'en-GB', 6)[0]).toMatchObject({
+      current: 'DKK\u00a0660.00',
+      isDiscounted: false,
+    })
+  })
+
+  it('does not extend a bounded calculated sale or its comparison price', () => {
+    const sale = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 100,
+        original_amount: 200,
+        calculated_price: { min_quantity: 1, max_quantity: 2 },
+        original_price: { min_quantity: 1, max_quantity: 2 },
+      },
+      prices: [{ amount: 110, min_quantity: 6, currency_code: 'dkk', rules_count: 0 }],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 2)[0].current).toBe('DKK\u00a0200.00')
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 3)).toEqual([])
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 6)[0]).toMatchObject({
+      current: 'DKK\u00a0660.00',
+      isDiscounted: false,
+      original: undefined,
+    })
+  })
+
   it.each([0, -1, 1.5, NaN, Infinity])('ignores invalid quantity %s', (quantity) => {
     expect(getVariantPriceDisplay(tiered, 'dkk', 'en-GB', quantity)).toEqual([])
   })

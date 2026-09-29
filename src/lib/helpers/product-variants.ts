@@ -173,7 +173,7 @@ type VariantPrice = {
   price_list_id?: string | null
 }
 
-function getVariantTiers(variant: ProductVariant, currency: string): VariantPrice[] {
+function getVariantPrices(variant: ProductVariant, currency: string): VariantPrice[] {
   if (
     variant.calculated_price?.currency_code !== currency ||
     !variant.calculated_price.is_calculated_price_tax_inclusive
@@ -192,7 +192,14 @@ function getVariantTiers(variant: ProductVariant, currency: string): VariantPric
 
     if (!validAmount || !validMin || !validMax || hasRules) return []
   }
-  return matching.filter((price) => (price.min_quantity ?? 1) > 1)
+  return matching
+}
+
+function appliesToQuantity(
+  price: { min_quantity?: number | null; max_quantity?: number | null },
+  quantity: number,
+): boolean {
+  return quantity >= (price.min_quantity ?? 1) && quantity <= (price.max_quantity ?? Infinity)
 }
 
 export function getVariantPriceDisplay(
@@ -204,28 +211,42 @@ export function getVariantPriceDisplay(
   const price = variant.calculated_price as CalculatedPrice | undefined
   const calculatedAmount = toAmount(price?.calculated_amount)
   if (calculatedAmount === null || !Number.isFinite(calculatedAmount)) return []
-  const tiers = getVariantTiers(variant, currencyCode)
+  const prices = getVariantPrices(variant, currencyCode)
   const quantities =
     quantity === undefined
-      ? [...new Set([1, ...tiers.map((tier) => tier.min_quantity!)])].sort((a, b) => a - b)
+      ? [...new Set([1, ...prices.map((price) => price.min_quantity ?? 1)])].sort((a, b) => a - b)
       : [quantity]
 
   const displays: ProductPriceDisplay[] = []
   for (const count of quantities) {
     if (!Number.isSafeInteger(count) || count < 1) continue
 
-    let unitAmount = calculatedAmount
-    for (const tier of tiers) {
-      const min = tier.min_quantity ?? 1
-      const max = tier.max_quantity ?? Infinity
-      if (count >= min && count <= max) unitAmount = Math.min(unitAmount, tier.amount)
-    }
+    const applicablePrices = prices.filter((price) => appliesToQuantity(price, count))
+    const calculatedApplies =
+      count === 1 ||
+      (price?.calculated_price
+        ? appliesToQuantity(price.calculated_price, count)
+        : applicablePrices.some((price) => price.amount === calculatedAmount))
+    const unitAmount = Math.min(
+      calculatedApplies ? calculatedAmount : Infinity,
+      ...applicablePrices.map((price) => price.amount),
+    )
+    if (!Number.isFinite(unitAmount)) continue
 
     const hasVolumeDiscount = unitAmount < calculatedAmount
     if (quantity === undefined && count > 1 && !hasVolumeDiscount) continue
 
     // Compare volume savings with today's single price, including any current sale.
-    const originalAmount = hasVolumeDiscount ? calculatedAmount : toAmount(price?.original_amount)
+    const originalApplies =
+      count === 1 ||
+      (price?.original_price
+        ? appliesToQuantity(price.original_price, count)
+        : applicablePrices.some((ordinary) => ordinary.amount === price?.original_amount))
+    const originalAmount = hasVolumeDiscount
+      ? calculatedAmount
+      : originalApplies
+        ? toAmount(price?.original_amount)
+        : null
     const isDiscounted = originalAmount !== null && originalAmount > unitAmount
     displays.push({
       quantity: count,

@@ -123,7 +123,7 @@
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
       <ul
-        class="quantity-offers mt-2 flex flex-nowrap justify-center divide-x divide-brand-blue/25 overflow-x-auto"
+        class="quantity-offers mt-2 flex flex-nowrap [justify-content:safe_center] divide-x divide-brand-blue/25 overflow-x-auto"
         class:-mx-6={priceDisplays.length > 1}
         aria-label="Priser efter antal"
       >
