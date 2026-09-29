@@ -45,7 +45,9 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
     }
     const cards = page.locator('li.grid-item').filter({ has: page.locator('a > h3') })
     await expect(cards.first()).toBeVisible()
-    await expect(cards.first().locator('a > div:last-child > p:last-child')).toContainText(/kr|DKK/)
+    await expect(cards.first().getByRole('list', { name: 'Priser efter antal' })).toContainText(
+      /kr|DKK/,
+    )
     if (path === '/') {
       await expect(cards).toHaveCount(2)
       await expect(cards.first()).toContainText('Normalpris')
