@@ -275,7 +275,7 @@
 <Marquee text="{product.title} //" theme="red"></Marquee>
 
 <section class="split-content border-b border-black lg:flex-row-reverse">
-  <div class="copy max-md:!px-4">
+  <div class="copy">
     <div class="float-right ml-4 h-20 w-20">
       {#if priceDisplay?.savingsPercent}
         <div
