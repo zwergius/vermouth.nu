@@ -3,7 +3,18 @@
   import Marquee from '$lib/components/marquee.svelte'
   import Hero from '$lib/components/hero.svelte'
   import Seo from '$lib/components/SEO.svelte'
+  import type { PageProps } from './$types'
 
+  const { data }: PageProps = $props()
+  const dateFormat = new Intl.DateTimeFormat('da-DK', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+  const timeFormat = new Intl.DateTimeFormat('da-DK', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
   const images = [
     {
       alt: 'Carmeleta Orange bliver skænket i glas',
@@ -54,12 +65,40 @@
     <p class="text-xs mb-6">Book en</p>
     <h2 class="text-2xl mb-6">Vermouth Smagning</h2>
     <p class="text-xs">Priser fra 450 DKK pr. person</p>
-    <p class="text-xs mb-6">Kommende smagninger:&nbsp;<b>22/10</b>&nbsp;&amp;&nbsp;<b>3/12</b></p>
-    <a
-      class="btn mb-12 2xl:mb-24"
-      href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
-      rel="external">BOOK NU</a
-    >
+    <div class="mb-6">
+      {#if data.tastings.length}
+        <p class="text-xs">
+          Kommende smagninger for private i <a
+            class="underline"
+            href="https://www.bunker526.nu"
+            rel="external">Bunker526</a
+          >:
+        </p>
+        <ul class="text-xs">
+          {#each data.tastings as tasting (tasting.id)}
+            <li>
+              <time class="font-bold" datetime={tasting.start_time}>
+                {dateFormat.format(new Date(tasting.start_time))}
+              </time>, kl. {timeFormat.format(new Date(tasting.start_time))}–{timeFormat.format(
+                new Date(tasting.end_time),
+              )}
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p class="text-xs">
+          Vi har i øjeblikket ingen kommende smagninger. Hold øje med siden – nye datoer kommer
+          snart.
+        </p>
+      {/if}
+    </div>
+    {#if data.tastings.length}
+      <a
+        class="btn mb-12 2xl:mb-24"
+        href="https://vermouth.understory.io/experience/4350f5eb314ef93c9602964ebce84c57"
+        rel="external">BOOK NU</a
+      >
+    {/if}
     <h3 class="text-sm font-bold mb-4">En typisk smagning</h3>
     <p class="text-sm">
       Hos Vermouth.nu inviterer vi til en smagsoplevelse, der forfører dine smagsløg med spansk
@@ -110,7 +149,7 @@
 <Marquee text="OPDAG VERMOUTH //" theme="red"></Marquee>
 
 <ul class="md:grid md:grid-cols-3">
-  {#each images as { alt, imageUrl }}
+  {#each images as { alt, imageUrl } (imageUrl)}
     <li class="relative aspect-square border-b border-black">
       <img
         {alt}
