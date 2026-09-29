@@ -359,12 +359,7 @@
               {buttonText}
             </button>
             {#key variant.id}
-              <QuantitySelector
-                min={1}
-                name="quantity"
-                aria-label="Antal flasker"
-                bind:value={quantity}
-              />
+              <QuantitySelector min={1} name="quantity" aria-label="Antal" bind:value={quantity} />
             {/key}
           </div>
           {#if offers.length}

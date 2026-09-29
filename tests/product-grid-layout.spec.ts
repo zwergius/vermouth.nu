@@ -39,7 +39,15 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
                     variant_rank: 1,
                     title: 'Bag-in-Box',
                     options: [{ value: '5 L', option: { title: 'Size' } }],
-                    calculated_price: { calculated_amount: 800, original_amount: 800 },
+                    calculated_price: {
+                      calculated_amount: 800,
+                      original_amount: 800,
+                      currency_code: 'dkk',
+                      is_calculated_price_tax_inclusive: true,
+                    },
+                    prices: [
+                      { amount: 700, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+                    ],
                   },
                 ],
               },
@@ -62,7 +70,10 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
     if (path === '/') {
       await expect(cards).toHaveCount(2)
       await expect(cards.first()).toContainText('Normalpris')
-      await expect(cards.last()).not.toContainText('Normalpris')
+      const boxOffers = cards.last().getByRole('list', { name: 'Priser efter antal' })
+      await expect(boxOffers).toContainText('3 stk.')
+      await expect(boxOffers).not.toContainText('flasker')
+      await expect(boxOffers.getByRole('listitem').first()).not.toContainText('Normalpris')
     }
     await page.evaluate(() => document.fonts.ready)
 

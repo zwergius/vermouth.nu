@@ -130,7 +130,14 @@
         {#each priceDisplays as price (price.quantity)}
           <li class="shrink-0 px-1.5 first:pl-0 last:pr-0">
             {#if priceDisplays.length > 1}
-              <div>{price.quantity} {price.quantity === 1 ? 'flaske' : 'flasker'}</div>
+              <div>
+                {price.quantity}
+                {presentation.packaging === 'Flaske'
+                  ? price.quantity === 1
+                    ? 'flaske'
+                    : 'flasker'
+                  : 'stk.'}
+              </div>
             {/if}
             <p class="whitespace-nowrap font-bold">
               {#if price.isDiscounted}
