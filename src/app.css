@@ -38,7 +38,7 @@ button {
 
   /* The .content class covers sections with a header, paragraph and link button */
   .content {
-    @apply px-11 py-16 text-center;
+    @apply px-4 py-16 text-center md:px-11;
   }
 
   .content > h2,

@@ -257,7 +257,7 @@
 </main>
 
 <footer>
-  <div class="px-11 py-16 text-center lg:text-left">
+  <div class="px-4 py-16 text-center md:px-11 lg:text-left">
     <h3 class="mb-6 text-xs">FANG OS PÅ</h3>
     <p class="mb-6 md:mb-8">
       <a href="tel:+4526353606">26 35 36 06</a>
@@ -270,7 +270,7 @@
   <div
     class="grid grid-flow-row grid-rows-3 text-sm md:grid-flow-col md:grid-cols-3 md:grid-rows-1"
   >
-    <figure class="border-y border-black py-5 pl-16 md:border-r">
+    <figure class="border-y border-black py-5 px-4 md:pl-16 md:pr-0 md:border-r">
       <figcaption class="font-bold">LINKS</figcaption>
       <ul>
         {#each routes as route (route)}
@@ -285,7 +285,7 @@
         {/each}
       </ul>
     </figure>
-    <figure class="border-b border-black py-5 pl-16 md:border-y">
+    <figure class="border-b border-black py-5 px-4 md:pl-16 md:pr-0 md:border-y">
       <figcaption class="font-bold">FØLG OS</figcaption>
       <ul>
         <li>
@@ -303,7 +303,7 @@
       </ul>
     </figure>
     <figure
-      class="border-b border-black py-5 px-16 md:border-l md:border-y text-left flex flex-col"
+      class="border-b border-black py-5 px-4 md:px-16 md:border-l md:border-y text-left flex flex-col"
     >
       <figcaption class="font-bold">POLICES</figcaption>
       <ul>
@@ -330,7 +330,7 @@
       </figure>
     </figure>
   </div>
-  <div class="bg-brand-yellow px-16 py-1.5 text-xs text-center">
+  <div class="bg-brand-yellow px-4 md:px-16 py-1.5 text-xs text-center">
     <p>© Copyright - Vermouth.nu</p>
   </div>
 </footer>
