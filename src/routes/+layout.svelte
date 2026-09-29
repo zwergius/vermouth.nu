@@ -263,9 +263,11 @@
       <a href="tel:+4526353606">26 35 36 06</a>
       <br />
       <a href="mailto:info@vermouth.nu">info@vermouth.nu</a>
-      <br />
-      Overgaden Neden Vandet 49b, 1414 Kbh K
     </p>
+    <address class="mb-6 text-sm not-italic md:mb-8 md:text-base">
+      Overgaden Neden Vandet 49b<br />
+      1414 Kbh K
+    </address>
   </div>
   <div
     class="grid grid-flow-row grid-rows-3 text-sm md:grid-flow-col md:grid-cols-3 md:grid-rows-1"
