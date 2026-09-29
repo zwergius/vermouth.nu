@@ -79,9 +79,10 @@
     const variantId = variant.id
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
   })
-  const priceDisplay = $derived(
+  const quantityPriceDisplay = $derived(
     getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
   )
+  const priceDisplay = $derived(quantityPriceDisplay ?? priceDisplays[0])
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -330,6 +331,9 @@
         data-testid="quantity-total"
       >
         <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
+        {#if !quantityPriceDisplay}
+          <span class="text-sm">pr. stk.</span>
+        {/if}
         {#if priceDisplay.isDiscounted}
           <p class="whitespace-nowrap text-sm opacity-70">
             <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>

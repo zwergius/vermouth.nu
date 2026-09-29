@@ -174,6 +174,13 @@ type VariantPrice = {
 }
 
 function getVariantPrices(variant: ProductVariant, currency: string): VariantPrice[] {
+  const calculated = variant.calculated_price
+  const priceListType = calculated?.calculated_price?.price_list_type
+  if (
+    priceListType === 'override' ||
+    (calculated?.is_calculated_price_price_list && priceListType !== 'sale')
+  )
+    return []
   if (
     variant.calculated_price?.currency_code !== currency ||
     !variant.calculated_price.is_calculated_price_tax_inclusive
@@ -227,10 +234,13 @@ export function getVariantPriceDisplay(
       (price?.calculated_price
         ? appliesToQuantity(price.calculated_price, count)
         : applicablePrices.some((price) => price.amount === calculatedAmount))
-    const unitAmount = Math.min(
-      calculatedApplies ? calculatedAmount : Infinity,
-      ...applicablePrices.map((price) => price.amount),
-    )
+    const unitAmount =
+      count === 1
+        ? calculatedAmount
+        : Math.min(
+            calculatedApplies ? calculatedAmount : Infinity,
+            ...applicablePrices.map((price) => price.amount),
+          )
     if (!Number.isFinite(unitAmount)) continue
 
     const hasVolumeDiscount = unitAmount < calculatedAmount

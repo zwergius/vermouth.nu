@@ -299,6 +299,28 @@ describe('variant price displays', () => {
     })
   })
 
+  it.each([1, 3])('preserves an override above ordinary prices at quantity %s', (quantity) => {
+    const override = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 200,
+        original_amount: 200,
+        is_calculated_price_price_list: true,
+        calculated_price: { price_list_type: 'override', min_quantity: null, max_quantity: null },
+      },
+      prices: [
+        { amount: 150, currency_code: 'dkk', rules_count: 0 },
+        { amount: 120, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(override, 'dkk', 'en-GB', quantity)[0]).toMatchObject({
+      current: quantity === 1 ? 'DKK\u00a0200.00' : 'DKK\u00a0600.00',
+      isDiscounted: false,
+    })
+    expect(getVariantPriceDisplay(override, 'dkk', 'en-GB')).toHaveLength(1)
+  })
+
   it.each([0, -1, 1.5, NaN, Infinity])('ignores invalid quantity %s', (quantity) => {
     expect(getVariantPriceDisplay(tiered, 'dkk', 'en-GB', quantity)).toEqual([])
   })

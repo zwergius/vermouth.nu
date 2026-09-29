@@ -1,11 +1,44 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 
 test.use({ locale: 'da-DK' })
 
-test('verified Forzudo tiers preview total quantities and stay isolated by size', async ({
+// Exercise ordinary tier pricing independently of staging's active override Price List.
+async function openOrdinaryTiers(page: Page, productDetails = false) {
+  await page.goto('/sortiment')
+  await page.route('**/store/products?**', async (route) => {
+    const url = new URL(route.request().url())
+    if (url.searchParams.has('collection_id')) {
+      url.searchParams.delete('collection_id')
+      url.searchParams.set('handle', 'forzudo-rojo')
+    }
+    const response = await route.fetch({ url: url.toString() })
+    const body = await response.json()
+    for (const product of body.products) {
+      for (const variant of product.variants) {
+        if (variant.sku !== 'forzudo-rojo-100cl-bottle') continue
+        const price = variant.calculated_price
+        price.is_calculated_price_price_list = false
+        price.is_original_price_price_list = false
+        for (const details of [price.calculated_price, price.original_price]) {
+          details.price_list_id = null
+          details.price_list_type = null
+        }
+      }
+    }
+    await route.fulfill({ json: body })
+  })
+  await page
+    .locator('header a')
+    .filter({ has: page.getByAltText('Vermouth.nu', { exact: true }) })
+    .click()
+  if (productDetails) await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
+}
+
+test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
   page,
 }) => {
-  await page.goto('/sortiment/forzudo-rojo')
+  await openOrdinaryTiers(page, true)
   const choices = page
     .getByRole('list', { name: 'Priser efter antal' })
     .filter({ has: page.locator('button') })
@@ -62,7 +95,7 @@ test('verified Forzudo tiers preview total quantities and stay isolated by size'
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
-  await page.goto('/sortiment')
+  await openOrdinaryTiers(page)
   const card = page
     .locator('li.grid-item')
     .filter({ has: page.locator('a[href*="forzudo-rojo-100cl-bottle"]') })
@@ -89,3 +122,37 @@ test('quantity totals fit product cards at mobile and desktop widths', async ({ 
     expect(new Set(rowTops).size, `tiers stay on one row at ${width}px`).toBe(1)
   }
 })
+
+for (const prices of [
+  undefined,
+  [{ amount: 100, min_quantity: 3, currency_code: 'dkk', rules_count: 1 }],
+]) {
+  test(`keeps a labelled unit price when tier data is ${prices ? 'rejected' : 'missing'}`, async ({
+    page,
+  }) => {
+    await page.goto('/sortiment')
+    await page.route('**/store/products?**', async (route) => {
+      const response = await route.fetch()
+      const body = await response.json()
+      for (const product of body.products) {
+        for (const variant of product.variants) {
+          variant.calculated_price = {
+            calculated_amount: 800,
+            original_amount: 800,
+            currency_code: 'dkk',
+            is_calculated_price_tax_inclusive: true,
+          }
+          variant.prices = prices
+        }
+      }
+      await route.fulfill({ json: body })
+    })
+    await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
+    const total = page.getByTestId('quantity-total')
+    await expect(total).toContainText(/800,00\s*DKK/)
+    await page.getByRole('spinbutton', { name: 'Antal flasker' }).fill('2')
+    await expect(total).toContainText(/800,00\s*DKK/)
+    await expect(total).toContainText('pr. stk.')
+    await expect(total).not.toContainText(/1\.600/)
+  })
+}
