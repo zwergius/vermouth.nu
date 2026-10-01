@@ -278,6 +278,94 @@ describe('variant price displays', () => {
     )
   })
 
+  it('derives quantities only from the selected regional price set', () => {
+    const regional = {
+      ...tiered,
+      prices: [
+        { amount: 295, currency_code: 'dkk', rules_count: 0 },
+        { amount: 200, min_quantity: 6, currency_code: 'dkk', rules_count: 0 },
+        ...[{ amount: 295 }, { amount: 273, min_quantity: 3 }].map((price) => ({
+          ...price,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'denmark' }],
+        })),
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(
+      getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'denmark').map((p) => p.quantity),
+    ).toEqual([1, 3])
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', 6, 'denmark')[0].current).toBe(
+      'DKK\u00a01,638.00',
+    )
+    expect(
+      getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'other').map((p) => p.quantity),
+    ).toEqual([1, 6])
+  })
+
+  it('does not fill a gap in the regional set with a general calculated price', () => {
+    const regional = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_price: { min_quantity: null, max_quantity: null },
+      },
+      prices: [
+        { amount: 295, currency_code: 'dkk', rules_count: 0 },
+        { amount: 200, min_quantity: 6, currency_code: 'dkk', rules_count: 0 },
+        {
+          amount: 273,
+          min_quantity: 3,
+          max_quantity: 5,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'denmark' }],
+        },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', 6, 'denmark')).toEqual([])
+  })
+
+  it('keeps Denmark regular pricing ahead of general DKK volume offers', () => {
+    const regional = {
+      ...tiered,
+      prices: [
+        {
+          amount: 295,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'denmark' }],
+        },
+        { amount: 250, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'denmark')).toHaveLength(1)
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', 3, 'denmark')[0]).toMatchObject({
+      current: 'DKK\u00a0885.00',
+      isDiscounted: false,
+    })
+  })
+
+  it('excludes another region before validating its price amounts', () => {
+    const regional = {
+      ...tiered,
+      prices: [
+        { amount: 295, currency_code: 'dkk', rules_count: 0 },
+        { amount: 273, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+        {
+          amount: null,
+          min_quantity: 3,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'other' }],
+        },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(
+      getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'denmark').map((p) => p.quantity),
+    ).toEqual([1, 3])
+  })
+
   it.each([
     { attribute: 'customer_group_id', operator: 'eq', value: 'vip' },
     { attribute: 'region_id', operator: 'ne', value: 'other' },
@@ -368,7 +456,12 @@ describe('variant price displays', () => {
         ...tiered.calculated_price!,
         calculated_amount: 100,
         original_amount: 200,
-        calculated_price: { min_quantity: 1, max_quantity: 2 },
+        calculated_price: {
+          price_list_id: 'sale-list',
+          price_list_type: 'sale',
+          min_quantity: 1,
+          max_quantity: 2,
+        },
         original_price: { min_quantity: 1, max_quantity: 2 },
       },
       prices: [{ amount: 110, min_quantity: 6, currency_code: 'dkk', rules_count: 0 }],

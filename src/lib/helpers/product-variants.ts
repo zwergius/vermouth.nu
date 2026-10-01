@@ -193,25 +193,31 @@ function getVariantPrices(
     return []
   const prices = (variant as ProductVariant & { prices?: VariantPrice[] }).prices
   if (!Array.isArray(prices)) return []
-  const matching = prices.filter((price) => price?.currency_code === currency)
-  for (const price of matching) {
+  const currencyPrices = prices.filter((price) => price?.currency_code === currency)
+  for (const price of currencyPrices) {
+    const rules = price.price_rules ?? []
+    if (
+      price.rules_count !== rules.length ||
+      rules.some((rule) => rule.attribute !== 'region_id' || rule.operator !== 'eq')
+    )
+      return []
+  }
+
+  const regional = currencyPrices.filter(
+    (price) => price.rules_count && price.price_rules?.every((rule) => rule.value === regionId),
+  )
+  const selected = regional.length
+    ? regional
+    : currencyPrices.filter((price) => price.rules_count === 0)
+  for (const price of selected) {
     const min = price.min_quantity ?? 1
     const max = price.max_quantity ?? min
     const validAmount = Number.isFinite(price.amount) && price.amount >= 0
     const validMin = Number.isSafeInteger(min) && min >= 1
     const validMax = Number.isSafeInteger(max) && max >= min
-    const rules = price.price_rules ?? []
-    const supportedRules =
-      price.rules_count === rules.length &&
-      rules.length <= 1 &&
-      rules.every((rule) => rule.attribute === 'region_id' && rule.operator === 'eq' && regionId)
-    const hasRules = Boolean(price.price_list_id) || !supportedRules
-
-    if (!validAmount || !validMin || !validMax || hasRules) return []
+    if (!validAmount || !validMin || !validMax || price.price_list_id) return []
   }
-  return matching.filter((price) =>
-    (price.price_rules ?? []).every((rule) => rule.value === regionId),
-  )
+  return selected
 }
 
 function appliesToQuantity(
@@ -241,15 +247,12 @@ export function getVariantPriceDisplay(
   for (const count of quantities) {
     if (!Number.isSafeInteger(count) || count < 1) continue
 
-    const matchingPrices = prices.filter((price) => appliesToQuantity(price, count))
-    const regionalPrices = matchingPrices.filter((price) => price.rules_count === 1)
-    const applicablePrices = regionalPrices.length ? regionalPrices : matchingPrices
+    const applicablePrices = prices.filter((price) => appliesToQuantity(price, count))
     const calculatedApplies =
       count === 1 ||
-      ((!applicablePrices.length || price?.calculated_price?.price_list_id) &&
-        (price?.calculated_price
-          ? appliesToQuantity(price.calculated_price, count)
-          : applicablePrices.some((price) => price.amount === calculatedAmount)))
+      (price?.calculated_price &&
+        (!prices.length || price.calculated_price.price_list_id) &&
+        appliesToQuantity(price.calculated_price, count))
     const unitAmount =
       count === 1
         ? calculatedAmount
