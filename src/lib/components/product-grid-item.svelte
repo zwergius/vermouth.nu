@@ -16,12 +16,14 @@
 
   const {
     currencyCode,
+    regionId,
     locale,
     product,
     variant,
     onSelectItem,
   }: {
     currencyCode: string
+    regionId: string
     locale: string
     product: HttpTypes.StoreProduct
     variant: EligibleProductVariant
@@ -43,7 +45,9 @@
   const storefrontImage = $derived(
     configuredImage ?? (eligibleVariantCount === 1 ? { altText: imageAltText, url: image } : null),
   )
-  const priceDisplays = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
+  const priceDisplays = $derived(
+    getVariantPriceDisplay(variant, currencyCode, locale, undefined, regionId),
+  )
   const priceDisplay = $derived(priceDisplays[0])
   let isDiscountBadgeVisible = $state(false)
 

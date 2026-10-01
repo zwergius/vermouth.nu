@@ -208,6 +208,89 @@ describe('variant price displays', () => {
     ],
   } as unknown as HttpTypes.StoreProductVariant
 
+  it('shows Carmeleta tiers alongside matching regional price rows', () => {
+    const regional = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 260,
+        original_amount: 260,
+      },
+      prices: [
+        ...[0, 1].flatMap((rules_count) =>
+          [
+            { amount: 260 },
+            { amount: 234, min_quantity: 3, max_quantity: 5 },
+            { amount: 208, min_quantity: 6 },
+          ].map((price) => ({
+            ...price,
+            currency_code: 'dkk',
+            rules_count,
+            price_rules: rules_count
+              ? [{ attribute: 'region_id', operator: 'eq', value: 'denmark' }]
+              : [],
+          })),
+        ),
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    const displays = getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'denmark')
+    expect(displays.map(({ quantity }) => quantity)).toEqual([1, 3, 6])
+    expect(displays[1].current).toBe('DKK\u00a0702.00')
+    expect(displays[2].current).toBe('DKK\u00a01,248.00')
+  })
+
+  it('uses the applicable regional price before a cheaper general or foreign price', () => {
+    const regional = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 260,
+        original_amount: 260,
+        calculated_price: { min_quantity: null, max_quantity: 2 },
+        original_price: { min_quantity: null, max_quantity: 2 },
+      },
+      prices: [
+        { amount: 260, max_quantity: 2, currency_code: 'dkk', rules_count: 0 },
+        { amount: 100, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+        {
+          amount: 280,
+          min_quantity: 3,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'denmark' }],
+        },
+        {
+          amount: 50,
+          min_quantity: 3,
+          currency_code: 'dkk',
+          rules_count: 1,
+          price_rules: [{ attribute: 'region_id', operator: 'eq', value: 'other' }],
+        },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', 3, 'denmark')[0]).toMatchObject({
+      current: 'DKK\u00a0840.00',
+      isDiscounted: false,
+    })
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', undefined, 'denmark')).toHaveLength(1)
+    expect(getVariantPriceDisplay(regional, 'dkk', 'en-GB', 3, 'unconfigured')[0].current).toBe(
+      'DKK\u00a0300.00',
+    )
+  })
+
+  it.each([
+    { attribute: 'customer_group_id', operator: 'eq', value: 'vip' },
+    { attribute: 'region_id', operator: 'ne', value: 'other' },
+  ])('does not advertise tiers with unsupported rules: %s', (rule) => {
+    const variant = {
+      ...tiered,
+      prices: [
+        { amount: 100, min_quantity: 3, currency_code: 'dkk', rules_count: 1, price_rules: [rule] },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(variant, 'dkk', 'en-GB', undefined, 'denmark')).toHaveLength(1)
+  })
+
   it('returns one display for an ordinary variant and n displays for tiers', () => {
     expect(getVariantPriceDisplay(box, 'dkk', 'en-GB')).toHaveLength(1)
     const displays = getVariantPriceDisplay(tiered, 'dkk', 'en-GB')

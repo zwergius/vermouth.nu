@@ -170,10 +170,15 @@ type VariantPrice = {
   min_quantity?: number | null
   max_quantity?: number | null
   rules_count?: number
+  price_rules?: { attribute: string; operator: string; value: string }[]
   price_list_id?: string | null
 }
 
-function getVariantPrices(variant: ProductVariant, currency: string): VariantPrice[] {
+function getVariantPrices(
+  variant: ProductVariant,
+  currency: string,
+  regionId?: string,
+): VariantPrice[] {
   const calculated = variant.calculated_price
   const priceListType = calculated?.calculated_price?.price_list_type
   if (
@@ -195,11 +200,18 @@ function getVariantPrices(variant: ProductVariant, currency: string): VariantPri
     const validAmount = Number.isFinite(price.amount) && price.amount >= 0
     const validMin = Number.isSafeInteger(min) && min >= 1
     const validMax = Number.isSafeInteger(max) && max >= min
-    const hasRules = Boolean(price.price_list_id) || price.rules_count !== 0
+    const rules = price.price_rules ?? []
+    const supportedRules =
+      price.rules_count === rules.length &&
+      rules.length <= 1 &&
+      rules.every((rule) => rule.attribute === 'region_id' && rule.operator === 'eq' && regionId)
+    const hasRules = Boolean(price.price_list_id) || !supportedRules
 
     if (!validAmount || !validMin || !validMax || hasRules) return []
   }
-  return matching
+  return matching.filter((price) =>
+    (price.price_rules ?? []).every((rule) => rule.value === regionId),
+  )
 }
 
 function appliesToQuantity(
@@ -214,11 +226,12 @@ export function getVariantPriceDisplay(
   currencyCode: string,
   locale: string,
   quantity?: number,
+  regionId?: string,
 ): ProductPriceDisplay[] {
   const price = variant.calculated_price as CalculatedPrice | undefined
   const calculatedAmount = toAmount(price?.calculated_amount)
   if (calculatedAmount === null || !Number.isFinite(calculatedAmount)) return []
-  const prices = getVariantPrices(variant, currencyCode)
+  const prices = getVariantPrices(variant, currencyCode, regionId)
   const quantities =
     quantity === undefined
       ? [...new Set([1, ...prices.map((price) => price.min_quantity ?? 1)])].sort((a, b) => a - b)
@@ -228,12 +241,15 @@ export function getVariantPriceDisplay(
   for (const count of quantities) {
     if (!Number.isSafeInteger(count) || count < 1) continue
 
-    const applicablePrices = prices.filter((price) => appliesToQuantity(price, count))
+    const matchingPrices = prices.filter((price) => appliesToQuantity(price, count))
+    const regionalPrices = matchingPrices.filter((price) => price.rules_count === 1)
+    const applicablePrices = regionalPrices.length ? regionalPrices : matchingPrices
     const calculatedApplies =
       count === 1 ||
-      (price?.calculated_price
-        ? appliesToQuantity(price.calculated_price, count)
-        : applicablePrices.some((price) => price.amount === calculatedAmount))
+      ((!applicablePrices.length || price?.calculated_price?.price_list_id) &&
+        (price?.calculated_price
+          ? appliesToQuantity(price.calculated_price, count)
+          : applicablePrices.some((price) => price.amount === calculatedAmount)))
     const unitAmount =
       count === 1
         ? calculatedAmount
