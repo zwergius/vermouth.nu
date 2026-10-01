@@ -112,7 +112,7 @@
 
 <Marquee text="HVEM ER VERMOUTH VENNERNE //"></Marquee>
 
-<section class="border-b border-black px-11 py-16 text-center lg:text-left">
+<section class="border-b border-black px-4 py-16 text-center md:px-11 lg:text-left">
   <div class="lg:w-7/12">
     <h2>OM OS</h2>
     <p class="mb-6 md:mb-8">

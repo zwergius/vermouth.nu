@@ -185,9 +185,168 @@ describe('variant storefront images', () => {
 
 describe('variant prices', () => {
   it('formats the selected variant price', () => {
-    expect(getVariantPriceDisplay(box, 'dkk', 'da-DK')).toMatchObject({
+    expect(getVariantPriceDisplay(box, 'dkk', 'da-DK')[0]).toMatchObject({
       current: expect.stringMatching(/800[,.]00/),
       isDiscounted: false,
     })
+  })
+})
+
+describe('variant price displays', () => {
+  const tiered = {
+    ...bottle,
+    calculated_price: {
+      calculated_amount: 295,
+      original_amount: 295,
+      currency_code: 'dkk',
+      is_calculated_price_tax_inclusive: true,
+    },
+    prices: [
+      { amount: 295, currency_code: 'dkk', rules_count: 0 },
+      { amount: 273, min_quantity: 3, max_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+      { amount: 250, min_quantity: 6, max_quantity: null, currency_code: 'dkk', rules_count: 0 },
+    ],
+  } as unknown as HttpTypes.StoreProductVariant
+
+  it('returns one display for an ordinary variant and n displays for tiers', () => {
+    expect(getVariantPriceDisplay(box, 'dkk', 'en-GB')).toHaveLength(1)
+    const displays = getVariantPriceDisplay(tiered, 'dkk', 'en-GB')
+    expect(displays.map(({ quantity }) => quantity)).toEqual([1, 3, 6])
+    expect(displays[1]).toMatchObject({
+      current: 'DKK\u00a0819.00',
+      unit: 'DKK\u00a0273.00',
+      savingsPercent: 7,
+    })
+    expect(displays[2].savingsPercent).toBe(15)
+  })
+  it.each([
+    [1, 295],
+    [2, 590],
+    [3, 819],
+    [4, 1092],
+    [5, 1365],
+    [6, 1500],
+    [7, 1750],
+  ])('resolves quantity %s using the same display', (quantity, total) => {
+    expect(getVariantPriceDisplay(tiered, 'dkk', 'en-GB', quantity)[0].current).toBe(
+      new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency: 'dkk',
+        currencyDisplay: 'code',
+      }).format(total),
+    )
+  })
+  it('keeps ordinary sale pricing and compares tiers with the current single price', () => {
+    const sale = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_price: {
+          id: 'sale',
+          price_list_id: 'sale-list',
+          price_list_type: 'sale',
+          min_quantity: null,
+          max_quantity: null,
+        },
+        calculated_amount: 260,
+        original_amount: 295,
+      },
+    }
+    const displays = getVariantPriceDisplay(sale, 'dkk', 'en-GB')
+    expect(displays.map(({ quantity }) => quantity)).toEqual([1, 6])
+    expect(displays[0].isDiscounted).toBe(true)
+    expect(displays[1].original).toBe('DKK\u00a01,560.00')
+  })
+  it('respects bounded ordinary prices when a discount expires', () => {
+    const bounded = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 100,
+        original_amount: 100,
+      },
+      prices: [
+        { amount: 100, min_quantity: 1, max_quantity: 2, currency_code: 'dkk', rules_count: 0 },
+        { amount: 90, min_quantity: 3, max_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+        { amount: 110, min_quantity: 6, currency_code: 'dkk', rules_count: 0 },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(bounded, 'dkk', 'en-GB', 3)[0].current).toBe('DKK\u00a0270.00')
+    expect(getVariantPriceDisplay(bounded, 'dkk', 'en-GB', 6)[0]).toMatchObject({
+      current: 'DKK\u00a0660.00',
+      isDiscounted: false,
+    })
+  })
+
+  it('does not extend a bounded calculated sale or its comparison price', () => {
+    const sale = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 100,
+        original_amount: 200,
+        calculated_price: { min_quantity: 1, max_quantity: 2 },
+        original_price: { min_quantity: 1, max_quantity: 2 },
+      },
+      prices: [{ amount: 110, min_quantity: 6, currency_code: 'dkk', rules_count: 0 }],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 2)[0].current).toBe('DKK\u00a0200.00')
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 3)).toEqual([])
+    expect(getVariantPriceDisplay(sale, 'dkk', 'en-GB', 6)[0]).toMatchObject({
+      current: 'DKK\u00a0660.00',
+      isDiscounted: false,
+      original: undefined,
+    })
+  })
+
+  it.each([1, 3])('preserves an override above ordinary prices at quantity %s', (quantity) => {
+    const override = {
+      ...tiered,
+      calculated_price: {
+        ...tiered.calculated_price!,
+        calculated_amount: 200,
+        original_amount: 200,
+        is_calculated_price_price_list: true,
+        calculated_price: { price_list_type: 'override', min_quantity: null, max_quantity: null },
+      },
+      prices: [
+        { amount: 150, currency_code: 'dkk', rules_count: 0 },
+        { amount: 120, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+      ],
+    } as unknown as HttpTypes.StoreProductVariant
+    expect(getVariantPriceDisplay(override, 'dkk', 'en-GB', quantity)[0]).toMatchObject({
+      current: quantity === 1 ? 'DKK\u00a0200.00' : 'DKK\u00a0600.00',
+      isDiscounted: false,
+    })
+    expect(getVariantPriceDisplay(override, 'dkk', 'en-GB')).toHaveLength(1)
+  })
+
+  it.each([0, -1, 1.5, NaN, Infinity])('ignores invalid quantity %s', (quantity) => {
+    expect(getVariantPriceDisplay(tiered, 'dkk', 'en-GB', quantity)).toEqual([])
+  })
+  it('falls back to one price for unsupported tier rules and tax context', () => {
+    expect(
+      getVariantPriceDisplay(
+        {
+          ...tiered,
+          prices: [{ amount: 100, min_quantity: 3, currency_code: 'dkk', rules_count: 1 }],
+        } as unknown as HttpTypes.StoreProductVariant,
+        'dkk',
+        'en-GB',
+      ),
+    ).toHaveLength(1)
+    expect(
+      getVariantPriceDisplay(
+        {
+          ...tiered,
+          calculated_price: {
+            ...tiered.calculated_price!,
+            is_calculated_price_tax_inclusive: false,
+          },
+        },
+        'dkk',
+        'en-GB',
+      ),
+    ).toHaveLength(1)
   })
 })

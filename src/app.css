@@ -38,7 +38,7 @@ button {
 
   /* The .content class covers sections with a header, paragraph and link button */
   .content {
-    @apply px-11 py-16 text-center;
+    @apply px-4 py-16 text-center md:px-11;
   }
 
   .content > h2,
@@ -60,7 +60,7 @@ button {
   }
 
   .split-content > .copy {
-    @apply my-auto px-11 py-11 2xl:px-32 xl:basis-1/2 lg:flex-1;
+    @apply my-auto px-4 py-11 md:px-11 2xl:px-32 xl:basis-1/2 lg:flex-1;
   }
 
   .split-content > .copy p {

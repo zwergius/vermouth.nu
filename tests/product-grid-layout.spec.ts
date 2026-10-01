@@ -20,7 +20,18 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
                     variant_rank: 0,
                     title: 'Flaske',
                     options: [{ value: '75 cl', option: { title: 'Size' } }],
-                    calculated_price: { calculated_amount: 195, original_amount: 250 },
+                    calculated_price: {
+                      calculated_amount: 195,
+                      original_amount: 250,
+                      currency_code: 'dkk',
+                      is_calculated_price_tax_inclusive: true,
+                    },
+                    prices: Array.from({ length: 8 }, (_, index) => ({
+                      amount: 180 - index * 10,
+                      min_quantity: (index + 1) * 3,
+                      currency_code: 'dkk',
+                      rules_count: 0,
+                    })),
                   },
                   {
                     id: 'layout-box',
@@ -28,7 +39,15 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
                     variant_rank: 1,
                     title: 'Bag-in-Box',
                     options: [{ value: '5 L', option: { title: 'Size' } }],
-                    calculated_price: { calculated_amount: 800, original_amount: 800 },
+                    calculated_price: {
+                      calculated_amount: 800,
+                      original_amount: 800,
+                      currency_code: 'dkk',
+                      is_calculated_price_tax_inclusive: true,
+                    },
+                    prices: [
+                      { amount: 700, min_quantity: 3, currency_code: 'dkk', rules_count: 0 },
+                    ],
                   },
                 ],
               },
@@ -45,16 +64,35 @@ for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
     }
     const cards = page.locator('li.grid-item').filter({ has: page.locator('a > h3') })
     await expect(cards.first()).toBeVisible()
-    await expect(cards.first().locator('a > div:last-child > p:last-child')).toContainText(/kr|DKK/)
+    await expect(cards.first().getByRole('list', { name: 'Priser efter antal' })).toContainText(
+      /kr|DKK/,
+    )
     if (path === '/') {
       await expect(cards).toHaveCount(2)
       await expect(cards.first()).toContainText('Normalpris')
-      await expect(cards.last()).not.toContainText('Normalpris')
+      const boxOffers = cards.last().getByRole('list', { name: 'Priser efter antal' })
+      await expect(boxOffers).toContainText('3 stk.')
+      await expect(boxOffers).not.toContainText('flasker')
+      await expect(boxOffers.getByRole('listitem').first()).not.toContainText('Normalpris')
     }
     await page.evaluate(() => document.fonts.ready)
 
     for (const width of [390, 768, 1023, 1024, 1100, 1280, 1440, 1500, 1536, 1800]) {
       await page.setViewportSize({ width, height: 1000 })
+      if (path === '/') {
+        const offers = cards.first().getByRole('list', { name: 'Priser efter antal' })
+        await expect(offers.getByRole('listitem')).toHaveCount(9)
+        const reachable = await offers.evaluate((row) => {
+          const bounds = row.getBoundingClientRect()
+          row.scrollLeft = 0
+          const first = row.firstElementChild!.getBoundingClientRect()
+          row.scrollLeft = row.scrollWidth
+          const last = row.lastElementChild!.getBoundingClientRect()
+          row.scrollLeft = 0
+          return first.left >= bounds.left - 1 && last.right <= bounds.right + 1
+        })
+        expect(reachable, 'first and last offers remain reachable').toBe(true)
+      }
       const overflow = await cards.evaluateAll((items) =>
         items.flatMap((card) => {
           const bounds = card.getBoundingClientRect()

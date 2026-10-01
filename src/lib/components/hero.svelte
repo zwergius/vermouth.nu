@@ -17,7 +17,7 @@
       height="410"
     />
   </picture>
-  <h1 class="h1 absolute inset-0 flex w-full flex-col justify-center px-7 lg:px-36">
+  <h1 class="h1 absolute inset-0 flex w-full flex-col justify-center px-4 md:px-7 lg:px-36">
     {@render children()}
   </h1>
 </section>

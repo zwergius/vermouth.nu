@@ -80,7 +80,8 @@ export const load: PageLoad = async ({ fetch, params, parent, url }) => {
   const { region } = await parent()
   const data = await sdk.store.product.list({
     handle: params.slug,
-    fields: '*categories,*options,*variants,*variants.options,*variants.calculated_price',
+    fields:
+      '*categories,*options,*variants,*variants.options,*variants.calculated_price,*variants.prices',
     region_id: region.id,
   })
 
