@@ -72,7 +72,9 @@
     configuredVariantImage ??
       (eligibleVariants.length === 1 ? { altText: variantImageAltText, url: image } : null),
   )
-  const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
+  const priceDisplays = $derived(
+    getVariantPriceDisplay(variant, region.currency_code, locale, undefined, region.id),
+  )
   const offers = $derived(priceDisplays.slice(1))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
   let quantity = $derived.by(() => {
@@ -80,14 +82,20 @@
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
   })
   const quantityPriceDisplay = $derived(
-    getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
+    getVariantPriceDisplay(variant, region.currency_code, locale, quantity, region.id)[0],
   )
   const priceDisplay = $derived(quantityPriceDisplay ?? priceDisplays[0])
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
       price:
-        getVariantPriceDisplay(eligibleVariant, region.currency_code, locale)[0]?.current ?? '',
+        getVariantPriceDisplay(
+          eligibleVariant,
+          region.currency_code,
+          locale,
+          undefined,
+          region.id,
+        )[0]?.current ?? '',
       value: eligibleVariant.sku,
     })),
   )
@@ -544,7 +552,13 @@
 
 <ul class="grid-layout border-b border-black">
   {#each red as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      regionId={region.id}
+      {locale}
+      {product}
+      {variant}
+    />
   {/each}
 </ul>
 
@@ -552,7 +566,13 @@
 
 <ul class="grid-layout border-b border-black">
   {#each white as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      regionId={region.id}
+      {locale}
+      {product}
+      {variant}
+    />
   {/each}
 </ul>
 
@@ -560,7 +580,13 @@
 
 <ul class="grid-layout border-b border-black">
   {#each other as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      regionId={region.id}
+      {locale}
+      {product}
+      {variant}
+    />
   {/each}
 </ul>
 
@@ -568,7 +594,13 @@
 
 <ul class="grid-layout border-b border-black">
   {#each packs as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      regionId={region.id}
+      {locale}
+      {product}
+      {variant}
+    />
   {/each}
 </ul>
 

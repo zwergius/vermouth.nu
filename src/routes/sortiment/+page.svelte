@@ -107,6 +107,7 @@
   {#each red as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
+      regionId={region.id}
       {locale}
       {product}
       {variant}
@@ -121,6 +122,7 @@
   {#each white as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
+      regionId={region.id}
       {locale}
       {product}
       {variant}
@@ -135,6 +137,7 @@
   {#each other as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
+      regionId={region.id}
       {locale}
       {product}
       {variant}
@@ -149,6 +152,7 @@
   {#each packs as { product, variant }, index (variant.sku)}
     <ProductGridItem
       currencyCode={region.currency_code}
+      regionId={region.id}
       {locale}
       {product}
       {variant}

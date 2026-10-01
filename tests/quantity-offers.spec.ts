@@ -148,3 +148,70 @@ test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) 
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
   await expect(page.getByTestId('quantity-total')).toContainText(/2\.100,00\s*DKK/)
 })
+
+for (const handle of ['carmeleta-blanco', 'carmeleta-rosso']) {
+  test(`${handle} shows regional tiers in the grid and product details`, async ({ page }) => {
+    await page.goto('/sortiment')
+    await page.route('**/store/products?**', async (route) => {
+      const url = new URL(route.request().url())
+      expect(url.searchParams.get('fields')).toContain('*variants.prices.price_rules')
+      const regionId = url.searchParams.get('region_id')!
+      url.searchParams.delete('collection_id')
+      url.searchParams.set('handle', handle)
+      const response = await route.fetch({ url: url.toString() })
+      const body = await response.json()
+      const product = body.products[0]
+      product.handle = handle
+      product.title = handle === 'carmeleta-blanco' ? 'Carmeleta Blanco' : 'Carmeleta Rosso'
+      const variant = product.variants[0]
+      variant.sku = `${handle}-75cl-bottle`
+      variant.title = 'Flaske'
+      variant.variant_rank = 0
+      variant.options = [{ value: '75 cl', option: { title: 'Size' } }]
+      variant.calculated_price = {
+        calculated_amount: 260,
+        original_amount: 260,
+        currency_code: 'dkk',
+        is_calculated_price_tax_inclusive: true,
+      }
+      variant.prices = [0, 1].flatMap((rules_count) =>
+        [
+          { amount: 260 },
+          { amount: 234, min_quantity: 3, max_quantity: 5 },
+          { amount: 208, min_quantity: 6 },
+        ].map((price) => ({
+          ...price,
+          currency_code: 'dkk',
+          rules_count,
+          price_rules: rules_count
+            ? [{ attribute: 'region_id', operator: 'eq', value: regionId }]
+            : [],
+        })),
+      )
+      product.variants = [variant]
+      body.products = [product]
+      await route.fulfill({ json: body })
+    })
+    await page
+      .locator('header a')
+      .filter({ has: page.getByAltText('Vermouth.nu', { exact: true }) })
+      .click()
+    const card = page
+      .locator('li.grid-item')
+      .filter({ has: page.locator('a > h3') })
+      .first()
+    await expect(
+      card.getByRole('list', { name: 'Priser efter antal' }).getByRole('listitem'),
+    ).toHaveCount(3)
+    await expect(card).toContainText(/702,00\s*DKK/)
+    await expect(card).toContainText(/1\.248,00\s*DKK/)
+    await card.locator('a').click()
+    await page.getByRole('button', { name: 'Køb 3 for 234,00 DKK/stk' }).click()
+    await expect(page.getByTestId('quantity-total')).toContainText(/702,00\s*DKK/)
+    await page.getByRole('button', { name: 'Køb 6 for 208,00 DKK/stk' }).click()
+    await expect(page.getByTestId('quantity-total')).toContainText(/1\.248,00\s*DKK/)
+    await page.getByRole('spinbutton', { name: 'Antal', exact: true }).fill('2')
+    await expect(page.getByTestId('quantity-total')).toContainText(/520,00\s*DKK/)
+    await expect(page.getByTestId('quantity-total').locator('s')).toHaveCount(0)
+  })
+}

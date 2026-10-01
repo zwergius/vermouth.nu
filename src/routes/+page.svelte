@@ -82,7 +82,13 @@
 
 <ul class="grid-layout border-b border-black">
   {#each favoriteVariants as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+    <ProductGridItem
+      currencyCode={region.currency_code}
+      regionId={region.id}
+      {locale}
+      {product}
+      {variant}
+    />
   {/each}
 </ul>
 

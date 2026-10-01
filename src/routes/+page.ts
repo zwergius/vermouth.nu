@@ -8,7 +8,8 @@ export const load: PageLoad = async ({ parent }) => {
     limit: 3,
     offset: 0,
     collection_id: dev ? 'pcol_01K9M5TBX8RNQFARPASPH3ASKM' : 'pcol_01KNKSM0FQXSFMJ4VE3KJMF43S',
-    fields: '*options,*variants,*variants.options,*variants.calculated_price,*variants.prices',
+    fields:
+      '*options,*variants,*variants.options,*variants.calculated_price,*variants.prices,*variants.prices.price_rules',
     region_id: region.id,
   })
   return {

@@ -170,10 +170,15 @@ type VariantPrice = {
   min_quantity?: number | null
   max_quantity?: number | null
   rules_count?: number
+  price_rules?: { attribute: string; operator: string; value: string }[]
   price_list_id?: string | null
 }
 
-function getVariantPrices(variant: ProductVariant, currency: string): VariantPrice[] {
+function getVariantPrices(
+  variant: ProductVariant,
+  currency: string,
+  regionId?: string,
+): VariantPrice[] {
   const calculated = variant.calculated_price
   const priceListType = calculated?.calculated_price?.price_list_type
   if (
@@ -188,18 +193,31 @@ function getVariantPrices(variant: ProductVariant, currency: string): VariantPri
     return []
   const prices = (variant as ProductVariant & { prices?: VariantPrice[] }).prices
   if (!Array.isArray(prices)) return []
-  const matching = prices.filter((price) => price?.currency_code === currency)
-  for (const price of matching) {
+  const currencyPrices = prices.filter((price) => price?.currency_code === currency)
+  for (const price of currencyPrices) {
+    const rules = price.price_rules ?? []
+    if (
+      price.rules_count !== rules.length ||
+      rules.some((rule) => rule.attribute !== 'region_id' || rule.operator !== 'eq')
+    )
+      return []
+  }
+
+  const regional = currencyPrices.filter(
+    (price) => price.rules_count && price.price_rules?.every((rule) => rule.value === regionId),
+  )
+  const selected = regional.length
+    ? regional
+    : currencyPrices.filter((price) => price.rules_count === 0)
+  for (const price of selected) {
     const min = price.min_quantity ?? 1
     const max = price.max_quantity ?? min
     const validAmount = Number.isFinite(price.amount) && price.amount >= 0
     const validMin = Number.isSafeInteger(min) && min >= 1
     const validMax = Number.isSafeInteger(max) && max >= min
-    const hasRules = Boolean(price.price_list_id) || price.rules_count !== 0
-
-    if (!validAmount || !validMin || !validMax || hasRules) return []
+    if (!validAmount || !validMin || !validMax || price.price_list_id) return []
   }
-  return matching
+  return selected
 }
 
 function appliesToQuantity(
@@ -214,11 +232,12 @@ export function getVariantPriceDisplay(
   currencyCode: string,
   locale: string,
   quantity?: number,
+  regionId?: string,
 ): ProductPriceDisplay[] {
   const price = variant.calculated_price as CalculatedPrice | undefined
   const calculatedAmount = toAmount(price?.calculated_amount)
   if (calculatedAmount === null || !Number.isFinite(calculatedAmount)) return []
-  const prices = getVariantPrices(variant, currencyCode)
+  const prices = getVariantPrices(variant, currencyCode, regionId)
   const quantities =
     quantity === undefined
       ? [...new Set([1, ...prices.map((price) => price.min_quantity ?? 1)])].sort((a, b) => a - b)
@@ -231,9 +250,9 @@ export function getVariantPriceDisplay(
     const applicablePrices = prices.filter((price) => appliesToQuantity(price, count))
     const calculatedApplies =
       count === 1 ||
-      (price?.calculated_price
-        ? appliesToQuantity(price.calculated_price, count)
-        : applicablePrices.some((price) => price.amount === calculatedAmount))
+      (price?.calculated_price &&
+        (!prices.length || price.calculated_price.price_list_id) &&
+        appliesToQuantity(price.calculated_price, count))
     const unitAmount =
       count === 1
         ? calculatedAmount
