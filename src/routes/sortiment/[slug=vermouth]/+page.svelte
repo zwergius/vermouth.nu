@@ -28,7 +28,7 @@
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
   import ProductSliders from '$lib/components/product-sliders.svelte'
   import Seo from '$lib/components/SEO.svelte'
-  import { afterNavigate, goto, replaceState } from '$app/navigation'
+  import { afterNavigate, goto } from '$app/navigation'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
 
@@ -76,10 +76,6 @@
   const offers = $derived(priceDisplays.slice(1))
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
   let quantity = $derived.by(() => {
-    const requestedQuantity = Number(page.url.searchParams.get('quantity'))
-    if (Number.isInteger(requestedQuantity) && requestedQuantity >= 1 && requestedQuantity <= 100) {
-      return requestedQuantity
-    }
     const variantId = variant.id
     return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
   })
@@ -96,9 +92,7 @@
     })),
   )
   const variantFormParams = $derived(
-    [...page.url.searchParams.entries()].filter(
-      ([name]) => name !== 'variant' && name !== 'quantity',
-    ),
+    [...page.url.searchParams.entries()].filter(([name]) => name !== 'variant'),
   )
   const reviews = $derived(data.reviews)
   const visibleReviews = $derived(data.reviews.reviews)
@@ -170,19 +164,6 @@
       item_variant: getVariantLabel(selectedVariant),
       quantity,
     }
-  }
-
-  function selectQuantityOffer(event: SubmitEvent) {
-    if (!(event.submitter instanceof HTMLButtonElement)) return
-
-    event.preventDefault()
-    const nextUrl = new URL(page.url)
-    nextUrl.searchParams.set('quantity', event.submitter.value)
-    replaceState(
-      resolve(`/sortiment/${encodeURIComponent(slug ?? product.handle ?? '')}${nextUrl.search}`),
-      page.state,
-    )
-    quantity = Number(event.submitter.value)
   }
 
   function selectVariant(event: Event & { currentTarget: HTMLInputElement }) {
@@ -361,17 +342,6 @@
       </div>
     {/if}
     <div class="mb-4">
-      <form
-        id="quantity-offers"
-        action={page.url.pathname}
-        method="GET"
-        onsubmit={selectQuantityOffer}
-      >
-        <input type="hidden" name="variant" value={variant.sku} />
-        {#each variantFormParams as [name, value], index (index)}
-          <input type="hidden" {name} {value} />
-        {/each}
-      </form>
       <Form
         action="/kurv?/addOrUpdateItemQuantity"
         bind:isSubmitting={isFormSubmitting}
@@ -392,27 +362,33 @@
               <QuantitySelector min={1} name="quantity" aria-label="Antal" bind:value={quantity} />
             {/key}
           </div>
-          {#if offers.length}
-            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
-              {#each offers as offer (offer.quantity)}
-                <li>
-                  <button
-                    type="submit"
-                    form="quantity-offers"
-                    name="quantity"
-                    value={offer.quantity}
-                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
-                    aria-pressed={quantity === offer.quantity}
-                    disabled={purchasesPaused || isFormSubmitting}
-                  >
-                    Køb {offer.quantity} for {offer.unit}/stk
-                  </button>
-                </li>
-              {/each}
-            </ul>
-          {/if}
         </fieldset>
       </Form>
+      {#if offers.length}
+        <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
+          {#each offers as offer (offer.quantity)}
+            <li>
+              <Form
+                action="/kurv?/addOrUpdateItemQuantity"
+                bind:isSubmitting={isFormSubmitting}
+                onResult={handleFormResult}
+              >
+                <input name="variant_id" type="hidden" value={variant.id} />
+                <input name="cart_item_id" type="hidden" value={cartItem?.id ?? ''} />
+                <input name="quantity" type="hidden" value={offer.quantity} />
+                <button
+                  type="submit"
+                  class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-pressed={quantity === offer.quantity}
+                  disabled={purchasesPaused || isFormSubmitting}
+                >
+                  Køb {offer.quantity} for {offer.unit}/stk
+                </button>
+              </Form>
+            </li>
+          {/each}
+        </ul>
+      {/if}
     </div>
     {#if eligibleVariants.length > 1}
       <div class="mb-6 mt-6">
@@ -428,7 +404,6 @@
             options={selectorOptions}
             selected={variant.sku}
           />
-          <noscript><button class="btn mt-3" type="submit">VÆLG FORMAT</button></noscript>
         </form>
       </div>
     {/if}
