@@ -2,6 +2,38 @@ import { expect, test } from './fixtures'
 
 test.use({ locale: 'da-DK' })
 
+test('quantity offers wait for hydration before accepting a selection', async ({ page }) => {
+  let releaseScripts = () => {}
+  const scriptsReady = new Promise<void>((resolve) => {
+    releaseScripts = resolve
+  })
+  await page.route('**/_app/**/*.js', async (route) => {
+    await scriptsReady
+    await route.continue()
+  })
+
+  try {
+    await page.goto('/sortiment/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
+      waitUntil: 'commit',
+    })
+    const offer = page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' })
+    const quantity = page.getByRole('spinbutton', { name: 'Antal', exact: true })
+
+    await expect(offer).toBeDisabled()
+    await expect(quantity).toHaveValue('1')
+
+    releaseScripts()
+    await expect(offer).toBeEnabled()
+    await offer.click()
+
+    await expect(quantity).toHaveValue('3')
+    await expect(offer).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByTestId('quantity-total')).toContainText(/819,00\s*DKK/)
+  } finally {
+    releaseScripts()
+  }
+})
+
 test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
   page,
 }) => {

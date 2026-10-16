@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -111,6 +112,11 @@
 
   let buttonState = $state<'default' | 'loading' | 'success' | 'error'>('default')
   let isFormSubmitting = $state(false)
+  let isHydrated = $state(false)
+
+  onMount(() => {
+    isHydrated = true
+  })
   let isLoadingMoreReviews = $state(false)
   let reviewsLoadError = $state(false)
 
@@ -370,7 +376,7 @@
                     type="button"
                     class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
                     aria-pressed={quantity === offer.quantity}
-                    disabled={purchasesPaused || isFormSubmitting}
+                    disabled={!isHydrated || purchasesPaused || isFormSubmitting}
                     onclick={() => {
                       quantity = offer.quantity
                     }}
