@@ -207,7 +207,7 @@
     nextSearchParams.set('reviews_offset', String(reviews.offset))
 
     try {
-      await goto(resolve(`/sortiment/${encodeURIComponent(currentSlug)}?${nextSearchParams}`), {
+      await goto(resolve(`/shop/${encodeURIComponent(currentSlug)}?${nextSearchParams}`), {
         keepFocus: true,
         noScroll: true,
         replaceState: true,
@@ -254,7 +254,7 @@
 
   afterNavigate(({ to }) => {
     const productSlug = slug ?? product.handle ?? ''
-    const productPath = resolve(`/sortiment/${encodeURIComponent(productSlug)}`)
+    const productPath = resolve(`/shop/${encodeURIComponent(productSlug)}`)
     if (to?.url.pathname !== productPath) return
 
     trackViewItem({
@@ -267,7 +267,7 @@
 <svelte:head>
   <link
     rel="canonical"
-    href={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
+    href={`https://www.vermouth.nu/shop/${encodeURIComponent(product.handle ?? slug ?? '')}`}
   />
 </svelte:head>
 
@@ -276,7 +276,7 @@
   description={productDescription}
   image={variantImage ? `${variantImage.url}/w=800,h=800,fit=cover` : undefined}
   imageAlt={variantImage?.altText}
-  url={`https://www.vermouth.nu/sortiment/${encodeURIComponent(product.handle ?? slug ?? '')}`}
+  url={`https://www.vermouth.nu/shop/${encodeURIComponent(product.handle ?? slug ?? '')}`}
 />
 
 <Marquee text="{product.title} //" theme="red"></Marquee>

@@ -1,9 +1,9 @@
 import { expect, test } from './fixtures'
 
-for (const path of ['/', '/sortiment', '/sortiment/sardino-rojo']) {
+for (const path of ['/', '/shop', '/shop/sardino-rojo']) {
   test(`${path} keeps product prices inside responsive cards`, async ({ page }) => {
     if (path === '/') {
-      await page.goto('/sortiment')
+      await page.goto('/shop')
       await page.route('**/store/products?**', (route) =>
         route.fulfill({
           json: {

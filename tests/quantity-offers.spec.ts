@@ -13,7 +13,7 @@ test('quantity offers wait for hydration before accepting a selection', async ({
   })
 
   try {
-    await page.goto('/sortiment/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
+    await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
       waitUntil: 'commit',
     })
     const offer = page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' })
@@ -37,7 +37,7 @@ test('quantity offers wait for hydration before accepting a selection', async ({
 test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
   page,
 }) => {
-  await page.goto('/sortiment/forzudo-rojo')
+  await page.goto('/shop/forzudo-rojo')
   const choices = page
     .getByRole('list', { name: 'Priser efter antal' })
     .filter({ has: page.locator('button') })
@@ -94,7 +94,7 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   const card = page
     .locator('li.grid-item')
     .filter({ has: page.locator('a[href*="forzudo-rojo-100cl-bottle"]') })
@@ -129,7 +129,7 @@ for (const prices of [
   test(`keeps a labelled unit price when tier data is ${prices ? 'rejected' : 'missing'}`, async ({
     page,
   }) => {
-    await page.goto('/sortiment')
+    await page.goto('/shop')
     await page.route('**/store/products?**', async (route) => {
       const response = await route.fetch()
       const body = await response.json()
@@ -157,7 +157,7 @@ for (const prices of [
 }
 
 test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   await page.route('**/store/products?**', async (route) => {
     const response = await route.fetch()
     const body = await response.json()

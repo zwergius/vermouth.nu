@@ -87,7 +87,8 @@
 </script>
 
 <Seo
-  title="Sortiment"
+  title="Shop"
+  url="https://www.vermouth.nu/shop"
   description="Se vores store udvalg af Vermouth"
   image="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/7e25baa1-0230-42b8-e5e3-1de47fe1f300/public"
   imageAlt="Statue kigger på en spand fyldt med Vermouth flasker"

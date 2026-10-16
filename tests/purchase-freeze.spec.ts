@@ -37,7 +37,7 @@ test.describe('catalog promotion purchase freeze', () => {
   test.skip(!purchasesPaused, 'Run with PURCHASES_PAUSED=true')
 
   test('keeps browsing available and blocks purchase entry points', async ({ page }) => {
-    await page.goto('/sortiment/forzudo-rojo', { waitUntil: 'domcontentloaded' })
+    await page.goto('/shop/forzudo-rojo', { waitUntil: 'domcontentloaded' })
 
     await expect(page.getByTestId('purchase-pause')).toContainText(
       'Køb er midlertidigt sat på pause',

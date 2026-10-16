@@ -2,7 +2,7 @@ import type { Page } from '@playwright/test'
 import { expect, test } from './fixtures'
 
 const productName = 'Forzudo Rojo'
-const productPath = '/sortiment/forzudo-rojo'
+const productPath = '/shop/forzudo-rojo'
 
 async function addProductToCart(page: Page) {
   await page.goto(productPath, { waitUntil: 'domcontentloaded' })
