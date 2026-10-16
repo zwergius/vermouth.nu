@@ -2,36 +2,62 @@ import { expect, test } from './fixtures'
 
 test.use({ locale: 'da-DK' })
 
-test('quantity offers wait for hydration before accepting a selection', async ({ page }) => {
-  let releaseScripts = () => {}
-  const scriptsReady = new Promise<void>((resolve) => {
-    releaseScripts = resolve
-  })
-  await page.route('**/_app/**/*.js', async (route) => {
-    await scriptsReady
-    await route.continue()
-  })
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
 
-  try {
-    await page.goto('/sortiment/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
-      waitUntil: 'commit',
-    })
-    const offer = page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' })
-    const quantity = page.getByRole('spinbutton', { name: 'Antal', exact: true })
+  test('quantity offers select a total and submit the chosen cart quantity', async ({ page }) => {
+    await page.goto(
+      '/sortiment/forzudo-rojo?variant=forzudo-rojo-100cl-bottle&reviews_limit=4&utm_source=offer-test',
+    )
+    await page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
 
-    await expect(offer).toBeDisabled()
-    await expect(quantity).toHaveValue('1')
-
-    releaseScripts()
-    await expect(offer).toBeEnabled()
-    await offer.click()
-
-    await expect(quantity).toHaveValue('3')
-    await expect(offer).toHaveAttribute('aria-pressed', 'true')
+    await expect(page).toHaveURL(
+      (url) =>
+        url.searchParams.get('quantity') === '3' &&
+        url.searchParams.get('variant') === 'forzudo-rojo-100cl-bottle' &&
+        url.searchParams.get('reviews_limit') === '4' &&
+        url.searchParams.get('utm_source') === 'offer-test',
+    )
+    await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
+    await expect(page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
     await expect(page.getByTestId('quantity-total')).toContainText(/819,00\s*DKK/)
-  } finally {
-    releaseScripts()
-  }
+
+    await page.getByRole('radio', { name: /Bag-in-Box/ }).check()
+    await page.getByRole('button', { name: 'VÆLG FORMAT' }).click()
+    await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('1')
+    await expect(page.getByTestId('quantity-total')).toContainText(/750,00\s*DKK/)
+
+    await page.getByRole('radio', { name: /Flaske/ }).check()
+    await page.getByRole('button', { name: 'VÆLG FORMAT' }).click()
+    await page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
+    await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
+
+    let submittedQuantity: string | null = null
+    await page.route('**/kurv?**', async (route) => {
+      if (route.request().method() !== 'POST') return route.continue()
+      const form = new URLSearchParams(route.request().postData() ?? '')
+      submittedQuantity = form.get('quantity')
+      await route.fulfill({
+        contentType: 'text/html',
+        body: '<h1>Cart submission captured</h1>',
+      })
+    })
+    await page.getByRole('button', { name: 'LÆG I KURV', exact: true }).click()
+    await expect.poll(() => submittedQuantity).toBe('3')
+  })
+
+  test('invalid quantity URLs fall back to the initial quantity', async ({ page }) => {
+    for (const quantity of ['101', '3.5']) {
+      await page.goto(
+        `/sortiment/forzudo-rojo?variant=forzudo-rojo-100cl-bottle&quantity=${quantity}`,
+      )
+      await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('1')
+      await expect(page.getByTestId('quantity-total')).toContainText(/295,00\s*DKK/)
+    }
+  })
 })
 
 test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
