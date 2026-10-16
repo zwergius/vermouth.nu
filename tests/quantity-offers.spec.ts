@@ -2,36 +2,48 @@ import { expect, test } from './fixtures'
 
 test.use({ locale: 'da-DK' })
 
-test('quantity offers wait for hydration before accepting a selection', async ({ page }) => {
-  let releaseScripts = () => {}
-  const scriptsReady = new Promise<void>((resolve) => {
-    releaseScripts = resolve
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('offer selection submits the quantity through the native cart action', async ({ page }) => {
+    await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle')
+    await page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
+
+    await expect(page).toHaveURL((url) => url.pathname === '/kurv')
+    await expect(page.getByRole('spinbutton')).toHaveValue('3')
+    await expect(page.locator('main')).toContainText('Forzudo Rojo')
   })
-  await page.route('**/_app/**/*.js', async (route) => {
-    await scriptsReady
-    await route.continue()
+})
+
+test('offer selection uses the enhanced cart action without reloading the product page', async ({
+  page,
+}) => {
+  await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
+    waitUntil: 'networkidle',
   })
-
-  try {
-    await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle', {
-      waitUntil: 'commit',
-    })
-    const offer = page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' })
-    const quantity = page.getByRole('spinbutton', { name: 'Antal', exact: true })
-
-    await expect(offer).toBeDisabled()
-    await expect(quantity).toHaveValue('1')
-
-    releaseScripts()
-    await expect(offer).toBeEnabled()
-    await offer.click()
-
-    await expect(quantity).toHaveValue('3')
-    await expect(offer).toHaveAttribute('aria-pressed', 'true')
-    await expect(page.getByTestId('quantity-total')).toContainText(/819,00\s*DKK/)
-  } finally {
-    releaseScripts()
-  }
+  let documentRequests = 0
+  page.on('request', (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documentRequests += 1
+  })
+  const actionResponse = page.waitForResponse(
+    (response) =>
+      response.url().includes('/kurv?/addOrUpdateItemQuantity') &&
+      response.request().method() === 'POST',
+    { timeout: 5000 },
+  )
+  await page.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
+  const response = await actionResponse
+  expect(response.ok()).toBe(true)
+  expect(response.request().headers()['x-sveltekit-action']).toBe('true')
+  const form = await new Response(response.request().postDataBuffer(), {
+    headers: { 'content-type': response.request().headers()['content-type'] },
+  }).formData()
+  expect(form.getAll('quantity')).toEqual(['3'])
+  expect(form.get('variant_id')).toBeTruthy()
+  await expect(page).toHaveURL('/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle')
+  await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
+  await expect(page.getByTestId('quantity-total')).toContainText(/819,00\s*DKK/)
+  expect(documentRequests).toBe(0)
 })
 
 test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
@@ -62,35 +74,13 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   await expect(total.locator('s')).toHaveCount(0)
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
 
-  // Choosing an offer must not submit; validate the explicit action payload without mutating Medusa.
-  await choices.getByRole('button', { name: /Køb 6 for/ }).click()
-  let submittedQuantity: string | null = null
-  await page.route('**/kurv?**', async (route) => {
-    if (route.request().method() !== 'POST') return route.continue()
-    const form = await new Response(route.request().postDataBuffer(), {
-      headers: { 'content-type': route.request().headers()['content-type'] },
-    }).formData()
-    submittedQuantity = String(form.get('quantity'))
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        type: 'failure',
-        status: 400,
-        data: '[{"message":1},"Test submission intercepted"]',
-      }),
-    })
-  })
-  await page.getByRole('button', { name: 'LÆG I KURV', exact: true }).click()
-  await expect.poll(() => submittedQuantity).toBe('6')
-
   await page.getByRole('radio', { name: /Bag-in-Box/ }).check()
   await expect(total).toContainText(/750,00\s*DKK/)
   await expect(choices).toHaveCount(0)
   await expect(quantity).toHaveValue('1')
   await page.getByRole('radio', { name: /Flaske/ }).check()
-  await expect(quantity).toHaveValue('1')
-  await expect(total).toContainText(/295,00\s*DKK/)
+  await expect(quantity).toHaveValue('6')
+  await expect(total).toContainText(/1\.500,00\s*DKK/)
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
