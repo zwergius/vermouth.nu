@@ -15,17 +15,17 @@
   import type { LayoutProps } from './$types'
   import { fade, scale } from 'svelte/transition'
 
-  const routes = ['sortiment', 'smagninger', 'inspiration', 'forhandlere', 'om-os'] as const
+  const routes = ['shop', 'smagninger', 'inspiration', 'forhandlere', 'om-os'] as const
   const routePaths = {
     forhandlere: '/forhandlere',
     inspiration: '/inspiration',
     'om-os': '/om-os',
     smagninger: '/smagninger',
-    sortiment: '/sortiment',
+    shop: '/shop',
   } as const
   const topBannerMessages = [
     {
-      href: '/sortiment',
+      href: '/shop',
       text: 'Gratis fragt ved køb over 550 dkk',
     },
     {
@@ -164,7 +164,7 @@
     class="hover:font-bold aria-[current=page]:font-bold flex-1 h-full flex items-center justify-center gap-4 py-4"
     href={resolve(route === 'kurv' ? '/kurv' : routePaths[route])}
   >
-    {route.replace('-', ' ')}
+    {route === 'shop' ? 'Shop' : route.replace('-', ' ')}
     {#if hasCartIcon}
       {@render cartIcon()}
     {/if}
@@ -210,7 +210,7 @@
           ><img width="137" height="57" src={logo} alt="Vermouth.nu" /></a
         >
       </li>
-      <li class="hidden lg:block">{@render anchor('sortiment')}</li>
+      <li class="hidden lg:block">{@render anchor('shop')}</li>
       <li class="hidden lg:block">{@render anchor('smagninger')}</li>
       <li class="hidden lg:block">{@render anchor('inspiration')}</li>
       <li class="hidden lg:block">{@render anchor('forhandlere')}</li>
@@ -225,7 +225,7 @@
       <li class="lg:hidden flex">
         <HamburgerMenu>
           <ul class="hamburger-nav-list">
-            <li><a href={resolve('/sortiment')}>Sortiment</a></li>
+            <li><a href={resolve('/shop')}>Shop</a></li>
             <li><a href={resolve('/smagninger')}>Smagninger</a></li>
             <li><a href={resolve('/inspiration')}>Inspiration</a></li>
             <li><a href={resolve('/forhandlere')}>Forhandlere</a></li>
@@ -281,7 +281,7 @@
               class="hover:font-bold aria-[current=page]:font-bold capitalize"
               href={resolve(routePaths[route])}
               aria-current={page.url.pathname.includes(route) ? 'page' : false}
-              >{route.replace('-', ' ')}</a
+              >{route === 'shop' ? 'Shop' : route.replace('-', ' ')}</a
             >
           </li>
         {/each}

@@ -75,7 +75,7 @@
     Rojo, Blanco, Orange eller Rosa?<br />
     Vi har det&nbsp;<span class="underline">hele</span>.
   </p>
-  <a class="btn" href={resolve('/sortiment')}>SE HELE UDVALGET</a>
+  <a class="btn" href={resolve('/shop')}>SE HELE UDVALGET</a>
 </section>
 
 <Marquee text="FAVORITTER //" theme="yellow"></Marquee>

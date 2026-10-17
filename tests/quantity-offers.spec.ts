@@ -6,7 +6,7 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   page,
 }) => {
   // Offer selection is client-side; wait for initialization before interacting.
-  await page.goto('/sortiment/forzudo-rojo', { waitUntil: 'networkidle' })
+  await page.goto('/shop/forzudo-rojo', { waitUntil: 'networkidle' })
   const cartPosts: string[] = []
   page.on('request', (request) => {
     if (request.method() === 'POST' && request.url().includes('/kurv?')) {
@@ -72,7 +72,7 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   const card = page
     .locator('li.grid-item')
     .filter({ has: page.locator('a[href*="forzudo-rojo-100cl-bottle"]') })
@@ -107,7 +107,7 @@ for (const prices of [
   test(`keeps a labelled unit price when tier data is ${prices ? 'rejected' : 'missing'}`, async ({
     page,
   }) => {
-    await page.goto('/sortiment')
+    await page.goto('/shop')
     await page.route('**/store/products?**', async (route) => {
       const response = await route.fetch()
       const body = await response.json()
@@ -135,7 +135,7 @@ for (const prices of [
 }
 
 test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   await page.route('**/store/products?**', async (route) => {
     const response = await route.fetch()
     const body = await response.json()
