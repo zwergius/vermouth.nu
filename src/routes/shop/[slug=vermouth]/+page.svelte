@@ -362,33 +362,27 @@
               <QuantitySelector min={1} name="quantity" aria-label="Antal" bind:value={quantity} />
             {/key}
           </div>
+          {#if offers.length}
+            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
+              {#each offers as offer (offer.quantity)}
+                <li>
+                  <button
+                    type="button"
+                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-pressed={quantity === offer.quantity}
+                    disabled={purchasesPaused || isFormSubmitting}
+                    onclick={() => {
+                      quantity = offer.quantity
+                    }}
+                  >
+                    Køb {offer.quantity} for {offer.unit}/stk
+                  </button>
+                </li>
+              {/each}
+            </ul>
+          {/if}
         </fieldset>
       </Form>
-      {#if offers.length}
-        <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
-          {#each offers as offer (offer.quantity)}
-            <li>
-              <Form
-                action="/kurv?/addOrUpdateItemQuantity"
-                bind:isSubmitting={isFormSubmitting}
-                onResult={handleFormResult}
-              >
-                <input name="variant_id" type="hidden" value={variant.id} />
-                <input name="cart_item_id" type="hidden" value={cartItem?.id ?? ''} />
-                <input name="quantity" type="hidden" value={offer.quantity} />
-                <button
-                  type="submit"
-                  class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-pressed={quantity === offer.quantity}
-                  disabled={purchasesPaused || isFormSubmitting}
-                >
-                  Køb {offer.quantity} for {offer.unit}/stk
-                </button>
-              </Form>
-            </li>
-          {/each}
-        </ul>
-      {/if}
     </div>
     {#if eligibleVariants.length > 1}
       <div class="mb-6 mt-6">
