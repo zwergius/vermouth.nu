@@ -250,12 +250,7 @@ test.describe('product detail pages', () => {
         await expect(page).toHaveURL(
           new RegExp(`/sortiment/${handle}\\?variant=${encodeURIComponent(sku)}$`),
         )
-        await expect(
-          page
-            .locator('form')
-            .filter({ has: page.getByRole('spinbutton', { name: 'Antal', exact: true }) })
-            .locator('input[name="variant_id"]'),
-        ).not.toHaveValue('')
+        await expect(page.locator('input[name="variant_id"]')).not.toHaveValue('')
 
         const cartAction = page.waitForResponse(
           (response) =>
@@ -307,12 +302,7 @@ test.describe('product detail pages', () => {
     )
     const selector = page.getByRole('group', { name: 'Vælg format' })
     await expect(selector.getByText('Flaske · 75 cl')).toBeVisible()
-    await expect(
-      page
-        .locator('form')
-        .filter({ has: page.getByRole('spinbutton', { name: 'Antal', exact: true }) })
-        .locator('input[name="variant_id"]'),
-    ).toHaveValue('variant_test_sardino_rojo')
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue('variant_test_sardino_rojo')
 
     const bibVariant = page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })
     await bibVariant.scrollIntoViewIfNeeded()
@@ -324,12 +314,9 @@ test.describe('product detail pages', () => {
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-5l-bag-in-box$/)
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(scrollPosition)
-    await expect(
-      page
-        .locator('form')
-        .filter({ has: page.getByRole('spinbutton', { name: 'Antal', exact: true }) })
-        .locator('input[name="variant_id"]'),
-    ).toHaveValue('variant_test_sardino_rojo_box')
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue(
+      'variant_test_sardino_rojo_box',
+    )
     await expect(
       page
         .locator('section.split-content')
@@ -356,12 +343,9 @@ test.describe('product detail pages', () => {
     await page.goBack()
 
     await expect(page).toHaveURL(/\/sortiment\/sardino-rojo\?variant=sardino-rojo-5l-bag-in-box$/)
-    await expect(
-      page
-        .locator('form')
-        .filter({ has: page.getByRole('spinbutton', { name: 'Antal', exact: true }) })
-        .locator('input[name="variant_id"]'),
-    ).toHaveValue('variant_test_sardino_rojo_box')
+    await expect(page.locator('input[name="variant_id"]')).toHaveValue(
+      'variant_test_sardino_rojo_box',
+    )
     await expect(page.getByRole('radio', { name: /Bag-in-Box · 5 L/ })).toBeChecked()
 
     await page.reload({ waitUntil: 'domcontentloaded' })
