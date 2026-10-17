@@ -5,7 +5,14 @@ test.use({ locale: 'da-DK' })
 test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
   page,
 }) => {
-  await page.goto('/sortiment/forzudo-rojo')
+  // Offer selection is client-side; wait for initialization before interacting.
+  await page.goto('/shop/forzudo-rojo', { waitUntil: 'networkidle' })
+  const cartPosts: string[] = []
+  page.on('request', (request) => {
+    if (request.method() === 'POST' && request.url().includes('/kurv?')) {
+      cartPosts.push(request.url())
+    }
+  })
   const choices = page
     .getByRole('list', { name: 'Priser efter antal' })
     .filter({ has: page.locator('button') })
@@ -16,6 +23,7 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   await expect(choices.getByRole('button', { name: /^Køb 1 for/ })).toHaveCount(0)
   await choices.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
   await expect(quantity).toHaveValue('3')
+  expect(cartPosts).toEqual([])
   await expect(total).toContainText(/819,00\s*DKK/)
   await expect(total.locator('s')).toContainText(/885,00\s*DKK/)
   await expect(page.getByTestId('quantity-savings')).toHaveText('Spar 7%')
@@ -29,6 +37,8 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   await expect(total).toContainText(/590,00\s*DKK/)
   await expect(total.locator('s')).toHaveCount(0)
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
+
+  expect(cartPosts).toEqual([])
 
   // Choosing an offer must not submit; validate the explicit action payload without mutating Medusa.
   await choices.getByRole('button', { name: /Køb 6 for/ }).click()
@@ -62,7 +72,7 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
 })
 
 test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   const card = page
     .locator('li.grid-item')
     .filter({ has: page.locator('a[href*="forzudo-rojo-100cl-bottle"]') })
@@ -97,7 +107,7 @@ for (const prices of [
   test(`keeps a labelled unit price when tier data is ${prices ? 'rejected' : 'missing'}`, async ({
     page,
   }) => {
-    await page.goto('/sortiment')
+    await page.goto('/shop')
     await page.route('**/store/products?**', async (route) => {
       const response = await route.fetch()
       const body = await response.json()
@@ -125,7 +135,7 @@ for (const prices of [
 }
 
 test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) => {
-  await page.goto('/sortiment')
+  await page.goto('/shop')
   await page.route('**/store/products?**', async (route) => {
     const response = await route.fetch()
     const body = await response.json()
@@ -144,6 +154,7 @@ test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) 
     await route.fulfill({ json: body })
   })
   await page.locator('a[href*="forzudo-rojo-3l-bag-in-box"]').first().click()
+  await page.waitForLoadState('networkidle')
   await page.getByRole('button', { name: 'Køb 3 for 700,00 DKK/stk' }).click()
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
   await expect(page.getByTestId('quantity-total')).toContainText(/2\.100,00\s*DKK/)
