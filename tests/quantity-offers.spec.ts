@@ -100,7 +100,7 @@ test('grid advertises the cheapest volume unit price at mobile and desktop width
   await expect(savings).toContainText(/SPAR\s*op til/)
   await expect(savings).toContainText('15%')
   const bubbleSizes: number[] = []
-  for (const width of [320, 390, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await price.evaluate((node) => {
       const bounds = node.closest('li.grid-item')!.getBoundingClientRect()
@@ -231,7 +231,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   await three.getByRole('radio').press('ArrowRight')
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')
   await expect(page.getByTestId('quantity-total')).toContainText('220,00 DKK/stk.')
-  for (const width of [320, 390, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await offers.evaluate((node) =>
       [...node.querySelectorAll('label p, label span')].every((el) => {
@@ -252,12 +252,27 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
           width: bounds.width,
           groupWidth: group.width,
           middle: label.querySelector('.grid > div:nth-child(2)')!.getBoundingClientRect().left,
+          right: label.querySelector('.grid > div:nth-child(2)')!.getBoundingClientRect().right,
+          singleLines: [
+            ...label.querySelectorAll('.grid > div:first-child > p:first-child, .rounded-full'),
+          ].every((el) => {
+            const range = document.createRange()
+            range.selectNodeContents(el)
+            return (
+              new Set(
+                [...range.getClientRects()]
+                  .filter((rect) => rect.width > 0)
+                  .map((rect) => rect.top),
+              ).size === 1
+            )
+          }),
         }
       })
     })
     for (const row of rows) {
+      expect(row.singleLines, `quantity label and badge stay on one line at ${width}px`).toBe(true)
       expect(
-        Math.abs(row.middle - rows[0].middle),
+        Math.abs(width < 400 ? row.right - rows[0].right : row.middle - rows[0].middle),
         `middle columns align at ${width}px`,
       ).toBeLessThanOrEqual(1)
       expect(row.width, `offer fills width at ${width}px`).toBeGreaterThanOrEqual(

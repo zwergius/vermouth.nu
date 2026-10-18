@@ -411,26 +411,28 @@
                   {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
                   {@const rank = rankedOffers.indexOf(offer)}
                   <div
-                    class="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_5rem] items-center gap-x-2 sm:gap-x-4"
+                    class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 min-[400px]:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_5rem] min-[400px]:gap-y-0 sm:gap-x-4"
                   >
-                    <div>
-                      <p class="font-bold">{option.label}</p>
+                    <div class="row-span-2 min-[400px]:row-span-1">
+                      <p class="whitespace-nowrap font-bold">{option.label}</p>
                       <p class="font-bold">{formatAmount(offer.unitAmount)}/stk.</p>
                       <p class="text-[11px]">
                         samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
                       </p>
                     </div>
-                    <div class="flex flex-col items-start justify-between gap-1 self-stretch">
+                    <div
+                      class="flex flex-col items-end justify-between gap-1 self-stretch min-[400px]:items-start"
+                    >
                       {#if rank < 2}
                         <span
-                          class="inline-block rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
+                          class="inline-block whitespace-nowrap rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
                         >
                           {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
                         </span>
                       {/if}
                       {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
                         <span
-                          class="inline-flex items-center gap-1 text-[10px] font-normal text-black"
+                          class="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-normal text-black"
                           title="Gratis levering til pakkeshop"
                         >
                           <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
@@ -438,7 +440,9 @@
                         </span>
                       {/if}
                     </div>
-                    <p class="whitespace-nowrap text-right font-bold text-brand-red">
+                    <p
+                      class="justify-self-end whitespace-nowrap text-right font-bold text-brand-red min-[400px]:justify-self-stretch"
+                    >
                       Spar {offer.savingsPercent}%
                     </p>
                   </div>
