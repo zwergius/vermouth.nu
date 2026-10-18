@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
+  import { reduced_motion } from '$lib/actions/reduced-motion'
   import truckIcon from '$lib/assets/truck.svg'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
@@ -366,11 +368,24 @@
           </p>
         {/if}
         {#if quantityPriceDisplay}
-          <p class="basis-full text-xs" data-testid="quantity-total-caption">
-            samlet pris {formatAmount(
-              quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity,
-            )}
-          </p>
+          <div class="flex basis-full flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <p data-testid="quantity-total-caption">
+              samlet pris {formatAmount(
+                quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity,
+              )}
+            </p>
+            {#if region.currency_code === 'dkk' && quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity >= FREE_SHIPPING_MINIMUM_DKK}
+              <span
+                class="inline-flex items-center gap-1 whitespace-nowrap"
+                data-testid="quantity-free-shipping"
+                title="Gratis levering til pakkeshop"
+                transition:fade={{ duration: $reduced_motion ? 0 : 150 }}
+              >
+                <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
+                Fri Fragt
+              </span>
+            {/if}
+          </div>
         {/if}
       </div>
     {/if}
@@ -396,9 +411,9 @@
             {/key}
           </div>
           {#if offers.length}
-            <div class="mt-4">
+            <div class="quantity-offers mt-4">
               <RadioGroup
-                groupLabel="Priser efter antal"
+                groupLabel="Mængderabatter"
                 name="volume-offer"
                 options={offerOptions}
                 selected={selectedOffer ? String(selectedOffer.quantity) : undefined}
@@ -410,18 +425,18 @@
                 {#snippet optionContent(option)}
                   {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
                   {@const rank = rankedOffers.indexOf(offer)}
-                  <div
-                    class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 min-[400px]:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_5rem] min-[400px]:gap-y-0 sm:gap-x-4"
-                  >
-                    <div class="row-span-2 min-[400px]:row-span-1">
+                  <div class="quantity-offer-content relative grid items-center gap-x-2 sm:gap-x-4">
+                    <div class="min-w-0">
                       <p class="whitespace-nowrap font-bold">{option.label}</p>
-                      <p class="font-bold">{formatAmount(offer.unitAmount)}/stk.</p>
-                      <p class="text-[11px]">
+                      <p class="whitespace-nowrap font-bold">
+                        {formatAmount(offer.unitAmount)}/stk.
+                      </p>
+                      <p class="whitespace-nowrap text-[11px]">
                         samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
                       </p>
                     </div>
                     <div
-                      class="flex flex-col items-end justify-between gap-1 self-stretch min-[400px]:items-start"
+                      class="quantity-offer-badges absolute inset-y-0 right-0 flex flex-col items-end justify-between gap-1 self-stretch"
                     >
                       {#if rank < 2}
                         <span
@@ -432,7 +447,7 @@
                       {/if}
                       {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
                         <span
-                          class="inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-normal text-black"
+                          class="quantity-offer-shipping hidden items-center gap-1 whitespace-nowrap text-[10px] font-normal text-black"
                           title="Gratis levering til pakkeshop"
                         >
                           <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
@@ -441,7 +456,7 @@
                       {/if}
                     </div>
                     <p
-                      class="justify-self-end whitespace-nowrap text-right font-bold text-brand-red min-[400px]:justify-self-stretch"
+                      class="quantity-offer-savings absolute right-0 top-[1.5em] whitespace-nowrap text-right font-bold text-brand-red"
                     >
                       Spar {offer.savingsPercent}%
                     </p>
@@ -657,6 +672,31 @@
 </section>
 
 <style>
+  .quantity-offers {
+    container-type: inline-size;
+  }
+
+  @container (min-width: 360px) {
+    .quantity-offer-shipping {
+      display: inline-flex;
+    }
+  }
+
+  @container (min-width: 460px) {
+    .quantity-offer-content {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 5rem;
+    }
+
+    .quantity-offer-badges,
+    .quantity-offer-savings {
+      position: static;
+    }
+
+    .quantity-offer-badges {
+      align-items: flex-start;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .quantity-savings {
       animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;

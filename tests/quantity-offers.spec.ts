@@ -13,7 +13,7 @@ test('ordinary Forzudo offers show unit prices and preserve quantity form action
       cartPosts.push(request.url())
     }
   })
-  const choices = page.getByRole('group', { name: 'Priser efter antal' })
+  const choices = page.getByRole('group', { name: 'Mængderabatter' })
   const total = page.getByTestId('quantity-total')
   const quantity = page.getByRole('spinbutton', { name: 'Antal', exact: true })
   await expect(choices).toBeVisible()
@@ -28,10 +28,12 @@ test('ordinary Forzudo offers show unit prices and preserve quantity form action
   await expect(six).toContainText(/samlet pris 1\.500,00\s*DKK/)
   await expect(six).toContainText('Spar 15%')
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
+  await expect(page.getByTestId('quantity-free-shipping')).toHaveCount(0)
   await expect(choices.getByRole('radio', { name: /^Min\. 1 Stk\./ })).toHaveCount(0)
   await choices.getByRole('radio', { name: /Min\. 3 Stk\./ }).check()
   await expect(quantity).toHaveValue('3')
   await expect(page.getByTestId('quantity-total-caption')).toHaveText('samlet pris 819,00 DKK')
+  await expect(page.getByTestId('quantity-free-shipping')).toHaveText('Fri Fragt')
   expect(cartPosts).toEqual([])
   await expect(total).toContainText(/273,00\s*DKK\/stk\./)
   await expect(total.locator('s')).toContainText(/295,00\s*DKK/)
@@ -45,6 +47,9 @@ test('ordinary Forzudo offers show unit prices and preserve quantity form action
   await expect(page.getByTestId('quantity-savings')).toHaveText('Spar 15%')
   await quantity.fill('2')
   await expect(total).toContainText(/295,00\s*DKK\/stk\./)
+  await expect(page.getByTestId('quantity-free-shipping')).toBeVisible()
+  await quantity.fill('1')
+  await expect(page.getByTestId('quantity-free-shipping')).toHaveCount(0)
   await expect(total.locator('s')).toHaveCount(0)
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
 
@@ -100,7 +105,7 @@ test('grid advertises the cheapest volume unit price at mobile and desktop width
   await expect(savings).toContainText(/SPAR\s*op til/)
   await expect(savings).toContainText('15%')
   const bubbleSizes: number[] = []
-  for (const width of [319, 320, 390, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 400, 499, 500, 510, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await price.evaluate((node) => {
       const bounds = node.closest('li.grid-item')!.getBoundingClientRect()
@@ -188,7 +193,7 @@ test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) 
   await page.locator('a[href*="forzudo-rojo-3l-bag-in-box"]').first().click()
   await page.waitForLoadState('networkidle')
   await page
-    .getByRole('group', { name: 'Priser efter antal' })
+    .getByRole('group', { name: 'Mængderabatter' })
     .getByRole('radio', { name: /Min\. 3 Stk\./ })
     .check()
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
@@ -218,7 +223,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   })
   await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
   await page.waitForLoadState('networkidle')
-  const offers = page.getByRole('group', { name: 'Priser efter antal' })
+  const offers = page.getByRole('group', { name: 'Mængderabatter' })
   const three = offers.locator('label').filter({ hasText: 'Min. 3 Stk.' })
   const six = offers.locator('label').filter({ hasText: 'Min. 6 Stk.' })
   const nine = offers.locator('label').filter({ hasText: 'Min. 9 Stk.' })
@@ -231,7 +236,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   await three.getByRole('radio').press('ArrowRight')
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')
   await expect(page.getByTestId('quantity-total')).toContainText('220,00 DKK/stk.')
-  for (const width of [319, 320, 390, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 400, 499, 500, 510, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await offers.evaluate((node) =>
       [...node.querySelectorAll('label p, label span')].every((el) => {
@@ -254,7 +259,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
           middle: label.querySelector('.grid > div:nth-child(2)')!.getBoundingClientRect().left,
           right: label.querySelector('.grid > div:nth-child(2)')!.getBoundingClientRect().right,
           singleLines: [
-            ...label.querySelectorAll('.grid > div:first-child > p:first-child, .rounded-full'),
+            ...label.querySelectorAll('.grid > div:first-child > p, .rounded-full'),
           ].every((el) => {
             const range = document.createRange()
             range.selectNodeContents(el)
@@ -270,11 +275,10 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
       })
     })
     for (const row of rows) {
-      expect(row.singleLines, `quantity label and badge stay on one line at ${width}px`).toBe(true)
-      expect(
-        Math.abs(width < 400 ? row.right - rows[0].right : row.middle - rows[0].middle),
-        `middle columns align at ${width}px`,
-      ).toBeLessThanOrEqual(1)
+      expect(row.singleLines, `pricing and badge stay on one line at ${width}px`).toBe(true)
+      const alignedLeft = Math.abs(row.middle - rows[0].middle) <= 1
+      const alignedRight = Math.abs(row.right - rows[0].right) <= 1
+      expect(alignedLeft || alignedRight, `offer columns align at ${width}px`).toBe(true)
       expect(row.width, `offer fills width at ${width}px`).toBeGreaterThanOrEqual(
         row.groupWidth - 2,
       )
@@ -310,7 +314,7 @@ test('free shipping uses each offer minimum total rather than the entered quanti
   })
   await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
   await page.waitForLoadState('networkidle')
-  const offers = page.getByRole('group', { name: 'Priser efter antal' })
+  const offers = page.getByRole('group', { name: 'Mængderabatter' })
   const three = offers.locator('label').filter({ hasText: 'Min. 3 Stk.' })
   const five = offers.locator('label').filter({ hasText: 'Min. 5 Stk.' })
   await expect(three).toContainText('samlet pris 548,97 DKK')
