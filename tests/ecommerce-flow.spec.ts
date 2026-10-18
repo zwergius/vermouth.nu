@@ -132,7 +132,7 @@ test('cart debounces quantity changes and unlocks controls after a failed update
     await expect(quantity).toBeDisabled()
     const totals = page.locator('[data-testid="cart-summary"]:visible').getByTestId('cart-totals')
     await expect(totals.locator('div').filter({ hasText: 'Subtotal' })).toContainText(
-      'DKK\u00a0819.00',
+      'DKK\u00a0807.00',
     )
     await expect(row.getByTestId('cart-unit-price').locator('li').first()).toHaveCSS(
       'font-weight',
@@ -146,7 +146,7 @@ test('cart debounces quantity changes and unlocks controls after a failed update
     expect(requests).toBe(1)
     await expect(quantity).toHaveValue(String(initialQuantity))
     await expect(totals.locator('div').filter({ hasText: 'Subtotal' })).toContainText(
-      'DKK\u00a0819.00',
+      'DKK\u00a0807.00',
     )
 
     await page.unroute('**/kurv?/addOrUpdateItemQuantity')
@@ -179,15 +179,15 @@ test('cart keeps consistent unit prices and three columns until narrow mobile', 
 
   try {
     await expect(row.getByRole('list', { name: 'Mængdepriser' })).toContainText(
-      'DKK\u00a0273.00/stk. v. min 3 SPAR 7%',
+      'DKK\u00a0269.00/stk. v. min 3 SPAR 18%',
     )
     await expect(row.getByRole('list', { name: 'Mængdepriser' })).toContainText(
-      'DKK\u00a0250.00/stk. v. min 6 SPAR 15%',
+      'DKK\u00a0249.00/stk. v. min 6 SPAR 24%',
     )
     for (const [count, unitPrice, threshold, percent] of [
-      [4, 273, 3, 7],
-      [3, 273, 3, 7],
-      [6, 250, 6, 15],
+      [4, 269, 3, 18],
+      [3, 269, 3, 18],
+      [6, 249, 6, 24],
     ] as const) {
       await quantity.fill(String(count))
       const [refresh] = await Promise.all([
@@ -198,7 +198,7 @@ test('cart keeps consistent unit prices and three columns until narrow mobile', 
       await expect(price).toContainText(
         `DKK\u00a0${unitPrice.toFixed(2)}/stk. v. min ${threshold} SPAR ${percent}%`,
       )
-      await expect(price.locator('li').last().locator('s')).toContainText('DKK\u00a0295.00/stk.')
+      await expect(price.locator('li').last().locator('s')).toContainText('DKK\u00a0329.00/stk.')
       await expect(price.locator('s')).toHaveCount(2)
       await expect(
         price
@@ -237,7 +237,7 @@ test('cart keeps consistent unit prices and three columns until narrow mobile', 
         .locator('div')
         .filter({ hasText: /^I alt/ })
         .locator('dd'),
-    ).toContainText('1,350.00')
+    ).toContainText('1,344.60')
 
     // A different size must not advertise the bottle's tiers.
     await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-3l-bag-in-box', {
@@ -254,7 +254,7 @@ test('cart keeps consistent unit prices and three columns until narrow mobile', 
 
     await quantity.fill('2')
     await quantity.press('Tab')
-    await expect(price).toContainText('DKK\u00a0295.00/stk.')
+    await expect(price).toContainText('DKK\u00a0329.00/stk.')
     await expect(price.locator('li').last().locator('s')).toHaveCount(0)
     await expect(price.locator('s')).toHaveCount(2)
     await expect(row.getByRole('list', { name: 'Mængdepriser' }).locator('li')).toHaveCount(3)
