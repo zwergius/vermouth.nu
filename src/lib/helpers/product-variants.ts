@@ -27,6 +27,7 @@ export type ProductPriceDisplay = {
   quantity: number
   unit: string
   unitAmount: number
+  totalAmount: number
   current: string
   originalUnitAmount?: number
   original?: string
@@ -260,11 +261,13 @@ export function getVariantPriceDisplay(
         ? toAmount(price?.original_amount)
         : null
     const isDiscounted = originalAmount !== null && originalAmount > unitAmount
+    const totalAmount = unitAmount * count
     displays.push({
       quantity: count,
       unit: formatPrice(unitAmount, currencyCode, locale),
       unitAmount,
-      current: formatPrice(unitAmount * count, currencyCode, locale),
+      totalAmount,
+      current: formatPrice(totalAmount, currencyCode, locale),
       originalUnitAmount: isDiscounted ? originalAmount : undefined,
       original: isDiscounted
         ? formatPrice(originalAmount * count, currencyCode, locale)

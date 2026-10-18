@@ -106,6 +106,9 @@
       )
       .at(-1),
   )
+  function hasFreeShipping(totalAmount: number) {
+    return region.currency_code === 'dkk' && totalAmount >= FREE_SHIPPING_MINIMUM_DKK
+  }
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -368,7 +371,7 @@
             <p data-testid="quantity-total-caption">
               samlet pris {quantityPriceDisplay.current}
             </p>
-            {#if region.currency_code === 'dkk' && quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity >= FREE_SHIPPING_MINIMUM_DKK}
+            {#if hasFreeShipping(quantityPriceDisplay.totalAmount)}
               <span
                 class="inline-flex items-center gap-1 whitespace-nowrap"
                 data-testid="quantity-free-shipping"
@@ -439,7 +442,7 @@
                           {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
                         </span>
                       {/if}
-                      {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
+                      {#if hasFreeShipping(offer.totalAmount)}
                         <span
                           class="quantity-offer-shipping hidden items-center gap-1 whitespace-nowrap text-[10px] font-normal text-black"
                           title="Gratis levering til pakkeshop"
