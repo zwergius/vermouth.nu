@@ -89,11 +89,14 @@ test('cart debounces quantity changes and unlocks controls after a failed update
   const increase = row.getByRole('button', { name: 'Increase quantity' })
   const decrease = row.getByRole('button', { name: 'Decrease quantity' })
   await quantity.fill('3')
-  const [refresh] = await Promise.all([
-    page.waitForResponse((response) => response.url().includes('/kurv/__data.json')),
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('?/addOrUpdateItemQuantity') &&
+        response.request().method() === 'POST',
+    ),
     quantity.press('Tab'),
   ])
-  await refresh.finished()
   await expect(quantity).toBeEnabled()
   const initialQuantity = 3
   let requests = 0
@@ -190,11 +193,15 @@ test('cart keeps consistent unit prices and three columns until narrow mobile', 
       [6, 249, 6, 24],
     ] as const) {
       await quantity.fill(String(count))
-      const [refresh] = await Promise.all([
-        page.waitForResponse((response) => response.url().includes('/kurv/__data.json')),
+      await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('?/addOrUpdateItemQuantity') &&
+            response.request().method() === 'POST',
+        ),
         quantity.press('Tab'),
       ])
-      await refresh.finished()
+      await expect(quantity).toBeEnabled()
       await expect(price).toContainText(
         `DKK\u00a0${unitPrice.toFixed(2)}/stk. v. min ${threshold} SPAR ${percent}%`,
       )
