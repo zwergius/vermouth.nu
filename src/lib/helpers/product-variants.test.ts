@@ -215,6 +215,7 @@ describe('variant price displays', () => {
     expect(displays[1]).toMatchObject({
       current: 'DKK\u00a0819.00',
       unit: 'DKK\u00a0273.00',
+      unitAmount: 273,
       savingsPercent: 7,
     })
     expect(displays[2].savingsPercent).toBe(15)

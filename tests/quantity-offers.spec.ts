@@ -71,33 +71,52 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   await expect(total).toContainText(/295,00\s*DKK/)
 })
 
-test('quantity totals fit product cards at mobile and desktop widths', async ({ page }) => {
+test('grid advertises the cheapest volume unit price at mobile and desktop widths', async ({
+  page,
+}) => {
   await page.goto('/shop')
   const card = page
     .locator('li.grid-item')
     .filter({ has: page.locator('a[href*="forzudo-rojo-100cl-bottle"]') })
-  const offers = card.getByRole('list', { name: 'Priser efter antal' })
-  await expect(offers).toContainText(/819,00\s*DKK/)
-  await expect(offers).toContainText(/1\.500,00\s*DKK/)
-  await expect(offers.locator('li').first().locator('s')).toHaveCount(0)
-  await expect(offers.locator('s')).toHaveCount(2)
+  const price = card.getByTestId('grid-price')
+  await expect(price).toContainText(/250,00\s*DKK/)
+  await expect(price.locator('s')).toContainText(/295,00\s*DKK/)
+  await expect(price).toContainText('Stykpris v/ 6 stk.')
+  await expect(price).not.toContainText(/819,00|1\.500,00/)
+  const savings = card.getByLabel('Spar op til 15%', { exact: true })
+  await expect(savings).toContainText(/SPAR\s*op til/)
+  await expect(savings).toContainText('15%')
+  const bubbleSizes: number[] = []
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
-    const fits = await card.evaluate((node) => {
-      const bounds = node.getBoundingClientRect()
-      return [...node.querySelectorAll('.quantity-offers li')].every((el) => {
+    const fits = await price.evaluate((node) => {
+      const bounds = node.closest('li.grid-item')!.getBoundingClientRect()
+      return [...node.querySelectorAll('p, span, s')].every((el) => {
         const rect = el.getBoundingClientRect()
         return (
           rect.left >= bounds.left && rect.right <= bounds.right && rect.bottom <= bounds.bottom
         )
       })
     })
-    expect(fits, `offers fit at ${width}px`).toBe(true)
-    const rowTops = await offers
-      .locator('li')
-      .evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)))
-    expect(new Set(rowTops).size, `tiers stay on one row at ${width}px`).toBe(1)
+    expect(fits, `price fits at ${width}px`).toBe(true)
+    const layout = await price.evaluate((node) => {
+      const card = node.closest('li.grid-item')!.getBoundingClientRect()
+      const current = node.querySelector('p')!.getBoundingClientRect()
+      const caption = node.querySelector('p:last-child')!.getBoundingClientRect()
+      return {
+        offset: Math.abs((current.left + current.right - card.left - card.right) / 2),
+        inline: caption.top < current.bottom && caption.bottom > current.top,
+      }
+    })
+    expect(layout.offset, `current price is centered at ${width}px`).toBeLessThanOrEqual(1)
+    expect(layout.inline, `caption stays inline at ${width}px`).toBe(true)
+    bubbleSizes.push(
+      await savings.evaluate(
+        (node) => node.querySelector<HTMLElement>('.discount-badge')!.offsetWidth,
+      ),
+    )
   }
+  expect(new Set(bubbleSizes).size, 'bubble scales with the card width').toBeGreaterThan(1)
 })
 
 for (const prices of [

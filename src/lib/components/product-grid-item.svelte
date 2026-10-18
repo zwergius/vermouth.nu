@@ -45,6 +45,14 @@
   )
   const priceDisplays = $derived(getVariantPriceDisplay(variant, currencyCode, locale))
   const priceDisplay = $derived(priceDisplays[0])
+  const advertisedPrice = $derived(
+    priceDisplays.reduce(
+      (lowest, price) => (price.unitAmount < lowest.unitAmount ? price : lowest),
+      priceDisplay,
+    ),
+  )
+  const hasVolumePrice = $derived(advertisedPrice?.quantity > 1)
+  const comparisonPrice = $derived(hasVolumePrice ? priceDisplay?.unit : advertisedPrice?.original)
   let isDiscountBadgeVisible = $state(false)
 
   function handleSelectItem() {
@@ -101,18 +109,28 @@
       <div class="overlay">
         <p class="btn whitespace-nowrap">KØB NU</p>
       </div>
-      {#if priceDisplay?.savingsPercent}
+      {#if advertisedPrice?.savingsPercent}
         <div
-          aria-label="Spar {priceDisplay.savingsPercent}%"
+          aria-label="Spar {hasVolumePrice ? 'op til ' : ''}{advertisedPrice.savingsPercent}%"
           class:discount-badge-visible={isDiscountBadgeVisible}
-          class="absolute left-1/2 top-1/2 z-10 -translate-x-32 -translate-y-48 md:-translate-x-48 md:-translate-y-32"
+          class="absolute right-0 top-2 z-10"
           {@attach revealDiscountBadge}
         >
           <div
-            class="discount-badge flex size-24 flex-col items-center justify-center gap-1 rounded-full bg-white p-3.5 text-center font-bold leading-none text-brand-red md:size-28 md:gap-3"
+            class="discount-badge flex flex-col items-center justify-center rounded-full bg-white text-center font-bold leading-none text-brand-red"
+            class:gap-0={hasVolumePrice}
+            class:gap-1={!hasVolumePrice}
+            class:md:gap-3={!hasVolumePrice}
           >
-            <span class="text-sm">SPAR</span>
-            <span class="text-base md:text-lg">{priceDisplay.savingsPercent}%</span>
+            <span class="text-[clamp(0.875rem,4.5cqi,1rem)]" class:leading-tight={hasVolumePrice}>
+              SPAR
+              {#if hasVolumePrice}
+                <span class="block text-[clamp(0.75rem,3.5cqi,0.875rem)] leading-tight">op til</span
+                >
+              {/if}
+            </span>
+            <span class="text-[clamp(1.25rem,6cqi,1.75rem)]">{advertisedPrice.savingsPercent}%</span
+            >
           </div>
         </div>
       {/if}
@@ -122,42 +140,39 @@
       <p class="mt-1 font-bold">
         {presentation.packaging} · {presentation.size} · {alcoholPercentage}
       </p>
-      <ul
-        class="quantity-offers mt-2 flex flex-nowrap [justify-content:safe_center] divide-x divide-brand-blue/25 overflow-x-auto"
-        class:-mx-6={priceDisplays.length > 1}
-        aria-label="Priser efter antal"
-      >
-        {#each priceDisplays as price (price.quantity)}
-          <li class="shrink-0 px-1.5 first:pl-0 last:pr-0">
-            {#if priceDisplays.length > 1}
-              <div>
-                {price.quantity}
-                {presentation.packaging === 'Flaske'
-                  ? price.quantity === 1
-                    ? 'flaske'
-                    : 'flasker'
-                  : 'stk.'}
-              </div>
+      {#if advertisedPrice}
+        <div
+          class="mt-2 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-baseline gap-x-2"
+          class:grid={hasVolumePrice}
+          class:flex={!hasVolumePrice}
+          class:justify-center={!hasVolumePrice}
+          data-testid="grid-price"
+        >
+          {#if comparisonPrice}
+            <s class="col-start-1 row-start-1 justify-self-end whitespace-nowrap opacity-70">
+              <span class="sr-only">Normalpris </span>{comparisonPrice}
+            </s>
+          {/if}
+          <p class="col-start-2 row-start-1 whitespace-nowrap font-bold">
+            {#if advertisedPrice.isDiscounted}
+              <span class="sr-only">Tilbudspris </span>
             {/if}
-            <p class="whitespace-nowrap font-bold">
-              {#if price.isDiscounted}
-                <span class="sr-only">Tilbudspris </span>
-              {/if}
-              {price.current}
-              {#if price.isDiscounted}
-                <span class="sr-only">Normalpris </span>
-                <s class="block font-normal opacity-70">{price.original}</s>
-              {/if}
+            {advertisedPrice.unit}
+          </p>
+          {#if hasVolumePrice}
+            <p class="col-start-3 row-start-1 justify-self-start whitespace-nowrap text-[0.625rem]">
+              Stykpris v/ {advertisedPrice.quantity} stk.
             </p>
-          </li>
-        {/each}
-      </ul>
+          {/if}
+        </div>
+      {/if}
     </div>
   </a>
 </li>
 
 <style lang="postcss">
   li.grid-item {
+    container-type: inline-size;
     --rotation-duration: 500ms;
     --filter-delay: 200ms;
     --filter-duration: 300ms;
@@ -176,7 +191,10 @@
   }
 
   .discount-badge {
-    rotate: 8deg;
+    width: clamp(4.5rem, 30cqi, 7rem);
+    height: clamp(4.5rem, 30cqi, 7rem);
+    padding: clamp(0.5rem, 3cqi, 0.875rem);
+    rotate: -8deg;
   }
 
   .discount-badge-visible .discount-badge {
@@ -185,19 +203,19 @@
 
   @keyframes discount-badge-rotate {
     0% {
-      rotate: 8deg;
+      rotate: -8deg;
     }
     55% {
-      rotate: -12deg;
+      rotate: 12deg;
     }
     100% {
-      rotate: -10deg;
+      rotate: 10deg;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .discount-badge {
-      rotate: -10deg;
+      rotate: 10deg;
     }
   }
 

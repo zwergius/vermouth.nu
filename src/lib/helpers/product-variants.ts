@@ -26,6 +26,7 @@ type CalculatedPrice = NonNullable<ProductVariant['calculated_price']> & {
 export type ProductPriceDisplay = {
   quantity: number
   unit: string
+  unitAmount: number
   current: string
   original?: string
   savingsPercent?: number
@@ -261,6 +262,7 @@ export function getVariantPriceDisplay(
     displays.push({
       quantity: count,
       unit: formatPrice(unitAmount, currencyCode, locale),
+      unitAmount,
       current: formatPrice(unitAmount * count, currencyCode, locale),
       original: isDiscounted
         ? formatPrice(originalAmount * count, currencyCode, locale)
