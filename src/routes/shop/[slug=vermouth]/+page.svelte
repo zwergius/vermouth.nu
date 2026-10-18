@@ -79,7 +79,7 @@
   const rankedOffers = $derived([...offers].sort((a, b) => a.unitAmount - b.unitAmount))
   const offerOptions = $derived(
     offers.map((offer) => ({
-      label: `Min ${offer.quantity} ${variantPresentation.packaging === 'Flaske' ? 'Flasker' : 'stk.'}`,
+      label: `Min. ${offer.quantity} Stk.`,
       value: String(offer.quantity),
     })),
   )
@@ -365,6 +365,13 @@
             >
           </p>
         {/if}
+        {#if quantityPriceDisplay}
+          <p class="basis-full text-xs" data-testid="quantity-total-caption">
+            samlet pris {formatAmount(
+              quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity,
+            )}
+          </p>
+        {/if}
       </div>
     {/if}
     <div class="mb-4">
@@ -404,7 +411,7 @@
                   {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
                   {@const rank = rankedOffers.indexOf(offer)}
                   <div
-                    class="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] items-center gap-x-2 sm:gap-x-4"
+                    class="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_5rem] items-center gap-x-2 sm:gap-x-4"
                   >
                     <div>
                       <p class="font-bold">{option.label}</p>
@@ -431,7 +438,9 @@
                         </span>
                       {/if}
                     </div>
-                    <p class="text-right font-bold text-brand-red">Spar {offer.savingsPercent}%</p>
+                    <p class="whitespace-nowrap text-right font-bold text-brand-red">
+                      Spar {offer.savingsPercent}%
+                    </p>
                   </div>
                 {/snippet}
               </RadioGroup>
