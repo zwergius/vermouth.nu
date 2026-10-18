@@ -28,6 +28,7 @@ export type ProductPriceDisplay = {
   unit: string
   unitAmount: number
   current: string
+  originalUnitAmount?: number
   original?: string
   savingsPercent?: number
   isDiscounted: boolean
@@ -264,6 +265,7 @@ export function getVariantPriceDisplay(
       unit: formatPrice(unitAmount, currencyCode, locale),
       unitAmount,
       current: formatPrice(unitAmount * count, currencyCode, locale),
+      originalUnitAmount: isDiscounted ? originalAmount : undefined,
       original: isDiscounted
         ? formatPrice(originalAmount * count, currencyCode, locale)
         : undefined,

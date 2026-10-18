@@ -2,7 +2,7 @@ import { expect, test } from './fixtures'
 
 test.use({ locale: 'da-DK' })
 
-test('ordinary Forzudo tiers preview total quantities and stay isolated by size', async ({
+test('ordinary Forzudo offers show unit prices and preserve quantity form actions', async ({
   page,
 }) => {
   // Offer selection is client-side; wait for initialization before interacting.
@@ -13,35 +13,42 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
       cartPosts.push(request.url())
     }
   })
-  const choices = page
-    .getByRole('list', { name: 'Priser efter antal' })
-    .filter({ has: page.locator('button') })
+  const choices = page.getByRole('group', { name: 'Priser efter antal' })
   const total = page.getByTestId('quantity-total')
   const quantity = page.getByRole('spinbutton', { name: 'Antal', exact: true })
   await expect(choices).toBeVisible()
+  const three = choices.locator('label').filter({ hasText: '3 Flasker' })
+  const six = choices.locator('label').filter({ hasText: '6 Flasker' })
+  await expect(three).toContainText(/273,00\s*DKK\/stk\./)
+  await expect(three).toContainText(/samlet pris 819,00\s*DKK/)
+  await expect(three).toContainText('Mest Populære')
+  await expect(three).toContainText('Spar 7%')
+  await expect(six).toContainText('Bedste Pris')
+  await expect(six).toContainText(/samlet pris 1\.500,00\s*DKK/)
+  await expect(six).toContainText('Spar 15%')
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
-  await expect(choices.getByRole('button', { name: /^Køb 1 for/ })).toHaveCount(0)
-  await choices.getByRole('button', { name: 'Køb 3 for 273,00 DKK/stk' }).click()
+  await expect(choices.getByRole('radio', { name: /^1 Flaske/ })).toHaveCount(0)
+  await choices.getByRole('radio', { name: /3 Flasker/ }).check()
   await expect(quantity).toHaveValue('3')
   expect(cartPosts).toEqual([])
-  await expect(total).toContainText(/819,00\s*DKK/)
-  await expect(total.locator('s')).toContainText(/885,00\s*DKK/)
+  await expect(total).toContainText(/273,00\s*DKK\/stk\./)
+  await expect(total.locator('s')).toContainText(/295,00\s*DKK/)
   await expect(page.getByTestId('quantity-savings')).toHaveText('Spar 7%')
   await quantity.fill('4')
-  await expect(total).toContainText(/1\.092,00\s*DKK/)
-  await choices.getByRole('button', { name: 'Køb 6 for 250,00 DKK/stk' }).click()
+  await expect(total).toContainText(/273,00\s*DKK\/stk\./)
+  await choices.getByRole('radio', { name: /6 Flasker/ }).check()
   await expect(quantity).toHaveValue('6')
-  await expect(total.locator('s')).toContainText(/1\.770,00\s*DKK/)
+  await expect(total.locator('s')).toContainText(/295,00\s*DKK/)
   await expect(page.getByTestId('quantity-savings')).toHaveText('Spar 15%')
   await quantity.fill('2')
-  await expect(total).toContainText(/590,00\s*DKK/)
+  await expect(total).toContainText(/295,00\s*DKK\/stk\./)
   await expect(total.locator('s')).toHaveCount(0)
   await expect(page.getByTestId('quantity-savings')).toHaveCount(0)
 
   expect(cartPosts).toEqual([])
 
   // Choosing an offer must not submit; validate the explicit action payload without mutating Medusa.
-  await choices.getByRole('button', { name: /Køb 6 for/ }).click()
+  await choices.getByRole('radio', { name: /6 Flasker/ }).check()
   let submittedQuantity: string | null = null
   await page.route('**/kurv?**', async (route) => {
     if (route.request().method() !== 'POST') return route.continue()
@@ -66,7 +73,10 @@ test('ordinary Forzudo tiers preview total quantities and stay isolated by size'
   await expect(total).toContainText(/750,00\s*DKK/)
   await expect(choices).toHaveCount(0)
   await expect(quantity).toHaveValue('1')
-  await page.getByRole('radio', { name: /Flaske/ }).check()
+  await page
+    .getByRole('group', { name: 'Vælg format' })
+    .getByRole('radio', { name: /Flaske/ })
+    .check()
   await expect(quantity).toHaveValue('1')
   await expect(total).toContainText(/295,00\s*DKK/)
 })
@@ -148,7 +158,7 @@ for (const prices of [
     await expect(total).toContainText(/800,00\s*DKK/)
     await page.getByRole('spinbutton', { name: 'Antal', exact: true }).fill('2')
     await expect(total).toContainText(/800,00\s*DKK/)
-    await expect(total).toContainText('pr. stk.')
+    await expect(total).toContainText('DKK/stk.')
     await expect(total).not.toContainText(/1\.600/)
   })
 }
@@ -174,7 +184,91 @@ test('Bag-in-Box quantity tiers use a neutral quantity label', async ({ page }) 
   })
   await page.locator('a[href*="forzudo-rojo-3l-bag-in-box"]').first().click()
   await page.waitForLoadState('networkidle')
-  await page.getByRole('button', { name: 'Køb 3 for 700,00 DKK/stk' }).click()
+  await page
+    .getByRole('group', { name: 'Priser efter antal' })
+    .getByRole('radio', { name: /3 stk/ })
+    .check()
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('3')
-  await expect(page.getByTestId('quantity-total')).toContainText(/2\.100,00\s*DKK/)
+  await expect(page.getByTestId('quantity-total')).toContainText(/700,00\s*DKK\/stk\./)
+})
+
+test('offer badges follow unit-price ranking and radio keys select minimum quantities', async ({
+  page,
+}) => {
+  await page.goto('/shop')
+  await page.route('**/store/products?**', async (route) => {
+    const response = await route.fetch()
+    const body = await response.json()
+    for (const product of body.products) {
+      for (const variant of product.variants) {
+        if (variant.sku === 'forzudo-rojo-100cl-bottle') {
+          variant.prices = [
+            { amount: 295, currency_code: 'dkk', rules_count: 0 },
+            { amount: 190, min_quantity: 3, max_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+            { amount: 220, min_quantity: 6, max_quantity: 8, currency_code: 'dkk', rules_count: 0 },
+            { amount: 180, min_quantity: 9, currency_code: 'dkk', rules_count: 0 },
+          ]
+        }
+      }
+    }
+    await route.fulfill({ json: body })
+  })
+  await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
+  await page.waitForLoadState('networkidle')
+  const offers = page.getByRole('group', { name: 'Priser efter antal' })
+  const three = offers.locator('label').filter({ hasText: '3 Flasker' })
+  const six = offers.locator('label').filter({ hasText: '6 Flasker' })
+  const nine = offers.locator('label').filter({ hasText: '9 Flasker' })
+  await expect(three).toContainText('Mest Populære')
+  await expect(six).not.toContainText(/Bedste Pris|Mest Populære/)
+  await expect(nine).toContainText('Bedste Pris')
+  await expect(nine).toContainText(/samlet pris 1\.620,00 DKK/)
+  await three.getByRole('radio').check()
+  await three.getByRole('radio').press('ArrowRight')
+  await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')
+  await expect(page.getByTestId('quantity-total')).toContainText('220,00 DKK/stk.')
+  for (const width of [320, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 })
+    const fits = await offers.evaluate((node) =>
+      [...node.querySelectorAll('label p, label span')].every((el) => {
+        const rect = el.getBoundingClientRect()
+        return rect.left >= 0 && rect.right <= document.documentElement.clientWidth
+      }),
+    )
+    expect(fits, `offer text fits at ${width}px`).toBe(true)
+  }
+})
+
+test('free shipping uses each offer minimum total rather than the entered quantity', async ({
+  page,
+}) => {
+  await page.goto('/shop')
+  await page.route('**/store/products?**', async (route) => {
+    const response = await route.fetch()
+    const body = await response.json()
+    for (const product of body.products) {
+      for (const variant of product.variants) {
+        if (variant.sku === 'forzudo-rojo-100cl-bottle') {
+          variant.prices = [
+            { amount: 295, currency_code: 'dkk', rules_count: 0 },
+            { amount: 183, min_quantity: 3, max_quantity: 4, currency_code: 'dkk', rules_count: 0 },
+            { amount: 110, min_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+          ]
+        }
+      }
+    }
+    await route.fulfill({ json: body })
+  })
+  await page.locator('a[href*="forzudo-rojo-100cl-bottle"]').first().click()
+  await page.waitForLoadState('networkidle')
+  const offers = page.getByRole('group', { name: 'Priser efter antal' })
+  const three = offers.locator('label').filter({ hasText: '3 Flasker' })
+  const five = offers.locator('label').filter({ hasText: '5 Flasker' })
+  await expect(three).toContainText('samlet pris 549,00 DKK')
+  await expect(three).not.toContainText('Fri Fragt')
+  await expect(five).toContainText('samlet pris 550,00 DKK')
+  await expect(five).toContainText('Fri Fragt')
+  await page.getByRole('spinbutton', { name: 'Antal', exact: true }).fill('10')
+  await expect(three).not.toContainText('Fri Fragt')
+  await expect(five).toContainText('samlet pris 550,00 DKK')
 })

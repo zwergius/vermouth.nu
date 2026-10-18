@@ -36,6 +36,7 @@
   const { data }: PageProps = $props()
 
   const REVIEWS_PAGE_SIZE = 2
+  const FREE_SHIPPING_MINIMUM_DKK = 550
 
   const red = $derived(getVariantGridItems(data.categories.red))
   const white = $derived(getVariantGridItems(data.categories.white))
@@ -74,6 +75,13 @@
   )
   const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const offers = $derived(priceDisplays.slice(1))
+  const rankedOffers = $derived([...offers].sort((a, b) => a.unitAmount - b.unitAmount))
+  const offerOptions = $derived(
+    offers.map((offer) => ({
+      label: `${offer.quantity} ${variantPresentation.packaging === 'Flaske' ? 'Flasker' : 'stk.'}`,
+      value: String(offer.quantity),
+    })),
+  )
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
   let quantity = $derived.by(() => {
     const variantId = variant.id
@@ -83,6 +91,22 @@
     getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
   )
   const priceDisplay = $derived(quantityPriceDisplay ?? priceDisplays[0])
+  const selectedOffer = $derived(
+    offers
+      .filter(
+        (offer) => offer.quantity <= quantity && offer.unitAmount === priceDisplay?.unitAmount,
+      )
+      .at(-1),
+  )
+  const amountFormatter = $derived(
+    new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }),
+  )
+  function formatAmount(amount: number) {
+    return `${amountFormatter.format(amount)} ${region.currency_code.toUpperCase()}`
+  }
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -330,13 +354,14 @@
         aria-atomic="true"
         data-testid="quantity-total"
       >
-        <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
-        {#if !quantityPriceDisplay}
-          <span class="text-sm">pr. stk.</span>
-        {/if}
+        <p class="whitespace-nowrap text-base font-bold">
+          {formatAmount(priceDisplay.unitAmount)}/stk.
+        </p>
         {#if priceDisplay.isDiscounted}
           <p class="whitespace-nowrap text-sm opacity-70">
-            <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>
+            <span class="sr-only">Normalpris </span><s
+              >{formatAmount(priceDisplay.originalUnitAmount!)}</s
+            >
           </p>
         {/if}
       </div>
@@ -363,23 +388,45 @@
             {/key}
           </div>
           {#if offers.length}
-            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
-              {#each offers as offer (offer.quantity)}
-                <li>
-                  <button
-                    type="button"
-                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
-                    aria-pressed={quantity === offer.quantity}
-                    disabled={purchasesPaused || isFormSubmitting}
-                    onclick={() => {
-                      quantity = offer.quantity
-                    }}
-                  >
-                    Køb {offer.quantity} for {offer.unit}/stk
-                  </button>
-                </li>
-              {/each}
-            </ul>
+            <div class="mt-4">
+              <RadioGroup
+                groupLabel="Priser efter antal"
+                layout="responsive-grid"
+                name="volume-offer"
+                options={offerOptions}
+                selected={selectedOffer ? String(selectedOffer.quantity) : undefined}
+                disabled={purchasesPaused || isFormSubmitting}
+                onChange={(event) => {
+                  quantity = Number(event.currentTarget.value)
+                }}
+              >
+                {#snippet optionContent(option)}
+                  {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
+                  {@const rank = rankedOffers.indexOf(offer)}
+                  <div class="mb-2 flex flex-wrap gap-1.5">
+                    {#if rank < 2}
+                      <span
+                        class="rounded-full bg-brand-blue px-2 py-0.5 text-[10px] font-bold text-white"
+                      >
+                        {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
+                      </span>
+                    {/if}
+                    {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
+                      <span
+                        class="rounded-full border border-brand-blue px-2 py-0.5 text-[10px] font-bold text-brand-blue"
+                        title="Gratis levering til pakkeshop">Fri Fragt</span
+                      >
+                    {/if}
+                  </div>
+                  <p class="font-bold">{option.label}</p>
+                  <p class="font-bold">{formatAmount(offer.unitAmount)}/stk.</p>
+                  <p class="text-[11px]">
+                    samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
+                  </p>
+                  <p class="mt-2 font-bold text-brand-red">Spar {offer.savingsPercent}%</p>
+                {/snippet}
+              </RadioGroup>
+            </div>
           {/if}
         </fieldset>
       </Form>
