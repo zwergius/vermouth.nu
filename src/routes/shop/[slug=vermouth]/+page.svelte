@@ -36,7 +36,7 @@
   const { data }: PageProps = $props()
 
   const REVIEWS_PAGE_SIZE = 2
-  const FREE_SHIPPING_MINIMUM_DKK = 550
+  const FREE_SHIPPING_MINIMUM_DKK = 549
 
   const red = $derived(getVariantGridItems(data.categories.red))
   const white = $derived(getVariantGridItems(data.categories.white))

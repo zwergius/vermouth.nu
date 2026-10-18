@@ -251,8 +251,14 @@ test('free shipping uses each offer minimum total rather than the entered quanti
         if (variant.sku === 'forzudo-rojo-100cl-bottle') {
           variant.prices = [
             { amount: 295, currency_code: 'dkk', rules_count: 0 },
-            { amount: 183, min_quantity: 3, max_quantity: 4, currency_code: 'dkk', rules_count: 0 },
-            { amount: 110, min_quantity: 5, currency_code: 'dkk', rules_count: 0 },
+            {
+              amount: 182.99,
+              min_quantity: 3,
+              max_quantity: 4,
+              currency_code: 'dkk',
+              rules_count: 0,
+            },
+            { amount: 109.8, min_quantity: 5, currency_code: 'dkk', rules_count: 0 },
           ]
         }
       }
@@ -264,11 +270,11 @@ test('free shipping uses each offer minimum total rather than the entered quanti
   const offers = page.getByRole('group', { name: 'Priser efter antal' })
   const three = offers.locator('label').filter({ hasText: '3 Flasker' })
   const five = offers.locator('label').filter({ hasText: '5 Flasker' })
-  await expect(three).toContainText('samlet pris 549,00 DKK')
+  await expect(three).toContainText('samlet pris 548,97 DKK')
   await expect(three).not.toContainText('Fri Fragt')
-  await expect(five).toContainText('samlet pris 550,00 DKK')
+  await expect(five).toContainText('samlet pris 549,00 DKK')
   await expect(five).toContainText('Fri Fragt')
   await page.getByRole('spinbutton', { name: 'Antal', exact: true }).fill('10')
   await expect(three).not.toContainText('Fri Fragt')
-  await expect(five).toContainText('samlet pris 550,00 DKK')
+  await expect(five).toContainText('samlet pris 549,00 DKK')
 })
