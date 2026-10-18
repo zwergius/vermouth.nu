@@ -440,7 +440,7 @@
                     >
                       {#if rank < 2}
                         <span
-                          class="inline-block whitespace-nowrap rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
+                          class="quantity-offer-badge inline-block whitespace-nowrap rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
                         >
                           {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
                         </span>
@@ -676,6 +676,10 @@
     container-type: inline-size;
   }
 
+  .quantity-offer-badge {
+    translate: 0.5rem -0.5rem;
+  }
+
   @container (min-width: 360px) {
     .quantity-offer-shipping {
       display: inline-flex;
@@ -694,6 +698,10 @@
 
     .quantity-offer-badges {
       align-items: flex-start;
+    }
+
+    .quantity-offer-badge {
+      translate: none;
     }
   }
 
