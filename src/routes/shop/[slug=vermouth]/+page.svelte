@@ -426,7 +426,7 @@
                         {offer.unit}/stk.
                       </p>
                       <p class="whitespace-nowrap text-[11px]">
-                        samlet pris v. {offer.quantity}stk. {offer.current}
+                        samlet pris v. {offer.quantity} stk. {offer.current}
                       </p>
                     </div>
                     <div
