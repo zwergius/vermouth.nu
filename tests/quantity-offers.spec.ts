@@ -107,6 +107,7 @@ test('grid advertises the cheapest volume unit price at mobile and desktop width
   await expect(savings).toContainText(/SPAR\s*op til/)
   await expect(savings).toContainText('15%')
   const bubbleSizes: number[] = []
+  await page.evaluate(() => document.fonts.ready)
   for (const width of [319, 320, 390, 400, 499, 500, 510, 551, 552, 560, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await price.evaluate((node) => {
@@ -240,6 +241,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   await three.getByRole('radio').press('ArrowRight')
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')
   await expect(page.getByTestId('quantity-total')).toContainText('220,00 DKK/stk.')
+  await page.evaluate(() => document.fonts.ready)
   for (const width of [319, 320, 390, 400, 499, 500, 510, 551, 552, 560, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await offers.evaluate((node) =>

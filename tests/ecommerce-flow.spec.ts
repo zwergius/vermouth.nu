@@ -6,8 +6,10 @@ const productPath = '/shop/forzudo-rojo'
 
 async function addProductToCart(page: Page) {
   await page.goto(productPath, { waitUntil: 'domcontentloaded' })
+  const quantity = await page.getByRole('spinbutton', { name: 'Antal', exact: true }).inputValue()
   await page.getByRole('button', { name: 'LÆG I KURV' }).click()
   await expect(page.getByRole('link', { name: /kurv 1/ })).toBeVisible()
+  return quantity
 }
 
 async function fillCheckoutForm(page: Page) {
@@ -24,14 +26,14 @@ async function fillCheckoutForm(page: Page) {
 }
 
 test('customer can add and remove a product from the cart', async ({ page }) => {
-  await addProductToCart(page)
+  const quantity = await addProductToCart(page)
   await page.goto('/kurv', { waitUntil: 'domcontentloaded' })
 
   const productRow = page.locator('li').filter({ hasText: productName }).first()
   await expect(productRow).toBeVisible()
   await expect(productRow).toContainText('Flaske — 100 cl')
   await expect(productRow.getByRole('img', { name: 'Forzudo Rojo – Flaske, 100 cl' })).toBeVisible()
-  await expect(productRow.locator('input[name="quantity"]')).toHaveValue('1')
+  await expect(productRow.locator('input[name="quantity"]')).toHaveValue(quantity)
 
   const selectedShippingMethod = page
     .getByRole('group', { name: 'Leveringsmetode', exact: true })

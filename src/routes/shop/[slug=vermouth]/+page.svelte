@@ -685,7 +685,7 @@
 
   @container (min-width: 520px) {
     .quantity-offer-content {
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 5rem;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 5rem;
     }
 
     .quantity-offer-badges,
