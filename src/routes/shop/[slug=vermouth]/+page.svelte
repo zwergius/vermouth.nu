@@ -88,7 +88,11 @@
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
   let quantity = $derived.by(() => {
     const variantId = variant.id
-    return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
+    return (
+      cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ??
+      rankedOffers[0]?.quantity ??
+      1
+    )
   })
   const quantityPriceDisplay = $derived(
     getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
