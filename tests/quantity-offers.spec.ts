@@ -20,12 +20,12 @@ test('ordinary Forzudo offers show unit prices and preserve quantity form action
   const three = choices.locator('label').filter({ hasText: 'Min. 3 Stk.' })
   const six = choices.locator('label').filter({ hasText: 'Min. 6 Stk.' })
   await expect(three).toContainText(/273,00\s*DKK\/stk\./)
-  await expect(three).toContainText(/samlet pris 819,00\s*DKK/)
+  await expect(three).toContainText(/samlet pris v\. 3stk\. 819,00\s*DKK/)
   await expect(three).toContainText('Mest Populære')
   await expect(three).toContainText('Min. 3 Stk.')
   await expect(three).toContainText('Spar 7%')
   await expect(six).toContainText('Bedste Pris')
-  await expect(six).toContainText(/samlet pris 1\.500,00\s*DKK/)
+  await expect(six).toContainText(/samlet pris v\. 6stk\. 1\.500,00\s*DKK/)
   await expect(six).toContainText('Spar 15%')
   await expect(quantity).toHaveValue('6')
   await expect(six.getByRole('radio')).toBeChecked()
@@ -107,7 +107,7 @@ test('grid advertises the cheapest volume unit price at mobile and desktop width
   await expect(savings).toContainText(/SPAR\s*op til/)
   await expect(savings).toContainText('15%')
   const bubbleSizes: number[] = []
-  for (const width of [319, 320, 390, 400, 499, 500, 510, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 400, 499, 500, 510, 551, 552, 560, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await price.evaluate((node) => {
       const bounds = node.closest('li.grid-item')!.getBoundingClientRect()
@@ -235,12 +235,12 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   await expect(nine).toContainText('Bedste Pris')
   await expect(nine.getByRole('radio')).toBeChecked()
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('9')
-  await expect(nine).toContainText(/samlet pris 1\.620,00\s*DKK/)
+  await expect(nine).toContainText(/samlet pris v\. 9stk\. 1\.620,00\s*DKK/)
   await three.getByRole('radio').check()
   await three.getByRole('radio').press('ArrowRight')
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')
   await expect(page.getByTestId('quantity-total')).toContainText('220,00 DKK/stk.')
-  for (const width of [319, 320, 390, 400, 499, 500, 510, 768, 1024, 1440]) {
+  for (const width of [319, 320, 390, 400, 499, 500, 510, 551, 552, 560, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 1000 })
     const fits = await offers.evaluate((node) =>
       [...node.querySelectorAll('label p, label span')].every((el) => {
@@ -321,11 +321,11 @@ test('free shipping uses each offer minimum total rather than the entered quanti
   const offers = page.getByRole('group', { name: 'Mængderabatter' })
   const three = offers.locator('label').filter({ hasText: 'Min. 3 Stk.' })
   const five = offers.locator('label').filter({ hasText: 'Min. 5 Stk.' })
-  await expect(three).toContainText('samlet pris 548,97 DKK')
+  await expect(three).toContainText('samlet pris v. 3stk. 548,97 DKK')
   await expect(three).not.toContainText('Fri Fragt')
-  await expect(five).toContainText('samlet pris 549,00 DKK')
+  await expect(five).toContainText('samlet pris v. 5stk. 549,00 DKK')
   await expect(five).toContainText('Fri Fragt')
   await page.getByRole('spinbutton', { name: 'Antal', exact: true }).fill('10')
   await expect(three).not.toContainText('Fri Fragt')
-  await expect(five).toContainText('samlet pris 549,00 DKK')
+  await expect(five).toContainText('samlet pris v. 5stk. 549,00 DKK')
 })

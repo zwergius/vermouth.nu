@@ -426,7 +426,7 @@
                         {offer.unit}/stk.
                       </p>
                       <p class="whitespace-nowrap text-[11px]">
-                        samlet pris {offer.current}
+                        samlet pris v. {offer.quantity}stk. {offer.current}
                       </p>
                     </div>
                     <div
@@ -680,7 +680,7 @@
     }
   }
 
-  @container (min-width: 460px) {
+  @container (min-width: 520px) {
     .quantity-offer-content {
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 5rem;
     }
