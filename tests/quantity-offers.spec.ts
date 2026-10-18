@@ -22,6 +22,7 @@ test('ordinary Forzudo offers show unit prices and preserve quantity form action
   await expect(three).toContainText(/273,00\s*DKK\/stk\./)
   await expect(three).toContainText(/samlet pris 819,00\s*DKK/)
   await expect(three).toContainText('Mest Populære')
+  await expect(three).toContainText('Min 3 Flasker')
   await expect(three).toContainText('Spar 7%')
   await expect(six).toContainText('Bedste Pris')
   await expect(six).toContainText(/samlet pris 1\.500,00\s*DKK/)
@@ -220,6 +221,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   const six = offers.locator('label').filter({ hasText: '6 Flasker' })
   const nine = offers.locator('label').filter({ hasText: '9 Flasker' })
   await expect(three).toContainText('Mest Populære')
+  await expect(three).toContainText('Min 3 Flasker')
   await expect(six).not.toContainText(/Bedste Pris|Mest Populære/)
   await expect(nine).toContainText('Bedste Pris')
   await expect(nine).toContainText(/samlet pris 1\.620,00 DKK/)
@@ -232,10 +234,26 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
     const fits = await offers.evaluate((node) =>
       [...node.querySelectorAll('label p, label span')].every((el) => {
         const rect = el.getBoundingClientRect()
-        return rect.left >= 0 && rect.right <= document.documentElement.clientWidth
+        return (
+          rect.left >= 0 &&
+          rect.right <= document.documentElement.clientWidth &&
+          el.scrollWidth <= el.clientWidth
+        )
       }),
     )
     expect(fits, `offer text fits at ${width}px`).toBe(true)
+    const rows = await offers.evaluate((node) => {
+      const group = node.getBoundingClientRect()
+      return [...node.querySelectorAll('label')].map((label) => {
+        const bounds = label.getBoundingClientRect()
+        return { width: bounds.width, groupWidth: group.width }
+      })
+    })
+    for (const row of rows) {
+      expect(row.width, `offer fills width at ${width}px`).toBeGreaterThanOrEqual(
+        row.groupWidth - 2,
+      )
+    }
   }
 })
 

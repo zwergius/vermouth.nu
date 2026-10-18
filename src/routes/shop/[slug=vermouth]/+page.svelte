@@ -1,4 +1,5 @@
 <script lang="ts">
+  import truckIcon from '$lib/assets/truck.svg'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -78,7 +79,7 @@
   const rankedOffers = $derived([...offers].sort((a, b) => a.unitAmount - b.unitAmount))
   const offerOptions = $derived(
     offers.map((offer) => ({
-      label: `${offer.quantity} ${variantPresentation.packaging === 'Flaske' ? 'Flasker' : 'stk.'}`,
+      label: `Min ${offer.quantity} ${variantPresentation.packaging === 'Flaske' ? 'Flasker' : 'stk.'}`,
       value: String(offer.quantity),
     })),
   )
@@ -391,7 +392,6 @@
             <div class="mt-4">
               <RadioGroup
                 groupLabel="Priser efter antal"
-                layout="responsive-grid"
                 name="volume-offer"
                 options={offerOptions}
                 selected={selectedOffer ? String(selectedOffer.quantity) : undefined}
@@ -403,27 +403,36 @@
                 {#snippet optionContent(option)}
                   {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
                   {@const rank = rankedOffers.indexOf(offer)}
-                  <div class="mb-2 flex flex-wrap gap-1.5">
-                    {#if rank < 2}
-                      <span
-                        class="rounded-full bg-brand-blue px-2 py-0.5 text-[10px] font-bold text-white"
-                      >
-                        {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
-                      </span>
-                    {/if}
-                    {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
-                      <span
-                        class="rounded-full border border-brand-blue px-2 py-0.5 text-[10px] font-bold text-brand-blue"
-                        title="Gratis levering til pakkeshop">Fri Fragt</span
-                      >
-                    {/if}
+                  <div
+                    class="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] items-center gap-x-2 sm:gap-x-4"
+                  >
+                    <div>
+                      <p class="font-bold">{option.label}</p>
+                      <p class="font-bold">{formatAmount(offer.unitAmount)}/stk.</p>
+                      <p class="text-[11px]">
+                        samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
+                      </p>
+                    </div>
+                    <div class="flex flex-col items-start gap-1">
+                      {#if rank < 2}
+                        <span
+                          class="inline-block rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
+                        >
+                          {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
+                        </span>
+                      {/if}
+                      {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
+                        <span
+                          class="inline-flex items-center gap-1 text-[10px] font-bold text-brand-blue"
+                          title="Gratis levering til pakkeshop"
+                        >
+                          <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
+                          Fri Fragt
+                        </span>
+                      {/if}
+                    </div>
+                    <p class="text-right font-bold text-brand-red">Spar {offer.savingsPercent}%</p>
                   </div>
-                  <p class="font-bold">{option.label}</p>
-                  <p class="font-bold">{formatAmount(offer.unitAmount)}/stk.</p>
-                  <p class="text-[11px]">
-                    samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
-                  </p>
-                  <p class="mt-2 font-bold text-brand-red">Spar {offer.savingsPercent}%</p>
                 {/snippet}
               </RadioGroup>
             </div>

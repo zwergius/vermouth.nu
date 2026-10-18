@@ -58,7 +58,12 @@
   }
 </script>
 
-<fieldset class:responsive-grid={layout === 'responsive-grid'} class="relative rounded" {disabled}>
+<fieldset
+  class:responsive-grid={layout === 'responsive-grid'}
+  class:custom-content={Boolean(optionContent)}
+  class="relative rounded"
+  {disabled}
+>
   <legend class="text-sm font-bold mb-4">
     <span class="">{groupLabel}</span>
   </legend>
@@ -84,7 +89,7 @@
             {value}
             {...restProps}
           />
-          <div class="text-xs leading-normal flex-1">
+          <div class="text-xs leading-normal flex-1" class:min-w-0={Boolean(optionContent)}>
             {#if optionContent}
               {@render optionContent(option)}
             {:else}
@@ -121,7 +126,8 @@
 </fieldset>
 
 <style>
-  fieldset.responsive-grid label {
+  fieldset.responsive-grid label,
+  fieldset.custom-content label {
     padding-inline-end: 1rem;
   }
 
