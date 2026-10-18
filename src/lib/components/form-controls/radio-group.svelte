@@ -131,6 +131,10 @@
     padding-inline-end: 1rem;
   }
 
+  fieldset.custom-content label {
+    padding-block: 0.75rem;
+  }
+
   @media (min-width: 1024px) {
     fieldset.responsive-grid ul {
       display: grid;

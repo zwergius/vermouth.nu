@@ -413,7 +413,7 @@
                         samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
                       </p>
                     </div>
-                    <div class="flex flex-col items-start gap-1">
+                    <div class="flex flex-col items-start justify-between gap-1 self-stretch">
                       {#if rank < 2}
                         <span
                           class="inline-block rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
@@ -423,7 +423,7 @@
                       {/if}
                       {#if region.currency_code === 'dkk' && offer.unitAmount * offer.quantity >= FREE_SHIPPING_MINIMUM_DKK}
                         <span
-                          class="inline-flex items-center gap-1 text-[10px] font-bold text-brand-blue"
+                          class="inline-flex items-center gap-1 text-[10px] font-normal text-black"
                           title="Gratis levering til pakkeshop"
                         >
                           <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
