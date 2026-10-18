@@ -235,7 +235,7 @@ test('offer badges follow unit-price ranking and radio keys select minimum quant
   await expect(nine).toContainText('Bedste Pris')
   await expect(nine.getByRole('radio')).toBeChecked()
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('9')
-  await expect(nine).toContainText(/samlet pris 1\.620,00 DKK/)
+  await expect(nine).toContainText(/samlet pris 1\.620,00\s*DKK/)
   await three.getByRole('radio').check()
   await three.getByRole('radio').press('ArrowRight')
   await expect(page.getByRole('spinbutton', { name: 'Antal', exact: true })).toHaveValue('6')

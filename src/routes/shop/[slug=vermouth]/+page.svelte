@@ -26,6 +26,7 @@
     type EligibleProductVariant,
   } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
+  import { formatPrice } from '$lib/helpers/numbers'
   import { Form, QuantitySelector, RadioGroup } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
@@ -105,15 +106,6 @@
       )
       .at(-1),
   )
-  const amountFormatter = $derived(
-    new Intl.NumberFormat(locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }),
-  )
-  function formatAmount(amount: number) {
-    return `${amountFormatter.format(amount)} ${region.currency_code.toUpperCase()}`
-  }
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -362,21 +354,19 @@
         data-testid="quantity-total"
       >
         <p class="whitespace-nowrap text-base font-bold">
-          {formatAmount(priceDisplay.unitAmount)}/stk.
+          {priceDisplay.unit}/stk.
         </p>
         {#if priceDisplay.isDiscounted}
           <p class="whitespace-nowrap text-sm opacity-70">
             <span class="sr-only">Normalpris </span><s
-              >{formatAmount(priceDisplay.originalUnitAmount!)}</s
+              >{formatPrice(priceDisplay.originalUnitAmount!, region.currency_code, locale)}</s
             >
           </p>
         {/if}
         {#if quantityPriceDisplay}
           <div class="flex basis-full flex-wrap items-center gap-x-3 gap-y-1 text-xs">
             <p data-testid="quantity-total-caption">
-              samlet pris {formatAmount(
-                quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity,
-              )}
+              samlet pris {quantityPriceDisplay.current}
             </p>
             {#if region.currency_code === 'dkk' && quantityPriceDisplay.unitAmount * quantityPriceDisplay.quantity >= FREE_SHIPPING_MINIMUM_DKK}
               <span
@@ -433,10 +423,10 @@
                     <div class="min-w-0">
                       <p class="whitespace-nowrap font-bold">{option.label}</p>
                       <p class="whitespace-nowrap font-bold">
-                        {formatAmount(offer.unitAmount)}/stk.
+                        {offer.unit}/stk.
                       </p>
                       <p class="whitespace-nowrap text-[11px]">
-                        samlet pris {formatAmount(offer.unitAmount * offer.quantity)}
+                        samlet pris {offer.current}
                       </p>
                     </div>
                     <div
