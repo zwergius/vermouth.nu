@@ -79,6 +79,211 @@ test('customer can apply a discount code in the cart summary', async ({ page }) 
   await expect(totals.locator('div').filter({ hasText: 'Rabat' })).toBeVisible()
 })
 
+test('cart debounces quantity changes and unlocks controls after a failed update', async ({
+  page,
+}) => {
+  await addProductToCart(page)
+  await page.goto('/kurv', { waitUntil: 'networkidle' })
+  const row = page.locator('li.cart-item:visible').filter({ hasText: productName })
+  const quantity = row.locator('input[name="quantity"]')
+  const increase = row.getByRole('button', { name: 'Increase quantity' })
+  const decrease = row.getByRole('button', { name: 'Decrease quantity' })
+  await quantity.fill('3')
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().includes('?/addOrUpdateItemQuantity') &&
+        response.request().method() === 'POST',
+    ),
+    quantity.press('Tab'),
+  ])
+  await expect(quantity).toBeEnabled()
+  const initialQuantity = 3
+  let requests = 0
+  let submittedQuantity: string | null = null
+  let releaseRequest!: () => void
+  const heldRequest = new Promise<void>((resolve) => {
+    releaseRequest = resolve
+  })
+
+  await page.route('**/kurv?/addOrUpdateItemQuantity', async (route) => {
+    requests++
+    const request = route.request()
+    const body = new Request(request.url(), {
+      method: 'POST',
+      headers: { 'content-type': request.headers()['content-type'] },
+      body: request.postDataBuffer(),
+    })
+    submittedQuantity = String((await body.formData()).get('quantity'))
+    await heldRequest
+    await route.fulfill({
+      status: 400,
+      contentType: 'application/json',
+      body: JSON.stringify({ type: 'failure', status: 400, data: null }),
+    })
+  })
+
+  try {
+    await increase.click()
+    await increase.click()
+    await increase.click()
+    await expect(quantity).toHaveValue(String(initialQuantity + 3))
+    await expect.poll(() => requests).toBe(1)
+    expect(submittedQuantity).toBe(String(initialQuantity + 3))
+    await expect(increase).toBeDisabled()
+    await expect(decrease).toBeDisabled()
+    await expect(quantity).toBeDisabled()
+    const totals = page.locator('[data-testid="cart-summary"]:visible').getByTestId('cart-totals')
+    await expect(totals.locator('div').filter({ hasText: 'Subtotal' })).toContainText(
+      'DKK\u00a0807.00',
+    )
+    await expect(row.getByTestId('cart-unit-price').locator('li').first()).toHaveCSS(
+      'font-weight',
+      '700',
+    )
+
+    releaseRequest()
+    await expect(increase).toBeEnabled()
+    await expect(decrease).toBeEnabled()
+    await expect(quantity).toBeEnabled()
+    expect(requests).toBe(1)
+    await expect(quantity).toHaveValue(String(initialQuantity))
+    await expect(totals.locator('div').filter({ hasText: 'Subtotal' })).toContainText(
+      'DKK\u00a0807.00',
+    )
+
+    await page.unroute('**/kurv?/addOrUpdateItemQuantity')
+    await increase.click()
+    await expect(increase).toBeDisabled()
+    await expect(increase).toBeEnabled({ timeout: 15_000 })
+    await page.reload({ waitUntil: 'networkidle' })
+    await expect(quantity).toHaveValue(String(initialQuantity + 1))
+  } finally {
+    releaseRequest()
+    await page.unroute('**/kurv?/addOrUpdateItemQuantity')
+    await row.getByRole('button', { name: `Fjern ${productName} fra kurv.` }).click()
+    await expect(row).toBeHidden()
+  }
+})
+
+test('cart keeps consistent unit prices and three columns until narrow mobile', async ({
+  page,
+}) => {
+  test.setTimeout(60_000)
+  await addProductToCart(page)
+  await page.goto('/kurv', { waitUntil: 'networkidle' })
+  const row = page
+    .locator('li.cart-item:visible')
+    .filter({ hasText: productName })
+    .filter({ hasText: 'Flaske — 100 cl' })
+  const price = row.getByTestId('cart-unit-price')
+  const quantity = row.locator('input[name="quantity"]')
+  const summary = page.locator('[data-testid="cart-summary"]:visible')
+
+  try {
+    await expect(row.getByRole('list', { name: 'Mængdepriser' })).toContainText(
+      'DKK\u00a0269.00/stk. v. min 3 SPAR 18%',
+    )
+    await expect(row.getByRole('list', { name: 'Mængdepriser' })).toContainText(
+      'DKK\u00a0249.00/stk. v. min 6 SPAR 24%',
+    )
+    for (const [count, unitPrice, threshold, percent] of [
+      [4, 269, 3, 18],
+      [3, 269, 3, 18],
+      [6, 249, 6, 24],
+    ] as const) {
+      await quantity.fill(String(count))
+      await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('?/addOrUpdateItemQuantity') &&
+            response.request().method() === 'POST',
+        ),
+        quantity.press('Tab'),
+      ])
+      await expect(quantity).toBeEnabled()
+      await expect(price).toContainText(
+        `DKK\u00a0${unitPrice.toFixed(2)}/stk. v. min ${threshold} SPAR ${percent}%`,
+      )
+      await expect(price.locator('li').last().locator('s')).toContainText('DKK\u00a0329.00/stk.')
+      await expect(price.locator('s')).toHaveCount(2)
+      await expect(
+        price
+          .locator('li')
+          .filter({ hasText: `v. min ${threshold} SPAR` })
+          .locator('s'),
+      ).toHaveCount(0)
+    }
+
+    for (const width of [540, 1184, 375, 319]) {
+      await page.setViewportSize({ width, height: 968 })
+      const image = await row
+        .getByRole('img', { name: 'Forzudo Rojo – Flaske, 100 cl' })
+        .boundingBox()
+      const details = await row.locator('.cart-item-details').boundingBox()
+      const controls = await quantity.boundingBox()
+      expect(image).not.toBeNull()
+      expect(details).not.toBeNull()
+      expect(controls).not.toBeNull()
+      expect(details!.x).toBeGreaterThanOrEqual(image!.x + image!.width)
+      if (width <= 375) {
+        expect(controls!.y).toBeGreaterThanOrEqual(details!.y + details!.height)
+      } else {
+        expect(controls!.x).toBeGreaterThanOrEqual(details!.x + details!.width)
+        expect(controls!.y).toBeLessThan(details!.y + details!.height)
+      }
+    }
+
+    await summary.getByRole('textbox', { name: 'Rabatkode' }).fill('test10')
+    await summary.getByRole('button', { name: 'Anvend' }).click()
+    await expect(summary.getByText('Rabatkoden er tilføjet.')).toBeVisible()
+    await expect(summary.getByText(/Mængderabat/)).toHaveCount(0)
+    await expect(
+      summary
+        .getByTestId('cart-totals')
+        .locator('div')
+        .filter({ hasText: /^I alt/ })
+        .locator('dd'),
+    ).toContainText('1,344.60')
+
+    // A different size must not advertise the bottle's tiers.
+    await page.goto('/shop/forzudo-rojo?variant=forzudo-rojo-3l-bag-in-box', {
+      waitUntil: 'networkidle',
+    })
+    await page.getByRole('button', { name: 'LÆG I KURV', exact: true }).click()
+    await expect(page.getByRole('link', { name: '2', exact: true })).toBeVisible()
+    await page.goto('/kurv', { waitUntil: 'networkidle' })
+    const boxRow = page.locator('li.cart-item:visible').filter({ hasText: 'Bag-in-Box — 3 L' })
+    await expect(boxRow.getByRole('list', { name: 'Mængdepriser' })).toHaveCount(0)
+    await expect(summary.getByText(/Mængderabat/)).toHaveCount(0)
+    await boxRow.getByRole('button', { name: `Fjern ${productName} fra kurv.` }).click()
+    await expect(boxRow).toHaveCount(0)
+
+    await quantity.fill('2')
+    await quantity.press('Tab')
+    await expect(price).toContainText('DKK\u00a0329.00/stk.')
+    await expect(price.locator('li').last().locator('s')).toHaveCount(0)
+    await expect(price.locator('s')).toHaveCount(2)
+    await expect(row.getByRole('list', { name: 'Mængdepriser' }).locator('li')).toHaveCount(3)
+    for (const amount of await summary.getByTestId('cart-totals').locator('dd').all()) {
+      await expect(amount).toHaveCSS('white-space', 'nowrap')
+    }
+    const fits = await row.evaluate((node) => node.scrollWidth <= node.clientWidth)
+    expect(fits).toBe(true)
+  } finally {
+    await page.goto('/kurv', { waitUntil: 'networkidle' })
+    const remainingRows = page.locator('li.cart-item:visible').filter({ hasText: productName })
+    while (await remainingRows.count()) {
+      const count = await remainingRows.count()
+      await remainingRows
+        .first()
+        .getByRole('button', { name: `Fjern ${productName} fra kurv.` })
+        .click()
+      await expect(remainingRows).toHaveCount(count - 1)
+    }
+  }
+})
+
 test('customer can continue from cart to payment', async ({ page }, testInfo) => {
   test.skip(
     !testInfo.config.metadata.ci,
