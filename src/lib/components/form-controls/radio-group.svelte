@@ -1,14 +1,18 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte'
   import type { HTMLInputAttributes } from 'svelte/elements'
   import { fade } from 'svelte/transition'
   import CheckedIcon from './checked-icon.svelte'
+
+  type RadioOption = { description?: string; label: string; price?: string; value: string }
 
   interface RadioGroupProps extends HTMLInputAttributes {
     groupLabel: string
     layout?: 'stacked' | 'responsive-grid'
     name: string
     onChange?: (e: Event & { currentTarget: HTMLInputElement }) => void
-    options: Array<{ description?: string; label: string; price?: string; value: string }>
+    options: RadioOption[]
+    optionContent?: Snippet<[RadioOption]>
     selected?: string
   }
 
@@ -19,6 +23,7 @@
     name,
     onChange,
     options,
+    optionContent,
     selected = $bindable(),
     ...restProps
   }: RadioGroupProps = $props()
@@ -53,12 +58,18 @@
   }
 </script>
 
-<fieldset class:responsive-grid={layout === 'responsive-grid'} class="relative rounded" {disabled}>
+<fieldset
+  class:responsive-grid={layout === 'responsive-grid'}
+  class:custom-content={Boolean(optionContent)}
+  class="relative rounded"
+  {disabled}
+>
   <legend class="text-sm font-bold mb-4">
     <span class="">{groupLabel}</span>
   </legend>
   <ul class="border border-dark-blue">
-    {#each options as { description, label, price, value } (value)}
+    {#each options as option (option.value)}
+      {@const { description, label, price, value } = option}
       <li class="border-b last-of-type:border-none border-dark-blue">
         <label
           class="relative pl-4 py-5 pr-24 flex items-center gap-4 bg-white/40 has-[:checked]:bg-black/20"
@@ -78,12 +89,16 @@
             {value}
             {...restProps}
           />
-          <div class="text-xs leading-normal flex-1">
-            <div class="flex justify-between gap-3 font-semibold">
-              <p>{label}</p>
-              <p class="ml-auto whitespace-nowrap text-right">{price}</p>
-            </div>
-            <p>{description}</p>
+          <div class="text-xs leading-normal flex-1" class:min-w-0={Boolean(optionContent)}>
+            {#if optionContent}
+              {@render optionContent(option)}
+            {:else}
+              <div class="flex justify-between gap-3 font-semibold">
+                <p>{label}</p>
+                <p class="ml-auto whitespace-nowrap text-right">{price}</p>
+              </div>
+              <p>{description}</p>
+            {/if}
           </div>
 
           {#if selected === value}
@@ -111,8 +126,13 @@
 </fieldset>
 
 <style>
-  fieldset.responsive-grid label {
+  fieldset.responsive-grid label,
+  fieldset.custom-content label {
     padding-inline-end: 1rem;
+  }
+
+  fieldset.custom-content label {
+    padding-block: 0.75rem;
   }
 
   @media (min-width: 1024px) {

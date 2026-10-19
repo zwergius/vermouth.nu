@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
+  import { reduced_motion } from '$lib/actions/reduced-motion'
+  import truckIcon from '$lib/assets/truck.svg'
   import type { ActionResult } from '@sveltejs/kit'
   import type { PageProps } from './$types'
   import { vermouths, type Handle } from '$lib/data/products'
@@ -23,6 +26,7 @@
     type EligibleProductVariant,
   } from '$lib/helpers/product-variants'
   import { squareSrcSet } from '$lib/helpers/images'
+  import { formatPrice } from '$lib/helpers/numbers'
   import { Form, QuantitySelector, RadioGroup } from '$lib/components/form-controls'
   import Marquee from '$lib/components/marquee.svelte'
   import ProductGridItem from '$lib/components/product-grid-item.svelte'
@@ -36,6 +40,7 @@
   const { data }: PageProps = $props()
 
   const REVIEWS_PAGE_SIZE = 2
+  const FREE_SHIPPING_MINIMUM_DKK = 549
 
   const red = $derived(getVariantGridItems(data.categories.red))
   const white = $derived(getVariantGridItems(data.categories.white))
@@ -74,15 +79,36 @@
   )
   const priceDisplays = $derived(getVariantPriceDisplay(variant, region.currency_code, locale))
   const offers = $derived(priceDisplays.slice(1))
+  const rankedOffers = $derived([...offers].sort((a, b) => a.unitAmount - b.unitAmount))
+  const offerOptions = $derived(
+    offers.map((offer) => ({
+      label: `Min. ${offer.quantity} Stk.`,
+      value: String(offer.quantity),
+    })),
+  )
   const cartItem = $derived(cart?.items?.find(({ variant_id }) => variant_id === variant.id))
   let quantity = $derived.by(() => {
     const variantId = variant.id
-    return cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ?? 1
+    return (
+      cart?.items?.find(({ variant_id }) => variant_id === variantId)?.quantity ??
+      rankedOffers[0]?.quantity ??
+      1
+    )
   })
   const quantityPriceDisplay = $derived(
     getVariantPriceDisplay(variant, region.currency_code, locale, quantity)[0],
   )
   const priceDisplay = $derived(quantityPriceDisplay ?? priceDisplays[0])
+  const selectedOffer = $derived(
+    offers
+      .filter(
+        (offer) => offer.quantity <= quantity && offer.unitAmount === priceDisplay?.unitAmount,
+      )
+      .at(-1),
+  )
+  function hasFreeShipping(totalAmount: number) {
+    return region.currency_code === 'dkk' && totalAmount >= FREE_SHIPPING_MINIMUM_DKK
+  }
   const selectorOptions = $derived(
     eligibleVariants.map((eligibleVariant) => ({
       label: getVariantLabel(eligibleVariant).replace(' — ', ' · '),
@@ -330,14 +356,33 @@
         aria-atomic="true"
         data-testid="quantity-total"
       >
-        <p class="whitespace-nowrap text-base font-bold">{priceDisplay.current}</p>
-        {#if !quantityPriceDisplay}
-          <span class="text-sm">pr. stk.</span>
-        {/if}
+        <p class="whitespace-nowrap text-base font-bold">
+          {priceDisplay.unit}/stk.
+        </p>
         {#if priceDisplay.isDiscounted}
           <p class="whitespace-nowrap text-sm opacity-70">
-            <span class="sr-only">Normalpris </span><s>{priceDisplay.original}</s>
+            <span class="sr-only">Normalpris </span><s
+              >{formatPrice(priceDisplay.originalUnitAmount!, region.currency_code, locale)}</s
+            >
           </p>
+        {/if}
+        {#if quantityPriceDisplay}
+          <div class="flex basis-full flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+            <p data-testid="quantity-total-caption">
+              samlet pris {quantityPriceDisplay.current}
+            </p>
+            {#if hasFreeShipping(quantityPriceDisplay.totalAmount)}
+              <span
+                class="inline-flex items-center gap-1 whitespace-nowrap"
+                data-testid="quantity-free-shipping"
+                title="Gratis levering til pakkeshop"
+                transition:fade={{ duration: $reduced_motion ? 0 : 150 }}
+              >
+                <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
+                Fri Fragt
+              </span>
+            {/if}
+          </div>
         {/if}
       </div>
     {/if}
@@ -363,23 +408,59 @@
             {/key}
           </div>
           {#if offers.length}
-            <ul class="mt-3 flex flex-wrap gap-x-2 gap-y-1.5" aria-label="Priser efter antal">
-              {#each offers as offer (offer.quantity)}
-                <li>
-                  <button
-                    type="button"
-                    class="rounded-full border border-black px-2.5 py-1.5 text-xs font-bold leading-tight text-black min-h-[34px] [@media(pointer:coarse)]:min-h-11 aria-pressed:border-brand-blue aria-pressed:bg-brand-blue aria-pressed:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue disabled:cursor-not-allowed disabled:opacity-50"
-                    aria-pressed={quantity === offer.quantity}
-                    disabled={purchasesPaused || isFormSubmitting}
-                    onclick={() => {
-                      quantity = offer.quantity
-                    }}
-                  >
-                    Køb {offer.quantity} for {offer.unit}/stk
-                  </button>
-                </li>
-              {/each}
-            </ul>
+            <div class="quantity-offers mt-4">
+              <RadioGroup
+                groupLabel="Mængderabatter"
+                name="volume-offer"
+                options={offerOptions}
+                selected={selectedOffer ? String(selectedOffer.quantity) : undefined}
+                disabled={purchasesPaused || isFormSubmitting}
+                onChange={(event) => {
+                  quantity = Number(event.currentTarget.value)
+                }}
+              >
+                {#snippet optionContent(option)}
+                  {@const offer = offers.find((offer) => String(offer.quantity) === option.value)!}
+                  {@const rank = rankedOffers.indexOf(offer)}
+                  <div class="quantity-offer-content relative grid items-center gap-x-2 sm:gap-x-4">
+                    <div class="min-w-0">
+                      <p class="whitespace-nowrap font-bold">{option.label}</p>
+                      <p class="whitespace-nowrap font-bold">
+                        {offer.unit}/stk.
+                      </p>
+                      <p class="whitespace-nowrap text-[11px]">
+                        samlet pris v. {offer.quantity} stk. {offer.current}
+                      </p>
+                    </div>
+                    <div
+                      class="quantity-offer-badges absolute inset-y-0 right-0 flex flex-col items-end justify-between gap-1 self-stretch"
+                    >
+                      {#if rank < 2}
+                        <span
+                          class="quantity-offer-badge inline-block whitespace-nowrap rounded-full bg-brand-blue px-1.5 py-0.5 text-[10px] font-bold text-white"
+                        >
+                          {rank === 0 ? 'Bedste Pris' : 'Mest Populære'}
+                        </span>
+                      {/if}
+                      {#if hasFreeShipping(offer.totalAmount)}
+                        <span
+                          class="quantity-offer-shipping hidden items-center gap-1 whitespace-nowrap text-[10px] font-normal text-black"
+                          title="Gratis levering til pakkeshop"
+                        >
+                          <img src={truckIcon} alt="" aria-hidden="true" class="size-4 shrink-0" />
+                          Fri Fragt
+                        </span>
+                      {/if}
+                    </div>
+                    <p
+                      class="quantity-offer-savings absolute right-0 top-[1.5em] whitespace-nowrap text-right font-bold text-brand-red"
+                    >
+                      Spar {offer.savingsPercent}%
+                    </p>
+                  </div>
+                {/snippet}
+              </RadioGroup>
+            </div>
           {/if}
         </fieldset>
       </Form>
@@ -588,6 +669,39 @@
 </section>
 
 <style>
+  .quantity-offers {
+    container-type: inline-size;
+  }
+
+  .quantity-offer-badge {
+    translate: 0.5rem -0.5rem;
+  }
+
+  @container (min-width: 360px) {
+    .quantity-offer-shipping {
+      display: inline-flex;
+    }
+  }
+
+  @container (min-width: 520px) {
+    .quantity-offer-content {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 5rem;
+    }
+
+    .quantity-offer-badges,
+    .quantity-offer-savings {
+      position: static;
+    }
+
+    .quantity-offer-badges {
+      align-items: flex-start;
+    }
+
+    .quantity-offer-badge {
+      translate: none;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .quantity-savings {
       animation: savings-appear 220ms cubic-bezier(0.16, 1, 0.3, 1) both;

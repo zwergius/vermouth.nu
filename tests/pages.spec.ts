@@ -177,7 +177,7 @@ test.describe('site pages', () => {
     await expect(
       sardinoBoxCard.getByRole('img', { name: 'Sardino Rojo – Bag-in-Box, 5 L' }),
     ).toBeVisible()
-    await expect(sardinoBoxCard).toContainText(/DKK\s*800[.,]00/)
+    await expect(sardinoBoxCard).toContainText(/DKK\s*649[.,]00/)
   })
 })
 
@@ -336,7 +336,7 @@ test.describe('product detail pages', () => {
     await expect(variantDetails).not.toHaveClass(/\bfont-bold\b/)
     await expect(headingAndMetadata.nth(1)).toHaveText('Sardino Rojo')
     await expect(headingAndMetadata.nth(2)).toHaveText('Galicien, Nordvestkysten Spanien')
-    await expect(page.locator('main')).toContainText(/DKK\s*800[.,]00/)
+    await expect(page.locator('main')).toContainText(/DKK\s*649[.,]00/)
 
     await page.getByRole('link', { name: 'KØB ELLER SMAG HER' }).click()
     await expect(page).toHaveURL(/\/forhandlere$/)
