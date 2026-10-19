@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ActionResult } from '@sveltejs/kit'
-  import { onMount } from 'svelte'
-  import { SvelteSet } from 'svelte/reactivity'
+  import { onDestroy, onMount } from 'svelte'
+  import { SvelteMap } from 'svelte/reactivity'
   import type { PageProps } from './$types'
   import { getVermouth } from '$lib/data/products'
   import {
@@ -20,13 +20,14 @@
     getLineItemVariantLabel,
     getVariantImage,
     getVariantImageAltText,
+    getVariantPriceDisplay,
   } from '$lib/helpers/product-variants'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
   import Input from '$lib/components/form-controls/input.svelte'
   import RadioGroup from '$lib/components/form-controls/radio-group.svelte'
   import { formatPrice } from '$lib/helpers/numbers'
-  import CartItemContent from '$lib/components/cart-item-content.svelte'
+  import QuantitySelector from '$lib/components/form-controls/quantity-selector.svelte'
 
   const { data, form }: PageProps = $props()
   const { cart, locale, purchasesPaused, region, shippingOptions, shippingPrices } = $derived(data)
@@ -43,8 +44,18 @@
     hasCartShippingMethod ? cart.shipping_total : selectedShippingPrice,
   )
   let isSubmitting = $state(false)
-  const pendingQuantities = new SvelteSet<string>()
-  const hasOptimisticQuantity = $derived(pendingQuantities.size > 0)
+  const pendingQuantities = $state<Record<string, number>>({})
+  const quantitySubmitting = $state<Record<string, boolean>>({})
+  const hasOptimisticQuantity = $derived(
+    (cart.items ?? []).some(
+      ({ id }) => pendingQuantities[id] !== undefined || quantitySubmitting[id],
+    ),
+  )
+  const quantityTimers = new SvelteMap<HTMLFormElement, ReturnType<typeof setTimeout>>()
+
+  onDestroy(() => {
+    for (const timer of quantityTimers.values()) clearTimeout(timer)
+  })
   let discountCodeMessage = $state('')
   let discountCodeState = $state<'idle' | 'success' | 'error'>('idle')
   let hasCheckoutRedirected = $state(false)
@@ -52,6 +63,35 @@
     hasCheckoutRedirected ? 'redirecting' : isSubmitting ? 'processing' : 'idle',
   )
   const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
+  const pricedItems = $derived(
+    (cart.items ?? []).map((item) => {
+      const variant = getProductByHandle(item.product_handle)?.variants?.find(
+        ({ id }) => id === item.variant_id,
+      )
+      const hasPriceContext =
+        variant && item.is_tax_inclusive && cart.currency_code === region.currency_code
+      const prices = hasPriceContext
+        ? getVariantPriceDisplay(variant, region.currency_code, locale)
+        : []
+      const displayedQuantity = pendingQuantities[item.id] ?? item.quantity
+      const quantityPrice = hasPriceContext
+        ? getVariantPriceDisplay(variant, region.currency_code, locale, displayedQuantity)[0]
+        : undefined
+      const displayedUnitPrice =
+        displayedQuantity !== item.quantity
+          ? (quantityPrice?.unitAmount ?? item.unit_price)
+          : item.unit_price
+      const appliedQuantity =
+        quantityPrice?.unitAmount === displayedUnitPrice
+          ? prices.findLast(
+              (price) =>
+                price.quantity <= displayedQuantity && price.unitAmount === displayedUnitPrice,
+            )?.quantity
+          : undefined
+
+      return { ...item, prices, appliedQuantity, displayedQuantity, displayedUnitPrice }
+    }),
+  )
   const displayedCartTotal = $derived(
     hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
   )
@@ -145,6 +185,23 @@
   function getShippingOptionPrice(option?: { amount?: number | null; id: string }) {
     if (!option) return undefined
     return shippingPrices[option.id] ?? option.amount ?? undefined
+  }
+
+  function handleChangeQuantity(e: Event & { currentTarget: HTMLInputElement }) {
+    const input = e.currentTarget
+    const { form } = input
+    if (!form || !input.validity.valid || !Number.isSafeInteger(input.valueAsNumber)) return
+    const itemId = String(new FormData(form).get('cart_item_id'))
+    pendingQuantities[itemId] = input.valueAsNumber
+
+    clearTimeout(quantityTimers.get(form))
+    quantityTimers.set(
+      form,
+      setTimeout(() => {
+        quantityTimers.delete(form)
+        if (form.isConnected) form.requestSubmit()
+      }, 300),
+    )
   }
 
   function getCategoryHandleByProductHandle(productHandle?: string): CategoryHandle | null {
@@ -276,11 +333,10 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each cart.items ?? [] as { product_id, product_handle, product_title, quantity, unit_price, variant_option_values, variant_sku, variant_title, variant_id, is_tax_inclusive, id } (id)}
-      {@const product = getProductByHandle(product_handle)}
+    {#each pricedItems as { product_id, product_handle, product_title, quantity, unit_price, variant_option_values, variant_sku, variant_title, id, prices, appliedQuantity, displayedQuantity, displayedUnitPrice } (id)}
       {@const itemVariant = getLineItemVariantLabel({
         optionValues: variant_option_values,
-        product,
+        product: getProductByHandle(product_handle),
         sku: variant_sku,
         title: variant_title,
       })}
@@ -301,41 +357,111 @@
           srcset={itemImage ? thumbnailSrcSet(itemImage.url) : undefined}
           src={itemImage ? `${itemImage.url}/w=186,h=186,fit=cover` : undefined}
         />
-        <CartItemContent
-          itemId={id}
-          productTitle={product_title}
-          {itemVariant}
-          {quantity}
-          unitPrice={unit_price}
-          variant={is_tax_inclusive && cart.currency_code === region.currency_code
-            ? product?.variants?.find((variant) => variant.id === variant_id)
-            : undefined}
-          currencyCode={region.currency_code}
-          {locale}
-          {purchasesPaused}
-          onPendingChange={(pending) => {
-            if (pending) pendingQuantities.add(id)
-            else pendingQuantities.delete(id)
-          }}
-          onQuantityResult={makeQuantityResultHandler({
-            cartItemId: id,
-            previousQuantity: quantity,
-            productHandle: product_handle,
-            productId: product_id,
-            productTitle: product_title,
-            itemVariant,
-            unitPrice: unit_price,
-          })}
-          onDeleteResult={makeDeleteResultHandler({
-            cartItemId: id,
-            previousQuantity: quantity,
-            productHandle: product_handle,
-            productId: product_id,
-            productTitle: product_title,
-            itemVariant,
-            unitPrice: unit_price,
-          })}
-        />
+        <div class="cart-item-content flex min-w-0 flex-col flex-1 justify-between">
+          <div class="cart-item-details min-w-0 flex-1 my-auto pt-6 lg:max-w-80">
+            <p class="text-sm font-bold">{product_title}</p>
+            <p class="text-xs">{itemVariant}</p>
+            <ul
+              class="text-xs"
+              aria-label={prices.length > 1 ? 'Mængdepriser' : 'Stykpris'}
+              data-testid="cart-unit-price"
+            >
+              {#each prices.slice(1).toReversed() as price (price.quantity)}
+                <li class:font-bold={appliedQuantity === price.quantity}>
+                  {#if appliedQuantity === price.quantity}
+                    <span class="whitespace-nowrap">{formattedPrice(price.unitAmount)}/stk.</span>
+                    <span class="whitespace-nowrap">v. min {price.quantity}</span>
+                    <span class="whitespace-nowrap">SPAR {price.savingsPercent}%</span>
+                  {:else}
+                    <s class="opacity-70">
+                      <span class="whitespace-nowrap">{formattedPrice(price.unitAmount)}/stk.</span>
+                      <span class="whitespace-nowrap">v. min {price.quantity}</span>
+                      <span class="whitespace-nowrap">SPAR {price.savingsPercent}%</span>
+                    </s>
+                  {/if}
+                </li>
+              {/each}
+              <li
+                class="whitespace-nowrap"
+                class:font-bold={appliedQuantity === undefined || appliedQuantity === 1}
+              >
+                {#if appliedQuantity !== undefined && appliedQuantity !== 1}
+                  <s class="opacity-70"
+                    ><span class="sr-only">Normal stykpris </span>{formattedPrice(
+                      prices[0].unitAmount,
+                    )}/stk.</s
+                  >
+                {:else}
+                  {formattedPrice(displayedUnitPrice)}/stk.
+                {/if}
+              </li>
+            </ul>
+          </div>
+          <div class="flex shrink-0 justify-between items-center">
+            <Form
+              action="?/addOrUpdateItemQuantity"
+              bind:isSubmitting={
+                () => quantitySubmitting[id] ?? false,
+                (pending) => {
+                  quantitySubmitting[id] = pending
+                  if (!pending) {
+                    delete pendingQuantities[id]
+                  }
+                }
+              }
+              onResult={makeQuantityResultHandler({
+                cartItemId: id,
+                previousQuantity: quantity,
+                productHandle: product_handle,
+                productId: product_id,
+                productTitle: product_title,
+                itemVariant,
+                unitPrice: unit_price,
+              })}
+            >
+              <fieldset
+                disabled={purchasesPaused || quantitySubmitting[id]}
+                aria-busy={quantitySubmitting[id]}
+              >
+                <input name="cart_item_id" type="hidden" value={id} />
+                <QuantitySelector
+                  min={1}
+                  name="quantity"
+                  onchange={handleChangeQuantity}
+                  value={displayedQuantity}
+                />
+              </fieldset>
+            </Form>
+            <Form
+              action="?/deleteItem"
+              onResult={makeDeleteResultHandler({
+                cartItemId: id,
+                previousQuantity: quantity,
+                productHandle: product_handle,
+                productId: product_id,
+                productTitle: product_title,
+                itemVariant,
+                unitPrice: unit_price,
+              })}
+            >
+              <input name="cart_item_id" type="hidden" value={id} />
+              <button aria-label="Fjern {product_title} fra kurv." class="p-5" type="submit">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M7 21C6.45 21 5.97917 20.8042 5.5875 20.4125C5.19583 20.0208 5 19.55 5 19V6H4V4H9V3H15V4H20V6H19V19C19 19.55 18.8042 20.0208 18.4125 20.4125C18.0208 20.8042 17.55 21 17 21H7ZM17 6H7V19H17V6ZM9 17H11V8H9V17ZM13 17H15V8H13V17Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </button>
+            </Form>
+          </div>
+        </div>
       </li>
     {/each}
   </ul>
@@ -631,6 +757,18 @@
 <style>
   .cart-item {
     container: cart-item / inline-size;
+  }
+
+  @container cart-item (min-width: 24rem) {
+    .cart-item-content {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .cart-item-details {
+      padding-top: 0;
+      padding-inline: 0.75rem;
+    }
   }
 
   details {
