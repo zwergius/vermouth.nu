@@ -280,3 +280,28 @@ export function getVariantPriceDisplay(
   }
   return displays
 }
+
+export function getCartItemPriceDisplay(
+  item: Pick<HttpTypes.StoreCartLineItem, 'quantity' | 'unit_price' | 'is_tax_inclusive'>,
+  variant: ProductVariant | undefined,
+  currencyCode: string,
+  locale: string,
+  quantity = item.quantity,
+) {
+  const prices =
+    variant && item.is_tax_inclusive ? getVariantPriceDisplay(variant, currencyCode, locale) : []
+  const selected =
+    variant && prices.length
+      ? getVariantPriceDisplay(variant, currencyCode, locale, quantity)[0]
+      : undefined
+  const displayedUnitPrice =
+    quantity === item.quantity ? item.unit_price : (selected?.unitAmount ?? item.unit_price)
+  const appliedPrice =
+    selected?.unitAmount === displayedUnitPrice
+      ? prices.findLast(
+          (price) => price.quantity <= quantity && price.unitAmount === displayedUnitPrice,
+        )
+      : undefined
+
+  return { prices, appliedQuantity: appliedPrice?.quantity, displayedUnitPrice }
+}

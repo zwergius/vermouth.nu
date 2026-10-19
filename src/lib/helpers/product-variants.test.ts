@@ -1,4 +1,5 @@
 import {
+  getCartItemPriceDisplay,
   getDefaultVariant,
   getEligibleVariants,
   getLineItemVariantLabel,
@@ -207,6 +208,32 @@ describe('variant price displays', () => {
       { amount: 250, min_quantity: 6, max_quantity: null, currency_code: 'dkk', rules_count: 0 },
     ],
   } as unknown as HttpTypes.StoreProductVariant
+
+  it('keeps advertised prices static while selecting the pending quantity tier', () => {
+    const item = { quantity: 1, unit_price: 295, is_tax_inclusive: true }
+    const confirmed = getCartItemPriceDisplay(item, tiered, 'dkk', 'en-GB')
+    for (const [quantity, threshold, unitAmount] of [
+      [3, 3, 273],
+      [4, 3, 273],
+      [6, 6, 250],
+    ]) {
+      const pending = getCartItemPriceDisplay(item, tiered, 'dkk', 'en-GB', quantity)
+      expect(pending.prices).toEqual(confirmed.prices)
+      expect(pending.appliedQuantity).toBe(threshold)
+      expect(pending.displayedUnitPrice).toBe(unitAmount)
+    }
+  })
+
+  it('keeps the cart price active when it does not match an advertised tier', () => {
+    const display = getCartItemPriceDisplay(
+      { quantity: 3, unit_price: 123, is_tax_inclusive: true },
+      tiered,
+      'dkk',
+      'en-GB',
+    )
+    expect(display.displayedUnitPrice).toBe(123)
+    expect(display.appliedQuantity).toBeUndefined()
+  })
 
   it('returns one display for an ordinary variant and n displays for tiers', () => {
     expect(getVariantPriceDisplay(box, 'dkk', 'en-GB')).toHaveLength(1)

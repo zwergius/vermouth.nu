@@ -20,7 +20,7 @@
     getLineItemVariantLabel,
     getVariantImage,
     getVariantImageAltText,
-    getVariantPriceDisplay,
+    getCartItemPriceDisplay,
   } from '$lib/helpers/product-variants'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
@@ -63,35 +63,6 @@
     hasCheckoutRedirected ? 'redirecting' : isSubmitting ? 'processing' : 'idle',
   )
   const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
-  const pricedItems = $derived(
-    (cart.items ?? []).map((item) => {
-      const variant = getProductByHandle(item.product_handle)?.variants?.find(
-        ({ id }) => id === item.variant_id,
-      )
-      const hasPriceContext =
-        variant && item.is_tax_inclusive && cart.currency_code === region.currency_code
-      const prices = hasPriceContext
-        ? getVariantPriceDisplay(variant, region.currency_code, locale)
-        : []
-      const displayedQuantity = pendingQuantities[item.id] ?? item.quantity
-      const quantityPrice = hasPriceContext
-        ? getVariantPriceDisplay(variant, region.currency_code, locale, displayedQuantity)[0]
-        : undefined
-      const displayedUnitPrice =
-        displayedQuantity !== item.quantity
-          ? (quantityPrice?.unitAmount ?? item.unit_price)
-          : item.unit_price
-      const appliedQuantity =
-        quantityPrice?.unitAmount === displayedUnitPrice
-          ? prices.findLast(
-              (price) =>
-                price.quantity <= displayedQuantity && price.unitAmount === displayedUnitPrice,
-            )?.quantity
-          : undefined
-
-      return { ...item, prices, appliedQuantity, displayedQuantity, displayedUnitPrice }
-    }),
-  )
   const displayedCartTotal = $derived(
     hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
   )
@@ -333,10 +304,32 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each pricedItems as { product_id, product_handle, product_title, quantity, unit_price, variant_option_values, variant_sku, variant_title, id, prices, appliedQuantity, displayedQuantity, displayedUnitPrice } (id)}
+    {#each cart.items ?? [] as item (item.id)}
+      {@const {
+        product_id,
+        product_handle,
+        product_title,
+        quantity,
+        unit_price,
+        variant_option_values,
+        variant_sku,
+        variant_title,
+        id,
+      } = item}
+      {@const product = getProductByHandle(product_handle)}
+      {@const displayedQuantity = pendingQuantities[id] ?? quantity}
+      {@const { prices, appliedQuantity, displayedUnitPrice } = getCartItemPriceDisplay(
+        item,
+        cart.currency_code === region.currency_code
+          ? product?.variants?.find(({ id }) => id === item.variant_id)
+          : undefined,
+        region.currency_code,
+        locale,
+        displayedQuantity,
+      )}
       {@const itemVariant = getLineItemVariantLabel({
         optionValues: variant_option_values,
-        product: getProductByHandle(product_handle),
+        product,
         sku: variant_sku,
         title: variant_title,
       })}
