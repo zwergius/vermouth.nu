@@ -26,7 +26,10 @@ type CalculatedPrice = NonNullable<ProductVariant['calculated_price']> & {
 export type ProductPriceDisplay = {
   quantity: number
   unit: string
+  unitAmount: number
+  totalAmount: number
   current: string
+  originalUnitAmount?: number
   original?: string
   savingsPercent?: number
   isDiscounted: boolean
@@ -258,10 +261,14 @@ export function getVariantPriceDisplay(
         ? toAmount(price?.original_amount)
         : null
     const isDiscounted = originalAmount !== null && originalAmount > unitAmount
+    const totalAmount = unitAmount * count
     displays.push({
       quantity: count,
       unit: formatPrice(unitAmount, currencyCode, locale),
-      current: formatPrice(unitAmount * count, currencyCode, locale),
+      unitAmount,
+      totalAmount,
+      current: formatPrice(totalAmount, currencyCode, locale),
+      originalUnitAmount: isDiscounted ? originalAmount : undefined,
       original: isDiscounted
         ? formatPrice(originalAmount * count, currencyCode, locale)
         : undefined,
@@ -272,4 +279,29 @@ export function getVariantPriceDisplay(
     })
   }
   return displays
+}
+
+export function getCartItemPriceDisplay(
+  item: Pick<HttpTypes.StoreCartLineItem, 'quantity' | 'unit_price' | 'is_tax_inclusive'>,
+  variant: ProductVariant | undefined,
+  currencyCode: string,
+  locale: string,
+  quantity = item.quantity,
+) {
+  const prices =
+    variant && item.is_tax_inclusive ? getVariantPriceDisplay(variant, currencyCode, locale) : []
+  const selected =
+    variant && prices.length
+      ? getVariantPriceDisplay(variant, currencyCode, locale, quantity)[0]
+      : undefined
+  const displayedUnitPrice =
+    quantity === item.quantity ? item.unit_price : (selected?.unitAmount ?? item.unit_price)
+  const appliedPrice =
+    selected?.unitAmount === displayedUnitPrice
+      ? prices.findLast(
+          (price) => price.quantity <= quantity && price.unitAmount === displayedUnitPrice,
+        )
+      : undefined
+
+  return { prices, appliedQuantity: appliedPrice?.quantity, displayedUnitPrice }
 }

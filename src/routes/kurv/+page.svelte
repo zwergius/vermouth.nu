@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ActionResult } from '@sveltejs/kit'
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
+  import { SvelteMap } from 'svelte/reactivity'
   import type { PageProps } from './$types'
   import { getVermouth } from '$lib/data/products'
   import {
@@ -19,6 +20,7 @@
     getLineItemVariantLabel,
     getVariantImage,
     getVariantImageAltText,
+    getCartItemPriceDisplay,
   } from '$lib/helpers/product-variants'
   import Checkbox from '$lib/components/form-controls/checkbox.svelte'
   import Form from '$lib/components/form-controls/form.svelte'
@@ -41,10 +43,19 @@
   const displayedShippingTotal = $derived(
     hasCartShippingMethod ? cart.shipping_total : selectedShippingPrice,
   )
-  const displayedCartTotal = $derived(
-    hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
-  )
   let isSubmitting = $state(false)
+  const pendingQuantities = $state<Record<string, number>>({})
+  const quantitySubmitting = $state<Record<string, boolean>>({})
+  const hasOptimisticQuantity = $derived(
+    (cart.items ?? []).some(
+      ({ id }) => pendingQuantities[id] !== undefined || quantitySubmitting[id],
+    ),
+  )
+  const quantityTimers = new SvelteMap<HTMLFormElement, ReturnType<typeof setTimeout>>()
+
+  onDestroy(() => {
+    for (const timer of quantityTimers.values()) clearTimeout(timer)
+  })
   let discountCodeMessage = $state('')
   let discountCodeState = $state<'idle' | 'success' | 'error'>('idle')
   let hasCheckoutRedirected = $state(false)
@@ -52,6 +63,9 @@
     hasCheckoutRedirected ? 'redirecting' : isSubmitting ? 'processing' : 'idle',
   )
   const analyticsCurrencyCode = $derived(region.currency_code.toUpperCase())
+  const displayedCartTotal = $derived(
+    hasCartShippingMethod ? cart.total : cart.total + (displayedShippingTotal ?? 0),
+  )
   const appliedPromoCodes = $derived(
     cart.promotions?.flatMap(({ code, is_automatic }) => (code && !is_automatic ? [code] : [])) ??
       [],
@@ -145,8 +159,20 @@
   }
 
   function handleChangeQuantity(e: Event & { currentTarget: HTMLInputElement }) {
-    const { form } = e.currentTarget
-    form?.requestSubmit()
+    const input = e.currentTarget
+    const { form } = input
+    if (!form || !input.validity.valid || !Number.isSafeInteger(input.valueAsNumber)) return
+    const itemId = String(new FormData(form).get('cart_item_id'))
+    pendingQuantities[itemId] = input.valueAsNumber
+
+    clearTimeout(quantityTimers.get(form))
+    quantityTimers.set(
+      form,
+      setTimeout(() => {
+        quantityTimers.delete(form)
+        if (form.isConnected) form.requestSubmit()
+      }, 300),
+    )
   }
 
   function getCategoryHandleByProductHandle(productHandle?: string): CategoryHandle | null {
@@ -278,10 +304,32 @@
 
 {#snippet cartSnippet()}
   <ul>
-    {#each cart?.items as { product_id, product_handle, product_title, quantity, unit_price, variant_option_values, variant_sku, variant_title, id } (id)}
+    {#each cart.items ?? [] as item (item.id)}
+      {@const {
+        product_id,
+        product_handle,
+        product_title,
+        quantity,
+        unit_price,
+        variant_option_values,
+        variant_sku,
+        variant_title,
+        id,
+      } = item}
+      {@const product = getProductByHandle(product_handle)}
+      {@const displayedQuantity = pendingQuantities[id] ?? quantity}
+      {@const { prices, appliedQuantity, displayedUnitPrice } = getCartItemPriceDisplay(
+        item,
+        cart.currency_code === region.currency_code
+          ? product?.variants?.find(({ id }) => id === item.variant_id)
+          : undefined,
+        region.currency_code,
+        locale,
+        displayedQuantity,
+      )}
       {@const itemVariant = getLineItemVariantLabel({
         optionValues: variant_option_values,
-        product: getProductByHandle(product_handle),
+        product,
         sku: variant_sku,
         title: variant_title,
       })}
@@ -291,29 +339,72 @@
       )}
       {@const itemImage = getCartItemImage(product_handle, itemImageAltText, variant_sku)}
       <li
-        class="px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
+        class="cart-item px-4 py-2 lg:p-5 flex border-b border-black first-of-type:border-t lg:first-of-type:border-t-0"
       >
         <img
           alt={itemImage?.altText ?? itemImageAltText}
-          class="size-20 object-cover lg:size-16"
+          class="size-20 shrink-0 object-cover lg:size-16"
           width="66"
           height="66"
           loading="lazy"
           srcset={itemImage ? thumbnailSrcSet(itemImage.url) : undefined}
           src={itemImage ? `${itemImage.url}/w=186,h=186,fit=cover` : undefined}
         />
-        <div class="flex flex-col flex-1 gap-0 justify-between lg:flex-row lg:gap-0">
-          <div class="flex-1 my-auto pt-6 lg:pt-0 lg:px-5 lg:max-w-80">
+        <div class="cart-item-content flex min-w-0 flex-col flex-1 justify-between">
+          <div class="cart-item-details min-w-0 flex-1 my-auto pt-6 lg:max-w-80">
             <p class="text-sm font-bold">{product_title}</p>
             <p class="text-xs">{itemVariant}</p>
-            <dl class="text-xs flex justify-between">
-              <dt>1 stk.</dt>
-              <dd>{formattedPrice(unit_price)}</dd>
-            </dl>
+            <ul
+              class="text-xs"
+              aria-label={prices.length > 1 ? 'Mængdepriser' : 'Stykpris'}
+              data-testid="cart-unit-price"
+            >
+              {#each prices.slice(1).toReversed() as price (price.quantity)}
+                <li class:font-bold={appliedQuantity === price.quantity}>
+                  {#if appliedQuantity === price.quantity}
+                    <span class="whitespace-nowrap">{formattedPrice(price.unitAmount)}/stk.</span>
+                    <span class="whitespace-nowrap">v. min {price.quantity}</span>
+                    <span class="whitespace-nowrap">SPAR {price.savingsPercent}%</span>
+                  {:else}
+                    <s class="opacity-70">
+                      <span class="whitespace-nowrap">{formattedPrice(price.unitAmount)}/stk.</span>
+                      <span class="whitespace-nowrap">v. min {price.quantity}</span>
+                      <span class="whitespace-nowrap">SPAR {price.savingsPercent}%</span>
+                    </s>
+                  {/if}
+                </li>
+              {/each}
+              <li
+                class="whitespace-nowrap"
+                class:font-bold={appliedQuantity === undefined || appliedQuantity === 1}
+              >
+                {#if appliedQuantity !== undefined && appliedQuantity !== 1}
+                  <s class="opacity-70"
+                    ><span class="sr-only">Normal stykpris </span>{formattedPrice(
+                      prices[0].unitAmount,
+                    )}/stk.</s
+                  >
+                {:else}
+                  {formattedPrice(displayedUnitPrice)}/stk.
+                {/if}
+              </li>
+            </ul>
+            <p class="mt-1 whitespace-nowrap text-xs italic" data-testid="cart-item-total">
+              Samlet pris: {quantity} stk. {formattedPrice(item.total)}
+            </p>
           </div>
-          <div class="flex justify-between items-center">
+          <div class="flex shrink-0 justify-between items-center">
             <Form
               action="?/addOrUpdateItemQuantity"
+              bind:isSubmitting={
+                () => quantitySubmitting[id] ?? false,
+                (pending) => {
+                  quantitySubmitting[id] = pending
+                  if (!pending) {
+                    delete pendingQuantities[id]
+                  }
+                }
+              }
               onResult={makeQuantityResultHandler({
                 cartItemId: id,
                 previousQuantity: quantity,
@@ -324,13 +415,16 @@
                 unitPrice: unit_price,
               })}
             >
-              <fieldset disabled={purchasesPaused}>
+              <fieldset
+                disabled={purchasesPaused || quantitySubmitting[id]}
+                aria-busy={quantitySubmitting[id]}
+              >
                 <input name="cart_item_id" type="hidden" value={id} />
                 <QuantitySelector
                   min={1}
                   name="quantity"
                   onchange={handleChangeQuantity}
-                  value={quantity}
+                  value={displayedQuantity}
                 />
               </fieldset>
             </Form>
@@ -418,24 +512,26 @@
       <dl class="flex flex-col gap-5 text-sm font-bold mb-2 lg:mb-0" data-testid="cart-totals">
         <div class="flex justify-between">
           <dt>Subtotal</dt>
-          <dd>{formattedPrice(cart?.item_total)}</dd>
+          <dd class="shrink-0 whitespace-nowrap">{formattedPrice(cart.item_total)}</dd>
         </div>
         {#if cart.discount_total}
           <div class="flex justify-between text-brand-red">
             <dt>Rabat</dt>
-            <dd>{formattedDiscount(cart.discount_total)}</dd>
+            <dd class="shrink-0 whitespace-nowrap">
+              {formattedDiscount(cart.discount_total)}
+            </dd>
           </div>
         {/if}
         <div class="flex justify-between">
           <dt>Levering</dt>
-          <dd>{formattedPrice(displayedShippingTotal)}</dd>
+          <dd class="shrink-0 whitespace-nowrap">{formattedPrice(displayedShippingTotal)}</dd>
         </div>
         <div class="flex justify-between">
           <dt>I alt</dt>
-          <dd>{formattedPrice(displayedCartTotal)}</dd>
+          <dd class="shrink-0 whitespace-nowrap">{formattedPrice(displayedCartTotal)}</dd>
         </div>
       </dl>
-      <p class="text-xs mb-2">Inklusiv {formattedPrice(cart?.tax_total)} i afgifter</p>
+      <p class="text-xs mb-2">Inklusiv {formattedPrice(cart.tax_total)} i afgifter</p>
       <div class="flex flex-col gap-2 lg:flex-row lg:gap-5">
         <img
           src="SST_Alkohol.png"
@@ -597,7 +693,7 @@
             requiredErrorMessage="Du skal bekræfte handelsbetingelser for at fortsætte."
           />
         </div>
-        <button class="btn" type="submit">
+        <button class="btn" type="submit" disabled={hasOptimisticQuantity}>
           {purchasesPaused ? 'BETALING MIDLERTIDIGT PAUSET' : 'Gå til betaling'}
         </button>
       </fieldset>
@@ -627,7 +723,7 @@
                   <path d="M6 7.4L0 1.4L1.4 0L6 4.6L10.6 0L12 1.4L6 7.4Z" fill="currentColor" />
                 </svg>
               </dt>
-              <dd>{formattedPrice(cart?.total)}</dd>
+              <dd>{formattedPrice(cart.total)}</dd>
             </div>
           </dl>
         </summary>
@@ -655,6 +751,22 @@
 {/if}
 
 <style>
+  .cart-item {
+    container: cart-item / inline-size;
+  }
+
+  @container cart-item (min-width: 24rem) {
+    .cart-item-content {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .cart-item-details {
+      padding-top: 0;
+      padding-inline: 0.75rem;
+    }
+  }
+
   details {
     overflow: hidden;
 

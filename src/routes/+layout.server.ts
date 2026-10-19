@@ -46,7 +46,7 @@ export const load: LayoutServerLoad = async ({ cookies, depends, locals }) => {
 
   if (cartId) {
     try {
-      const res = await sdk.store.cart.retrieve(cartId)
+      const res = await sdk.store.cart.retrieve(cartId, { fields: '+items.total' })
       // checks if cart has been completed
       if (!res.cart.completed_at) {
         cart = res.cart

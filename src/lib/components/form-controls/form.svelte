@@ -22,7 +22,10 @@
   }: FormProps = $props()
 
   const handleSubmit: SubmitFunction = ({ cancel, formElement }) => {
-    if (isSubmitting) cancel()
+    if (isSubmitting) {
+      cancel()
+      return
+    }
 
     const isValid = formElement.reportValidity()
     if (!isValid) {
@@ -50,9 +53,12 @@
       // } else if (!disableFeedback) {
       //   notifications.add(errorMessage, true)
       // }
-      onResult(result)
-      isSubmitting = false
-      update({ reset })
+      try {
+        onResult(result)
+        await update({ reset })
+      } finally {
+        isSubmitting = false
+      }
     }
   }
 </script>
