@@ -48,6 +48,7 @@ function cartData(withTiers: boolean, unitPrice: number): PageProps['data'] {
           product_title: 'Forzudo Rojo',
           quantity: withTiers ? 3 : 1,
           unit_price: unitPrice,
+          total: unitPrice * (withTiers ? 3 : 1),
           is_tax_inclusive: true,
         },
       ],
@@ -84,4 +85,20 @@ describe('cart unit price fallback', () => {
   it('keeps a matching catalogue tier active', () => {
     expect(activePrices(cartData(true, 269))).toEqual(['DKK 269.00/stk. v. min 3 SPAR 18%'])
   })
+})
+
+it('shows Medusa’s discounted line total below the tier prices', () => {
+  const data = cartData(true, 269)
+  data.cart.items![0].total = 700
+  const { body } = render(Page, { props: { data, form: null, params: {} } })
+  const total = body.match(/data-testid="cart-item-total"[^>]*>([\s\S]*?)<\/p>/)?.[1]
+  expect(
+    total
+      ?.replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  ).toBe('I alt DKK 700.00')
+  expect(body.indexOf('data-testid="cart-item-total"')).toBeGreaterThan(
+    body.indexOf('data-testid="cart-unit-price"'),
+  )
 })

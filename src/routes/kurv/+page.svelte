@@ -389,6 +389,9 @@
                 {/if}
               </li>
             </ul>
+            <p class="mt-2 whitespace-nowrap text-xs font-bold" data-testid="cart-item-total">
+              I alt {formattedPrice(item.total)}
+            </p>
           </div>
           <div class="flex shrink-0 justify-between items-center">
             <Form
