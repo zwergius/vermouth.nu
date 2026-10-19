@@ -97,7 +97,7 @@ it('shows Medusa’s discounted line total below the tier prices', () => {
       ?.replace(/<[^>]*>/g, '')
       .replace(/\s+/g, ' ')
       .trim(),
-  ).toBe('I alt DKK 700.00')
+  ).toBe('Samlet pris: 3 stk. DKK 700.00')
   expect(body.indexOf('data-testid="cart-item-total"')).toBeGreaterThan(
     body.indexOf('data-testid="cart-unit-price"'),
   )
