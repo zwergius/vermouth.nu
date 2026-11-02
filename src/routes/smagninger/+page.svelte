@@ -45,7 +45,12 @@
 />
 
 <Hero
-  imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00"
+  images={[
+    {
+      desktop:
+        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/46c5feb3-ecaf-427e-6623-26c6d3addd00',
+    },
+  ]}
 >
   Smag Vermouth<br />
   // I Totalt Godt<br />

@@ -49,25 +49,31 @@
   imageAlt="Vermouth.Nu Founders"
 />
 
-<Hero
-  imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/5de0aefc-364c-4bba-dcd4-0c45ed0c2f00"
->
-  Vermouth<br />
-  // Fra kikset<br />
-  Til Cool
-</Hero>
+<a class="block" href={resolve('/shop')}>
+  <Hero
+    images={[
+      {
+        desktop:
+          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/c25f615d-4853-4bcd-096c-d8a92e9c2300',
+        tablet:
+          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/61953ada-c997-4ec7-5412-5e6b490ddc00',
+        mobile:
+          'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/eb42a8d5-286d-467c-ca6e-b726e2039b00',
+      },
+    ]}
+    alt=""
+  >
+    <span class="sr-only">Sardino Rojo – klasse vermouth til kongepris. Spar 34%, kun 119,-.</span>
+  </Hero>
+</a>
 
-<section class="content border-b border-black">
-  <h2>ENDNU IKKE FAN AF VERMOUTH?</h2>
-  <p class="mb-6">
-    .. Måske har du bare ikke mødt den helt rigtige<br />
-    endnu. Fortvivl ikke! Lad os hjælpe dig med at<br />
-    opdage og nyde vermouth.
-  </p>
-  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
-</section>
+<Marquee text="FAVORITTER //" theme="yellow"></Marquee>
 
-<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
+<ul class="grid-layout border-b border-black">
+  {#each favoriteVariants as { product, variant } (variant.sku)}
+    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
+  {/each}
+</ul>
 
 <section class="content border-b border-black">
   <h2>HVILKEN FARVE ER DIN FAVORIT?</h2>
@@ -78,13 +84,17 @@
   <a class="btn" href={resolve('/shop')}>SE HELE UDVALGET</a>
 </section>
 
-<Marquee text="FAVORITTER //" theme="yellow"></Marquee>
+<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 
-<ul class="grid-layout border-b border-black">
-  {#each favoriteVariants as { product, variant } (variant.sku)}
-    <ProductGridItem currencyCode={region.currency_code} {locale} {product} {variant} />
-  {/each}
-</ul>
+<section class="content border-b border-black">
+  <h2>ENDNU IKKE FAN AF VERMOUTH?</h2>
+  <p class="mb-6">
+    .. Måske har du bare ikke mødt den helt rigtige<br />
+    endnu. Fortvivl ikke! Lad os hjælpe dig med at<br />
+    opdage og nyde vermouth.
+  </p>
+  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
+</section>
 
 <section class="split-content border-b border-black">
   <div class="copy">

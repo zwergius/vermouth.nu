@@ -17,14 +17,35 @@
   import type { HttpTypes } from '@medusajs/types'
 
   const { data }: PageProps = $props()
-  const red = $derived(getVariantGridItems(data.categories.red))
-  const white = $derived(getVariantGridItems(data.categories.white))
-  const other = $derived(getVariantGridItems(data.categories.other))
-  const packs = $derived(getVariantGridItems(data.categories.packs))
+  const red = $derived(getVariantGridItems(sortShopProducts(data.categories.red)))
+  const white = $derived(getVariantGridItems(sortShopProducts(data.categories.white)))
+  const other = $derived(getVariantGridItems(sortShopProducts(data.categories.other)))
+  const packs = $derived(getVariantGridItems(sortShopProducts(data.categories.packs)))
   const { locale, region } = $derived(data)
   const currency = $derived(data.region.currency_code.toUpperCase())
 
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
+
+  function getShopOrder(product: HttpTypes.StoreProduct): number {
+    const value = product.metadata?.shop_order
+    if (
+      (typeof value !== 'number' && typeof value !== 'string') ||
+      (typeof value === 'string' && !value.trim())
+    ) {
+      return Infinity
+    }
+
+    const order = Number(value)
+    return Number.isFinite(order) ? order : Infinity
+  }
+
+  function sortShopProducts(products: HttpTypes.StoreProduct[]): HttpTypes.StoreProduct[] {
+    return products.toSorted((left, right) => {
+      const leftOrder = getShopOrder(left)
+      const rightOrder = getShopOrder(right)
+      return leftOrder === rightOrder ? 0 : leftOrder - rightOrder
+    })
+  }
 
   function getCategoryHandle(product: HttpTypes.StoreProduct): CategoryHandle | null {
     for (const category of product.categories ?? []) {
@@ -94,14 +115,6 @@
   imageAlt="Statue kigger på en spand fyldt med Vermouth flasker"
 />
 
-<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
-
-<section class="content border-b border-black">
-  <h1>VIL DU SMAGE FØR DU KØBER?</h1>
-  <p>Så frygt ej! Du kan smage vores lækre dråber på et udvalg af steder i København</p>
-  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
-</section>
-
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
@@ -157,6 +170,14 @@
     />
   {/each}
 </ul>
+
+<section class="content border-b border-black">
+  <h1>VIL DU SMAGE FØR DU KØBER?</h1>
+  <p>Så frygt ej! Du kan smage vores lækre dråber på et udvalg af steder i København</p>
+  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
+</section>
+
+<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 
 <section class="content border-b border-black">
   <h2>VIDSTE DU AT VI TILBYDER</h2>

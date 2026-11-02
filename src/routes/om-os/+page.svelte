@@ -45,7 +45,12 @@
 />
 
 <Hero
-  imageUrl="https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500"
+  images={[
+    {
+      desktop:
+        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/bfb03447-2e8a-478c-0bd8-ba1667247500',
+    },
+  ]}
 >
   VENNERNE SOM<br />
   ELSKER SMAGEN AF<br />
