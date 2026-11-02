@@ -2,6 +2,7 @@
   import viewport from '$lib/actions/use-viewport-action'
   import drinkRecipes from '$lib/data/drinkRecipes'
   import { squareSrcSet } from '$lib/helpers/images'
+  import Hero from '$lib/components/hero.svelte'
   import Marquee from '$lib/components/marquee.svelte'
   import Seo from '$lib/components/SEO.svelte'
 
@@ -23,10 +24,23 @@
   imageAlt="Negroni Cocktail"
 />
 
-<section class="split-content border-b border-black">
+<Hero
+  images={[
+    {
+      desktop:
+        'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/5de0aefc-364c-4bba-dcd4-0c45ed0c2f00',
+    },
+  ]}
+>
+  Vermouth<br />
+  // Fra kikset<br />
+  Til Cool
+</Hero>
+
+<section class="split-content max-lg:flex-col border-b border-black">
   <div class="copy">
     <div class="my-auto flex-1">
-      <h1 class="text-xs mb-6">INSPIRATION</h1>
+      <h2 class="text-xs mb-6">INSPIRATION</h2>
       <p class="mb-6 md:mb-8">
         Gå på opdagelse i et smagsunivers, hvor Vermouth er hovedrollen. Vi lover, at du ikke bliver
         skuffet.

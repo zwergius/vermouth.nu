@@ -94,14 +94,6 @@
   imageAlt="Statue kigger på en spand fyldt med Vermouth flasker"
 />
 
-<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
-
-<section class="content border-b border-black">
-  <h1>VIL DU SMAGE FØR DU KØBER?</h1>
-  <p>Så frygt ej! Du kan smage vores lækre dråber på et udvalg af steder i København</p>
-  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
-</section>
-
 <Marquee text="ROJO // RØD //" theme="yellow"></Marquee>
 
 <ul class="grid-layout border-b border-black">
@@ -157,6 +149,14 @@
     />
   {/each}
 </ul>
+
+<section class="content border-b border-black">
+  <h1>VIL DU SMAGE FØR DU KØBER?</h1>
+  <p>Så frygt ej! Du kan smage vores lækre dråber på et udvalg af steder i København</p>
+  <a class="btn" href={resolve('/forhandlere')}>SE HVOR</a>
+</section>
+
+<Marquee text="VERMOUTH ER FOR ALLE //" theme="red"></Marquee>
 
 <section class="content border-b border-black">
   <h2>VIDSTE DU AT VI TILBYDER</h2>

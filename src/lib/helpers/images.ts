@@ -51,3 +51,8 @@ export function thumbnailSrcSet(url: string) {
     ${url}/w=186,h=186,fit=cover 3x
   `
 }
+
+// Preserve each art-directed image's proportions instead of cropping to a shared ratio.
+export function responsiveHeroSrcSet(url: string) {
+  return [400, 800, 1200, 1600, 2400].map((width) => `${url}/w=${width} ${width}w`).join(', ')
+}
