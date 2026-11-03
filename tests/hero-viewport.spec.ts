@@ -60,10 +60,14 @@ for (const width of [390, 834, 1440]) {
   })
 }
 
-test('the homepage hero links to the shop', async ({ page }) => {
+test('the homepage hero links to the Sardino Rojo bottle', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   const heroLink = page.getByRole('link', { name: /Sardino Rojo – klasse vermouth til kongepris/i })
-  await expect(heroLink).toHaveAttribute('href', /^\.?\/shop$/)
+  await expect(heroLink).toHaveAttribute(
+    'href',
+    /^\.?\/shop\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/,
+  )
   await heroLink.click()
-  await expect(page).toHaveURL(/\/shop$/)
+  await expect(page).toHaveURL(/\/shop\/sardino-rojo\?variant=sardino-rojo-75cl-bottle$/)
+  await expect(page.getByRole('radio', { name: /Flaske · 75 cl/ })).toBeChecked()
 })
