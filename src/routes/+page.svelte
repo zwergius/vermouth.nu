@@ -49,7 +49,7 @@
   imageAlt="Vermouth.Nu Founders"
 />
 
-<a class="block" href={resolve('/shop')}>
+<a class="block" href={resolve('/shop/sardino-rojo?variant=sardino-rojo-75cl-bottle')}>
   <Hero
     images={[
       {
