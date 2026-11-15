@@ -45,10 +45,16 @@ export const GET: RequestHandler = async () => {
         const [single, ...tiers] = getVariantPriceDisplay(variant, region.currency_code, 'da-DK')
         if (!single || single.unitAmount < 0) continue
 
-        const price = single.unitAmount.toFixed(2)
-        const salePrice = Math.min(
-          single.unitAmount,
-          ...tiers.map(({ unitAmount }) => unitAmount),
+        const originalBundleAmount =
+          variant.title === 'Pakke' &&
+          variant.calculated_price?.calculated_price?.price_list_type === 'sale'
+            ? single.originalUnitAmount
+            : undefined
+        const price = (originalBundleAmount ?? single.unitAmount).toFixed(2)
+        const salePrice = (
+          originalBundleAmount === undefined
+            ? Math.min(single.unitAmount, ...tiers.map(({ unitAmount }) => unitAmount))
+            : single.unitAmount
         ).toFixed(2)
 
         const link = new URL(`/shop/${encodeURIComponent(product.handle)}`, STOREFRONT_URL)
@@ -58,6 +64,7 @@ export const GET: RequestHandler = async () => {
           ? `${storefrontImage}/w=580,h=580,fit=cover`
           : variant.thumbnail || product.thumbnail || `${vermouth.image}/w=580,h=580,fit=cover`
         const inStock = variant.manage_inventory === false || (variant.inventory_quantity ?? 0) > 0
+        const ean = variant.ean?.trim()
         const fields = {
           id: variant.id,
           item_group_id: product.id,
@@ -71,6 +78,7 @@ export const GET: RequestHandler = async () => {
           ...(salePrice !== price ? { sale_price: `${salePrice} ${currency}` } : {}),
           brand: vermouth.brand,
           mpn: variant.sku,
+          ...(ean ? { gtin: ean } : {}),
         }
 
         const xml = Object.entries(fields)
