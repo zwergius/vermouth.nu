@@ -47,7 +47,7 @@ describe('Google Shopping XML feed', () => {
     listProducts.mockReset()
   })
 
-  it('keeps Medusa IDs and uses the lowest eligible unit amount for each variant', async () => {
+  it('keeps Medusa IDs and sends the cheapest tier as a sale against the single-unit price', async () => {
     const box = {
       ...bottle,
       id: 'variant_original_box',
@@ -77,7 +77,8 @@ describe('Google Shopping XML feed', () => {
     expect(items).toHaveLength(2)
     expect(items?.[0]).toContain('<g:id>variant_original_bottle</g:id>')
     expect(items?.[0]).toContain('<g:item_group_id>prod_original</g:item_group_id>')
-    expect(items?.[0]).toContain('<g:price>250.00 DKK</g:price>')
+    expect(items?.[0]).toContain('<g:price>295.00 DKK</g:price>')
+    expect(items?.[0]).toContain('<g:sale_price>250.00 DKK</g:sale_price>')
     expect(items?.[0]).toContain('<g:availability>in_stock</g:availability>')
     expect(items?.[0]).toContain('<g:title>Vermouth &amp; friends</g:title>')
     expect(items?.[0]).toContain('<g:description>Serve &lt;cold&gt;.</g:description>')
@@ -86,6 +87,7 @@ describe('Google Shopping XML feed', () => {
     )
     expect(items?.[1]).toContain('<g:id>variant_original_box</g:id>')
     expect(items?.[1]).toContain('<g:price>800.00 DKK</g:price>')
+    expect(items?.[1]).not.toContain('<g:sale_price>')
     expect(items?.[1]).toContain('<g:availability>out_of_stock</g:availability>')
   })
 
@@ -118,7 +120,7 @@ describe('Google Shopping XML feed', () => {
     expect(xml).toContain('<g:price>225.00 DKK</g:price>')
     expect(xml).toContain('<g:id>variant_unsupported_tier</g:id>')
     expect(xml).toContain('<g:price>295.00 DKK</g:price>')
-    expect(xml).not.toContain('199.00')
+    expect(xml).not.toContain('<g:sale_price>')
   })
 
   it('returns a service error when the Danish pricing region is unavailable', async () => {

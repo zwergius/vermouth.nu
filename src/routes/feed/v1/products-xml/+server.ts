@@ -20,6 +20,7 @@ export const GET: RequestHandler = async () => {
   const { regions } = await sdk.store.region.list({ fields: 'id,currency_code,*countries' })
   const region = regions.find(({ countries }) => countries?.some(({ iso_2 }) => iso_2 === 'dk'))
   if (!region) error(503, 'The Danish feed region is unavailable')
+  const currency = region.currency_code.toUpperCase()
 
   const items: string[] = []
   let offset = 0
@@ -41,9 +42,14 @@ export const GET: RequestHandler = async () => {
 
       const vermouth = vermouths[product.handle as Handle]
       for (const variant of getEligibleVariants(product)) {
-        const prices = getVariantPriceDisplay(variant, region.currency_code, 'da-DK')
-        const amount = Math.min(...prices.map(({ unitAmount }) => unitAmount))
-        if (!Number.isFinite(amount) || amount < 0) continue
+        const [single, ...tiers] = getVariantPriceDisplay(variant, region.currency_code, 'da-DK')
+        if (!single || single.unitAmount < 0) continue
+
+        const price = single.unitAmount.toFixed(2)
+        const salePrice = Math.min(
+          single.unitAmount,
+          ...tiers.map(({ unitAmount }) => unitAmount),
+        ).toFixed(2)
 
         const link = new URL(`/shop/${encodeURIComponent(product.handle)}`, STOREFRONT_URL)
         link.searchParams.set('variant', variant.sku)
@@ -61,7 +67,8 @@ export const GET: RequestHandler = async () => {
           image_link: image,
           availability: inStock ? 'in_stock' : 'out_of_stock',
           condition: 'new',
-          price: `${amount.toFixed(2)} ${region.currency_code.toUpperCase()}`,
+          price: `${price} ${currency}`,
+          ...(salePrice !== price ? { sale_price: `${salePrice} ${currency}` } : {}),
           brand: vermouth.brand,
           mpn: variant.sku,
         }
