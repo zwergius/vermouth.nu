@@ -18,6 +18,13 @@
 
   const { data }: { data: PageData } = $props()
   const { locale, order } = $derived(data)
+  const discountLabels = $derived(getDiscountLabels())
+  // The separate discount line includes shipping discounts, so show delivery before discounts.
+  const shippingTotal = $derived(
+    order.discount_total > 0
+      ? (order.original_shipping_total ?? order.shipping_total)
+      : order.shipping_total,
+  )
   let isCancellationRequestOpen = $state(false)
   type CategoryHandle = keyof typeof GA_CATEGORY_LABEL_BY_HANDLE
 
@@ -81,6 +88,18 @@
         quantity: String(item.quantity),
       }
     })
+  }
+
+  function getDiscountLabels() {
+    const adjustments = [
+      ...(order.items ?? []).flatMap((item) => item.adjustments ?? []),
+      ...(order.shipping_methods ?? []).flatMap((method) => method.adjustments ?? []),
+    ]
+    const labels = adjustments
+      .map((adjustment) => adjustment.code || adjustment.description)
+      .filter(Boolean)
+
+    return [...new Set(labels)].join(', ')
   }
 
   function getCouponCode() {
@@ -198,11 +217,17 @@
     <div class="flex justify-between items-center py-2">
       <span>Levering</span>
       <span
-        >{order.shipping_total > 0
-          ? formatPrice(order.shipping_total, order.currency_code, locale)
+        >{shippingTotal > 0
+          ? formatPrice(shippingTotal, order.currency_code, locale)
           : 'Gratis'}</span
       >
     </div>
+    {#if order.discount_total > 0}
+      <div class="flex justify-between items-center py-2">
+        <span>Rabat{discountLabels ? ` (${discountLabels})` : ''}</span>
+        <span>{formatPrice(-order.discount_total, order.currency_code, locale)}</span>
+      </div>
+    {/if}
     <div class="flex justify-between items-center mb-3 font-bold">
       <span>Total</span>
       <span>{formatPrice(order.total, order.currency_code, locale)}</span>
