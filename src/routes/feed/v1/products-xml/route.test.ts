@@ -16,6 +16,7 @@ const bottle = {
   sku: 'forzudo-rojo-100cl-bottle',
   ean: ' 0123456789012 ',
   title: 'Flaske',
+  options: [{ value: '100 cl', option: { title: 'Size' } }],
   variant_rank: 0,
   inventory_quantity: 20,
   calculated_price: {
@@ -55,6 +56,8 @@ describe('Google Shopping XML feed', () => {
       id: 'variant_original_box',
       sku: 'forzudo-rojo-3l-bag-in-box',
       ean: ' ',
+      title: 'Bag-in-Box',
+      options: [{ value: '3 L', option: { title: 'Size' } }],
       variant_rank: 1,
       inventory_quantity: 0,
       calculated_price: { ...bottle.calculated_price, calculated_amount: 800 },
@@ -81,15 +84,32 @@ describe('Google Shopping XML feed', () => {
     expect(items?.[0]).toContain('<g:id>variant_original_bottle</g:id>')
     expect(items?.[0]).toContain('<g:gtin>0123456789012</g:gtin>')
     expect(items?.[0]).toContain('<g:item_group_id>prod_original</g:item_group_id>')
+    expect(items?.[0]).toContain('<g:item_group_title>Vermouth &amp; friends</g:item_group_title>')
+    expect(items?.[0]).toContain('<g:size>100 cl</g:size>')
+    expect(items?.[0]).toContain(
+      '<g:variant_option><g:name>size</g:name><g:value>100 cl</g:value></g:variant_option>',
+    )
+    expect(items?.[0]).toContain(
+      '<g:variant_option><g:name>packaging</g:name><g:value>Flaske</g:value></g:variant_option>',
+    )
     expect(items?.[0]).toContain('<g:price>295.00 DKK</g:price>')
     expect(items?.[0]).toContain('<g:sale_price>250.00 DKK</g:sale_price>')
     expect(items?.[0]).toContain('<g:availability>in_stock</g:availability>')
-    expect(items?.[0]).toContain('<g:title>Vermouth &amp; friends</g:title>')
+    expect(items?.[0]).toContain('<g:title>Vermouth &amp; friends — Flaske, 100 cl</g:title>')
     expect(items?.[0]).toContain('<g:description>Serve &lt;cold&gt;.</g:description>')
     expect(items?.[0]).toContain(
       'https://www.vermouth.nu/shop/forzudo-rojo?variant=forzudo-rojo-100cl-bottle',
     )
     expect(items?.[1]).toContain('<g:id>variant_original_box</g:id>')
+    expect(items?.[1]).toContain('<g:item_group_id>prod_original</g:item_group_id>')
+    expect(items?.[1]).toContain('<g:item_group_title>Vermouth &amp; friends</g:item_group_title>')
+    expect(items?.[1]).toContain('<g:size>3 L</g:size>')
+    expect(items?.[1]).toContain(
+      '<g:variant_option><g:name>size</g:name><g:value>3 L</g:value></g:variant_option>',
+    )
+    expect(items?.[1]).toContain(
+      '<g:variant_option><g:name>packaging</g:name><g:value>Bag-in-Box</g:value></g:variant_option>',
+    )
     expect(items?.[1]).not.toContain('<g:gtin>')
     expect(items?.[1]).toContain('<g:price>800.00 DKK</g:price>')
     expect(items?.[1]).not.toContain('<g:sale_price>')
@@ -153,6 +173,8 @@ describe('Google Shopping XML feed', () => {
 
     expect(xml).toContain('<g:price>358.00 DKK</g:price>')
     expect(xml).toContain('<g:sale_price>298.00 DKK</g:sale_price>')
+    expect(xml).not.toContain('<g:item_group_id>')
+    expect(xml).not.toContain('<g:variant_option>')
   })
 
   it('returns a service error when the Danish pricing region is unavailable', async () => {

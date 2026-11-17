@@ -1,6 +1,10 @@
 import { error } from '@sveltejs/kit'
 import { vermouths, type Handle } from '$lib/data/products'
-import { getEligibleVariants, getVariantPriceDisplay } from '$lib/helpers/product-variants'
+import {
+  getEligibleVariants,
+  getVariantPresentation,
+  getVariantPriceDisplay,
+} from '$lib/helpers/product-variants'
 import { sdk } from '$lib/medusa'
 import type { RequestHandler } from './$types'
 
@@ -27,7 +31,8 @@ export const GET: RequestHandler = async () => {
   let count = 0
   do {
     const page = await sdk.store.product.list({
-      fields: '*variants,*variants.calculated_price,*variants.prices,+variants.inventory_quantity',
+      fields:
+        '*variants,*variants.options,*variants.calculated_price,*variants.prices,+variants.inventory_quantity',
       region_id: region.id,
       limit: PAGE_SIZE,
       offset,
@@ -41,10 +46,20 @@ export const GET: RequestHandler = async () => {
       if (!Object.hasOwn(vermouths, product.handle)) continue
 
       const vermouth = vermouths[product.handle as Handle]
-      for (const variant of getEligibleVariants(product)) {
+      const variants = getEligibleVariants(product).flatMap((variant) => {
         const [single, ...tiers] = getVariantPriceDisplay(variant, region.currency_code, 'da-DK')
-        if (!single || single.unitAmount < 0) continue
+        if (!single || single.unitAmount < 0) return []
 
+        const { packaging, size } = getVariantPresentation(variant)
+        return [{ variant, single, tiers, packaging, size: size.trim() }]
+      })
+      const groupVariants =
+        variants.length > 1 &&
+        variants.every(({ size }) => size) &&
+        new Set(variants.map(({ size, packaging }) => JSON.stringify([size, packaging]))).size ===
+          variants.length
+
+      for (const { variant, single, tiers, packaging, size } of variants) {
         const originalBundleAmount =
           variant.title === 'Pakke' &&
           variant.calculated_price?.calculated_price?.price_list_type === 'sale'
@@ -67,8 +82,10 @@ export const GET: RequestHandler = async () => {
         const ean = variant.ean?.trim()
         const fields = {
           id: variant.id,
-          item_group_id: product.id,
-          title: product.title,
+          ...(groupVariants
+            ? { item_group_id: product.id, item_group_title: product.title, size }
+            : {}),
+          title: groupVariants ? `${product.title} — ${packaging}, ${size}` : product.title,
           description: product.description?.trim() || vermouth.taste,
           link: link.href,
           image_link: image,
@@ -84,7 +101,15 @@ export const GET: RequestHandler = async () => {
         const xml = Object.entries(fields)
           .map(([key, value]) => `<g:${key}>${escapeXml(value)}</g:${key}>`)
           .join('')
-        items.push(`<item>${xml}</item>`)
+        const options = groupVariants
+          ? Object.entries({ size, packaging })
+              .map(
+                ([name, value]) =>
+                  `<g:variant_option><g:name>${name}</g:name><g:value>${escapeXml(value)}</g:value></g:variant_option>`,
+              )
+              .join('')
+          : ''
+        items.push(`<item>${xml}${options}</item>`)
       }
     }
   } while (offset < count)
