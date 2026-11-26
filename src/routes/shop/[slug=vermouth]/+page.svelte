@@ -57,6 +57,11 @@
     taste,
     variantImages,
   } = $derived(vermouths[product.handle as Handle])
+  const lifestyleImageSizes = $derived(
+    scores
+      ? '(max-width: 400px) 100vw, (max-width: 800px) 50vw, 33vw'
+      : '(min-width: 1024px) 50vw, 100vw',
+  )
   const productDescription = $derived(product.description ?? '')
   const eligibleVariants = $derived(getEligibleVariants(product))
   const defaultVariant = $derived(getDefaultVariant(product))
@@ -514,7 +519,9 @@
   </div>
 </section>
 
-<ul class="lg:grid lg:grid-cols-3 border-b border-black overflow-visible">
+<ul
+  class={`border-b border-black overflow-visible lg:grid ${scores ? 'lg:grid-cols-3' : 'lg:grid-cols-2 lg:divide-x lg:divide-black'}`}
+>
   <li class="relative aspect-square">
     <img
       alt={extraImages[0].altText}
@@ -524,12 +531,14 @@
       loading="lazy"
       src="{extraImages[0].url}/w=800,h=800,fit=cover"
       srcset={squareSrcSet(extraImages[0].url)}
-      sizes="(max-width: 400px) 100vw, (max-width: 800px) 50vw, 33vw"
+      sizes={lifestyleImageSizes}
     />
   </li>
-  <li class="relative aspect-square flex flex-col justify-center border-x border-black">
-    <ProductSliders {scores} />
-  </li>
+  {#if scores}
+    <li class="relative aspect-square flex flex-col justify-center border-x border-black">
+      <ProductSliders {scores} />
+    </li>
+  {/if}
   <li class="relative aspect-square">
     <img
       alt={extraImages[1].altText}
@@ -539,7 +548,7 @@
       loading="lazy"
       src="{extraImages[1].url}/w=800,h=800,fit=cover"
       srcset={squareSrcSet(extraImages[1].url)}
-      sizes="(max-width: 400px) 100vw, (max-width: 800px) 50vw, 33vw"
+      sizes={lifestyleImageSizes}
     />
   </li>
 </ul>
