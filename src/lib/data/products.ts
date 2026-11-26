@@ -27,13 +27,10 @@ export interface Vermouth {
   brand: string
   origin: string
   recommendation: string
-  scores?: { body: number; fruityness: number; spiciness: number; sweetness: number }
+  scores: { body: number; fruityness: number; spiciness: number; sweetness: number }
   taste: string
   variantImages?: Record<string, StorefrontImage>
 }
-
-const ARTEMISIAE_IMAGE =
-  'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/9b5d3782-fdca-4b2b-686f-15b37a348700'
 
 export const vermouths: Record<Handle, Vermouth> = {
   '7-artemisiae': {
@@ -49,15 +46,16 @@ export const vermouths: Record<Handle, Vermouth> = {
         url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/dcc14072-7377-4b69-8715-7e9fb7758800',
       },
     ],
-    image: ARTEMISIAE_IMAGE,
+    image: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/9b5d3782-fdca-4b2b-686f-15b37a348700',
     origin: 'Valle Elvo, Piemonte, Italien',
     recommendation: 'Nyd den ren som aperitif eller efter middagen, med tonic eller i en spritz.',
+    scores: { sweetness: 2, fruityness: 1, body: 3, spiciness: 2 },
     taste:
       'Markant bitterhed og fine urtearomaer fra syv arter i malurtslægten. Erbaluce-vinen giver friskhed og livlig syre.',
     variantImages: {
       '7-artemisiae-75cl-bottle': {
         altText: '7 Artemisiæ – Flaske, 75 cl',
-        url: ARTEMISIAE_IMAGE,
+        url: 'https://imagedelivery.net/rOTc9tKCTQBc9ztkiBTX_w/9b5d3782-fdca-4b2b-686f-15b37a348700',
       },
     },
   },
