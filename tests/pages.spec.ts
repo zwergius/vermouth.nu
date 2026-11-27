@@ -104,6 +104,7 @@ const sardinoRojoProduct = {
 }
 
 const catalogVariants = {
+  '7-artemisiae': [{ sku: '7-artemisiae-75cl-bottle', label: 'Flaske — 75 cl' }],
   'forzudo-rojo': [
     { sku: 'forzudo-rojo-100cl-bottle', label: 'Flaske — 100 cl' },
     { sku: 'forzudo-rojo-3l-bag-in-box', label: 'Bag-in-Box — 3 L' },
@@ -227,6 +228,18 @@ test.describe('cancellation request flow', () => {
 })
 
 test.describe('product detail pages', () => {
+  test('opens 7 Artemisiæ from Shop and shows the tasting profile and photos', async ({ page }) => {
+    const productPath = '/shop/7-artemisiae?variant=7-artemisiae-75cl-bottle'
+    await page.goto('/shop')
+    await page.locator(`main a[href="${productPath}"]`).click()
+    await expect(page).toHaveURL(productPath)
+
+    for (const { altText } of vermouths['7-artemisiae'].extraImages) {
+      await expect(page.getByRole('img', { name: altText })).toBeVisible()
+    }
+    await expect(page.getByText('Krydret', { exact: true })).toBeVisible()
+  })
+
   for (const handle of Object.keys(vermouths) as Array<keyof typeof vermouths>) {
     const vermouth = vermouths[handle]
 
